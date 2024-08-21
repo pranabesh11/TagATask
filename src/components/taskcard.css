@@ -1,0 +1,83 @@
+.card {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin: 10px;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  color: black;
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.card-item {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  position: relative;
+  margin: 10px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  color: black;
+}
+
+.card-item.dragging {
+  opacity: 0.6;
+  transform: scale(1.05);
+  background-color: #f0f0f0;
+}
+
+.drag_image_logo{
+  opacity: 0;
+}
+
+.card-item:hover .drag_image_logo{
+  opacity: 1;
+}
+
+
+.drag_image {
+  height: 20px;
+  width: 20px;
+}
+
+.card-item input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.card-text {
+  font-size: 14px;
+  color: #666;
+}
+
+
+
+
+.task-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-label {
+  font-size: 0.9em;
+  margin: 5px;
+}
+
+.task-datetime {
+  font-size: 0.8em;
+  margin-top: 3px;
+  color: #999;
+}

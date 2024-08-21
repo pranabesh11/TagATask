@@ -1,0 +1,82 @@
+.input-with-datetime {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row-reverse;
+}
+
+.clock-icon-wrapper {
+  position: relative;
+}
+
+.input-with-datetime .clock-icon,
+.input-with-datetime .selected-datetime {
+  padding: 8px;
+  font-size: 16px;
+  transition: filter 0.3s ease-in-out;
+}
+
+.grey-icon {
+  opacity: 0.3;
+}
+
+.black-icon {
+  opacity: 1;
+}
+
+.hovered-datetime {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  padding: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 10;
+  width: 70px;
+}
+
+.datetime-picker-wrapper {
+  position: absolute;
+  z-index: 1000;
+  background: white;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.datetime-picker-wrapper .clear-button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 3px;
+}
+
+.datetime-picker-wrapper .clear-button:hover {
+  background-color: #e0e0e0;
+}
+
+.selected-datetime {
+  display: inline-block;
+  margin-left: 10px;
+  font-family: sans-serif;
+  font-weight: 500;
+  height: 40px;
+}
+
+.clear-icon {
+  margin-left: 10px;
+  cursor: pointer;
+  color: red;
+  font-size: 16px;
+}
+
+.input-with-datetime input:focus {
+  border: none;
+  outline: none;
+}
