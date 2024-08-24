@@ -371,7 +371,7 @@ const applyHighlight = () => {
   return (
     
     <div className="main_div">
-      {showToolbar && (
+      {/* {showToolbar && (
         <div
           className="text-toolbar"
           style={{ position: 'absolute', top: toolbarPosition.top, left: toolbarPosition.left }}
@@ -381,7 +381,7 @@ const applyHighlight = () => {
           <button onClick={applyUnderline}><FontAwesomeIcon icon={faUnderline} /></button>
           <button onClick={applyHighlight}><FontAwesomeIcon icon={faHighlighter} /></button>
         </div>
-      )}
+      )} */}
 
       <div ref={containerRef} className="container">
         <button className="close_button" onClick={saveAllData}>
