@@ -38,8 +38,9 @@ const DropdownSelector = () => {
           src={selectedOption === 'WorkFlow' ? workflowIcon : icon}
           alt="dropdown icon"
           className="dropdown-icon"
+          style={{ opacity: selectedOption ? (selectedOption === 'WorkFlow' ? 1 : 0) : 0.3 }}
         />
-        {selectedOption && (
+        {selectedOption && selectedOption !== 'WorkFlow' && (
           <span className="selected-value">{selectedOption}</span>
         )}
       </div>
