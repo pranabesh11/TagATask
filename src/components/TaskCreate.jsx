@@ -27,7 +27,7 @@ function TaskCreate() {
   const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
   const [savedSelection, setSavedSelection] = useState(null);
 
-  
+
 
   const colors = ['#FF5733', '#33FF57', '#3357FF', '#F33FF5', '#F5A623'];
 
@@ -60,7 +60,7 @@ function TaskCreate() {
       document.removeEventListener('mouseup', handleTextSelection);
     };
   }, []);
-  
+
 
   const handleTextSelection = () => {
     const selection = window.getSelection();
@@ -121,8 +121,8 @@ const applyHighlight = () => {
   document.execCommand('backColor', false, 'yellow');
 };
 
-  
-  
+
+
 
   const handleChange = (event) => {
     setInputValue(event.target.value);
@@ -189,7 +189,7 @@ const applyHighlight = () => {
       }
     }
   };
-  
+
   const handleEditableKeyDown = (event) => {
     if (event.key === 'Escape' && !isSaving) {
       setIsSaving(true);
@@ -213,7 +213,7 @@ const applyHighlight = () => {
     }
   };
 
-  
+
   const createNewTaskAtIndex = (index) => {
     const newTask = {
       text: '',
@@ -231,8 +231,8 @@ const applyHighlight = () => {
       newTask.ref.current.focus();
     }, 0);
   };
-  
-  
+
+
 
   const handleTaskChange = (index, event) => {
     const newTasks = [...tasks];
@@ -251,7 +251,7 @@ const applyHighlight = () => {
     newTasks[index].selectedTags = tags;
     setTasks(newTasks);
   };
-  
+
 
   const handleDeleteTask = (index) => {
     setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
@@ -276,7 +276,7 @@ const applyHighlight = () => {
       setSavedItems((prevItems) => {
         const newItems = [...prevItems];
         const card = newItems[cardIndex];
-    
+
         if (card && card.items && card.items[taskIndex]) {
           card.items[taskIndex].completed = isChecked;
           if (isChecked) {
@@ -284,13 +284,13 @@ const applyHighlight = () => {
             card.items.push(completedTask);
           }
         }
-    
+
         return newItems;
       });
     }
   };
-  
-  
+
+
   const handleTaskDragStart = (e, cardIndex, taskIndex) => {
     setDraggingIndex({ cardIndex, taskIndex });
 };
@@ -302,26 +302,49 @@ const applyHighlight = () => {
   const handleTaskDrop = (e, cardIndex, targetTaskIndex) => {
     e.preventDefault();
     if (draggingIndex && draggingIndex.cardIndex === cardIndex && draggingIndex.taskIndex !== targetTaskIndex) {
-      if (cardIndex === null) {
-        setTasks((prevTasks) => {
-          const newTasks = [...prevTasks];
-          const [movedTask] = newTasks.splice(draggingIndex.taskIndex, 1);
-          newTasks.splice(targetTaskIndex, 0, movedTask);
-          return newTasks;
-        });
-      } else {
-        setSavedItems((prevItems) => {
-          const newItems = [...prevItems];
-          const tasks = newItems[cardIndex].items;
-          const [movedTask] = tasks.splice(draggingIndex.taskIndex, 1);
-          tasks.splice(targetTaskIndex, 0, movedTask);
-          return newItems;
-        });
-      }
-      setDraggingIndex(null);
+        if (cardIndex === null) {
+            setTasks((prevTasks) => {
+                const newTasks = [...prevTasks];
+                const [movedTask] = newTasks.splice(draggingIndex.taskIndex, 1); // Remove the task from the original position
+                newTasks.splice(targetTaskIndex, 0, movedTask); // Insert it at the new position
+                return newTasks;
+            });
+        } else {
+            setSavedItems((prevItems) => {
+                const newItems = [...prevItems];
+                const tasks = newItems[cardIndex].items;
+                const [movedTask] = tasks.splice(draggingIndex.taskIndex, 1); // Remove the task from the original position
+                tasks.splice(targetTaskIndex, 0, movedTask); // Insert it at the new position
+                return newItems;
+            });
+        }
+    } else if (draggingIndex && draggingIndex.cardIndex !== cardIndex) {
+        // Handling for dragging between different cards
+        const sourceCardIndex = draggingIndex.cardIndex;
+        if (sourceCardIndex === null) {
+            setTasks((prevTasks) => {
+                const newTasks = [...prevTasks];
+                const [movedTask] = newTasks.splice(draggingIndex.taskIndex, 1); // Remove from original card
+                setSavedItems((prevItems) => {
+                    const newItems = [...prevItems];
+                    newItems[cardIndex].items.splice(targetTaskIndex, 0, movedTask); // Add to target card
+                    return newItems;
+                });
+                return newTasks;
+            });
+        } else {
+            setSavedItems((prevItems) => {
+                const newItems = [...prevItems];
+                const sourceTasks = newItems[sourceCardIndex].items;
+                const targetTasks = newItems[cardIndex].items;
+                const [movedTask] = sourceTasks.splice(draggingIndex.taskIndex, 1); // Remove from original card
+                targetTasks.splice(targetTaskIndex, 0, movedTask); // Add to target card
+                return newItems;
+            });
+        }
     }
-  };
-  
+    setDraggingIndex(null); // Reset dragging index after drop
+};
 
   const saveAllData = useCallback(() => {
     const dataToSave = {
@@ -344,14 +367,14 @@ const applyHighlight = () => {
     }
     setIsSaving(false);
   }, [tasks, inputValue]);
-  
-  
+
+
 
   const handleEditTask = (itemIndex) => {
     if (tasks.length > 0 || inputValue.trim()) {
       saveAllData();
     }
-  
+
     const item = savedItems[itemIndex];
     setInputValue(item.title);
     setTasks(
@@ -361,15 +384,15 @@ const applyHighlight = () => {
         selectedTags: task.selectedTags || [],
       }))
     );
-  
+
     setSavedItems((prevItems) => prevItems.filter((_, index) => index !== itemIndex));
     document.getElementById('inputField').focus();
   };
-  
-  
+
+
 
   return (
-    
+
     <div className="main_div">
       {showToolbar && (
         <div
@@ -423,17 +446,17 @@ const applyHighlight = () => {
                 ref={task.ref}
                 className="new-div-input"
               />
-              
+
               <TaskList
                     dateTime={task.datetime}
                     onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
                     onKeyDown={(e) => handleTaskKeyDown(index, e)}
               />
-                
+
               <div id ='icon_div'>
                 <div>
                   <CustomSelect
-                    selectedTags={task.selectedTags} 
+                    selectedTags={task.selectedTags}
                     onSelectTags={(tags) => handleLabelChange(index, tags)}
                   />
                 </div>
@@ -478,7 +501,7 @@ const applyHighlight = () => {
       </div>
       <div className="saved-items">
         {savedItems.map((item, itemIndex) => (
-          <div key={itemIndex} 
+          <div key={itemIndex}
                className="card"
                onClick={(e) => {
                 if (e.target === e.currentTarget) {
@@ -506,7 +529,7 @@ const applyHighlight = () => {
                 <div className="task-content">
                   <p style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
                     {task.text}
-                  </p>                 
+                  </p>
                 </div>
               </div>
             ))}
