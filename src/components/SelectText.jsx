@@ -15,7 +15,7 @@ const SelectText = () => {
       const rect = range.getBoundingClientRect();
 
       setOptionsPosition({
-        top: rect.top - 35 + window.scrollY,
+        top: rect.top - 360 + window.scrollY,
         left: rect.left + window.scrollX,
       });
       setSelectionRange(range);
@@ -100,7 +100,7 @@ const SelectText = () => {
         contentEditable={true}
         placeholder="Select text to see options..."
         onClick={handleLinkClick}
-      >
+      > b
         This is an editable text. Select any part to apply styling.
       </div>
       {showOptions && (

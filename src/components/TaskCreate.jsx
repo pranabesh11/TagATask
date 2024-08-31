@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import deleteicon from '../assets/delete.png';
 import closebutton from '../assets/close.png';
-import message from '../assets/messenger.png';
 import drag from '../assets/drag.png';
 import TaskList from './TaskList';
 import moment from 'moment';
@@ -12,7 +11,6 @@ import CustomSelect from './CustomSelect';
 import WorkType from './WorkType';
 import FileUpload from './FileUpload';
 import Comment from './Comment';
-import { faBold, faItalic, faUnderline, faHighlighter } from '@fortawesome/free-solid-svg-icons';
 
 
 function TaskCreate() {
@@ -23,9 +21,7 @@ function TaskCreate() {
   const [isSaving, setIsSaving] = useState(false);
   const editableInputRef = useRef(null);
   const containerRef = useRef(null);
-  const [showToolbar, setShowToolbar] = useState(false);
-  const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
-  const [savedSelection, setSavedSelection] = useState(null);
+
 
   
 
@@ -54,74 +50,6 @@ function TaskCreate() {
     };
   }, [isSaving]);
 
-  useEffect(() => {
-    document.addEventListener('mouseup', handleTextSelection);
-    return () => {
-      document.removeEventListener('mouseup', handleTextSelection);
-    };
-  }, []);
-  
-
-  const handleTextSelection = () => {
-    const selection = window.getSelection();
-    if (selection && selection.toString().length > 0) {
-        const range = selection.getRangeAt(0);
-        setSavedSelection(range);  // Store the selection range
-        const rect = range.getBoundingClientRect();
-        let top = rect.top - 40; // Default position above the selection
-        let left = rect.left;
-
-        // Check if the toolbar is going out of the viewport on the top
-        if (top < 0) {
-            top = rect.bottom + 10; // Position below the selection if there's no space above
-        }
-
-        // Adjust to make sure the toolbar doesn't go out of the screen on the left side
-        if (left < 0) {
-            left = 10; // Set it a little inside the screen
-        }
-
-        // Adjust to make sure the toolbar doesn't go out of the screen on the right side
-        if (left + 200 > window.innerWidth) { // Assuming the toolbar width is 200px
-            left = window.innerWidth - 210; // Set it a little inside the screen
-        }
-
-        setToolbarPosition({ top, left });
-        setShowToolbar(true);
-    } else {
-        setShowToolbar(false);
-    }
-};
-
-const restoreSelection = () => {
-  if (savedSelection) {
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(savedSelection);
-  }
-};
-
-const applyBold = () => {
-  restoreSelection();
-  document.execCommand('bold');
-};
-
-const applyItalic = () => {
-  restoreSelection();
-  document.execCommand('italic');
-};
-
-const applyUnderline = () => {
-  restoreSelection();
-  document.execCommand('underline');
-};
-
-const applyHighlight = () => {
-  restoreSelection();
-  document.execCommand('backColor', false, 'yellow');
-};
-
-  
   
 
   const handleChange = (event) => {
@@ -371,18 +299,6 @@ const applyHighlight = () => {
   return (
     
     <div className="main_div">
-      {/* {showToolbar && (
-        <div
-          className="text-toolbar"
-          style={{ position: 'absolute', top: toolbarPosition.top, left: toolbarPosition.left }}
-        >
-          <button onClick={applyBold}><FontAwesomeIcon icon={faBold} /></button>
-          <button onClick={applyItalic}><FontAwesomeIcon icon={faItalic} /></button>
-          <button onClick={applyUnderline}><FontAwesomeIcon icon={faUnderline} /></button>
-          <button onClick={applyHighlight}><FontAwesomeIcon icon={faHighlighter} /></button>
-        </div>
-      )} */}
-
       <div ref={containerRef} className="container">
         <button className="close_button" onClick={saveAllData}>
           <img src={closebutton} className="close_icon" height={15} width={15} />
