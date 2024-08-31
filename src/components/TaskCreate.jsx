@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import deleteicon from '../assets/delete.png';
 import closebutton from '../assets/close.png';
-import message from '../assets/messenger.png';
 import drag from '../assets/drag.png';
 import TaskList from './TaskList';
 import moment from 'moment';
@@ -12,7 +11,6 @@ import CustomSelect from './CustomSelect';
 import WorkType from './WorkType';
 import FileUpload from './FileUpload';
 import Comment from './Comment';
-import { faBold, faItalic, faUnderline, faHighlighter } from '@fortawesome/free-solid-svg-icons';
 
 
 function TaskCreate() {
@@ -23,9 +21,7 @@ function TaskCreate() {
   const [isSaving, setIsSaving] = useState(false);
   const editableInputRef = useRef(null);
   const containerRef = useRef(null);
-  const [showToolbar, setShowToolbar] = useState(false);
-  const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
-  const [savedSelection, setSavedSelection] = useState(null);
+
 
 
 
@@ -394,18 +390,6 @@ const applyHighlight = () => {
   return (
 
     <div className="main_div">
-      {showToolbar && (
-        <div
-          className="text-toolbar"
-          style={{ position: 'absolute', top: toolbarPosition.top, left: toolbarPosition.left }}
-        >
-          <button onClick={applyBold}><FontAwesomeIcon icon={faBold} /></button>
-          <button onClick={applyItalic}><FontAwesomeIcon icon={faItalic} /></button>
-          <button onClick={applyUnderline}><FontAwesomeIcon icon={faUnderline} /></button>
-          <button onClick={applyHighlight}><FontAwesomeIcon icon={faHighlighter} /></button>
-        </div>
-      )}
-
       <div ref={containerRef} className="container">
         <button className="close_button" onClick={saveAllData}>
           <img src={closebutton} className="close_icon" height={15} width={15} />
