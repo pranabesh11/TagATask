@@ -11,6 +11,8 @@ import CustomSelect from './CustomSelect';
 import WorkType from './WorkType';
 import FileUpload from './FileUpload';
 import Comment from './Comment';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 function TaskCreate() {
@@ -392,7 +394,8 @@ const applyHighlight = () => {
     <div className="main_div">
       <div ref={containerRef} className="container">
         <button className="close_button" onClick={saveAllData}>
-          <img src={closebutton} className="close_icon" height={15} width={15} />
+        <CloseIcon className='close_icon'/>
+          {/* <img src={closebutton} className="close_icon" height={15} width={15} /> */}
         </button>
         <input
           className="title_input"
@@ -460,7 +463,7 @@ const applyHighlight = () => {
               </div>
 
               <button className="delete-button" onClick={() => handleDeleteTask(index)}>
-                <img src={deleteicon} className="cross_button" height={30} width={30} />
+              <DeleteForeverIcon style={{ fontSize: 30 }} />
               </button>
             </div>
           ))}

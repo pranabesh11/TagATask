@@ -95,8 +95,8 @@
 .new-div {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-    padding: 10px;
+    margin-bottom: 1px;
+    padding: 3px;
     border-radius: 5px;
     background-color: #fff;
     transition: transform 0.2s ease, opacity 0.2s ease;
@@ -173,11 +173,14 @@
 
 
 .delete-button {
-    background: none;
+    cursor: pointer;
+    color: grey;
     border: none;
+    background: none;
+}
+.delete-button:hover {
     cursor: pointer;
     color: red;
-    font-size: 1.2rem;
 }
 .label_input{
     border-style: none;
@@ -251,7 +254,7 @@
 .drag_image_logo{
     opacity: 0;
   }
-  
+
   .new-div:hover .drag_image_logo{
     opacity: 1;
   }
@@ -281,17 +284,21 @@
     justify-content: space-evenly;
     width: 40%;
 }
+.close_icon{
+    cursor: pointer;
+    margin: -2px;
+}
 .card-item.dragging {
     opacity: 0.5;
     background-color: #e0e0e0;
     transform: scale(1.05);
     transition: all 0.2s ease;
   }
-  
+
   .card-item {
     transition: all 0.2s ease;
   }
-  
+
   .text-toolbar {
     display: flex;
     background-color: #fff;
@@ -301,7 +308,7 @@
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1000;
   }
-  
+
   .text-toolbar button {
     background: none;
     border: none;
@@ -309,8 +316,7 @@
     margin-right: 5px;
     font-size: 16px;
   }
-  
+
   .text-toolbar button:hover {
     color: #007bff;
   }
-  
