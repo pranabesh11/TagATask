@@ -286,7 +286,7 @@
 }
 .close_icon{
     cursor: pointer;
-    margin: -2px;
+    margin: -2px
 }
 .card-item.dragging {
     opacity: 0.5;
