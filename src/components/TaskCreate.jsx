@@ -13,7 +13,7 @@ import FileUpload from './FileUpload';
 import Comment from './Comment';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CloseIcon from '@mui/icons-material/Close';
-
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
@@ -418,7 +418,7 @@ const applyHighlight = () => {
               onDragOver={handleTaskDragOver}
               onDrop={(e) => handleTaskDrop(e, null,index)}
             >
-              <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
+              <DragIndicatorIcon className="drag_image_logo" style={{ fontSize: 30 }}/>
               <input
                 type="checkbox"
                 className="new-div-checkbox"
@@ -507,7 +507,7 @@ const applyHighlight = () => {
                 onDrop={(e) => handleTaskDrop(e,itemIndex,  index)}
                 onDragEnd={() => setDraggingIndex(null)}
               >
-                <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
+                 <DragIndicatorIcon className="drag_image_logo" style={{ fontSize: 20 }}/>
                 <input
                   type="checkbox"
                   checked={task.completed || false}
