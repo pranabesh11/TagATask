@@ -15,6 +15,11 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CloseIcon from '@mui/icons-material/Close';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
+import { DndContext, useDraggable, useDroppable, closestCenter} from '@dnd-kit/core';
+import { SortableContext, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
   const [tasks, setTasks] = useState([]);
@@ -387,6 +392,75 @@ const applyHighlight = () => {
     document.getElementById('inputField').focus();
   };
 
+  function Card({ item, itemIndex }) {
+    return (
+      <div className="card" onClick={(e) => e.currentTarget === e.target && handleEditTask(itemIndex)}>
+        <h1>{item.title}</h1>
+        <SortableContext items={item.items} strategy={rectSortingStrategy}>
+          {item.items.map((task, index) => (
+            <DraggableTask key={index} task={task} itemIndex={itemIndex} index={index} />
+          ))}
+        </SortableContext>
+      </div>
+    );
+  }
+
+  function DraggableTask({ task, itemIndex, index }) {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+      id: `task-${itemIndex}-${index}`,
+    });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className={`card-item ${draggingIndex?.cardIndex === itemIndex && draggingIndex?.taskIndex === index ? 'dragging' : ''}`}
+      >
+        <DragIndicatorIcon className="drag_image_logo" style={{ fontSize: 20 }} />
+        <input
+          type="checkbox"
+          checked={task.completed || false}
+          onChange={(e) => handleTaskCheck(itemIndex, index, e.target.checked)}
+        />
+        <div className="task-content">
+          <p style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
+            {task.text}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  function handleDragEnd(event) {
+    const { active, over } = event;
+    if (!over) return;
+
+    const [activeItemIndex, activeTaskIndex] = active.id.split('-').slice(1).map(Number);
+    const [overItemIndex, overTaskIndex] = over.id.split('-').slice(1).map(Number);
+
+    // Handle reordering logic here
+    if (activeItemIndex === overItemIndex) {
+      // Reorder within the same card
+      const updatedItems = [...savedItems];
+      const [movedTask] = updatedItems[activeItemIndex].items.splice(activeTaskIndex, 1);
+      updatedItems[overItemIndex].items.splice(overTaskIndex, 0, movedTask);
+      setSavedItems(updatedItems);
+    } else {
+      // Move between different cards
+      const updatedItems = [...savedItems];
+      const [movedTask] = updatedItems[activeItemIndex].items.splice(activeTaskIndex, 1);
+      updatedItems[overItemIndex].items.splice(overTaskIndex, 0, movedTask);
+      setSavedItems(updatedItems);
+    }
+  }
+
 
 
   return (
@@ -486,43 +560,20 @@ const applyHighlight = () => {
           </div>
         </div>
       </div>
-      <div className="saved-items">
-        {savedItems.map((item, itemIndex) => (
-          <div key={itemIndex}
-               className="card"
-               onClick={(e) => {
-                if (e.target === e.currentTarget) {
-                  handleEditTask(itemIndex);
-                }
-              }}
-               >
-            <h1>{item.title}</h1>
-            {item.items.map((task, index) => (
-              <div
-                key={index}
-                className={`card-item ${draggingIndex && draggingIndex.cardIndex === itemIndex && draggingIndex.taskIndex === index ? 'dragging' : ''}`}
-                draggable
-                onDragStart={(e) => handleTaskDragStart(e,itemIndex, index)}
-                onDragOver={handleTaskDragOver}
-                onDrop={(e) => handleTaskDrop(e,itemIndex,  index)}
-                onDragEnd={() => setDraggingIndex(null)}
-              >
-                 <DragIndicatorIcon className="drag_image_logo" style={{ fontSize: 20 }}/>
-                <input
-                  type="checkbox"
-                  checked={task.completed || false}
-                  onChange={(e) => handleTaskCheck(itemIndex, index, e.target.checked)}
-                />
-                <div className="task-content">
-                  <p style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
-                    {task.text}
-                  </p>
-                </div>
-              </div>
+
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={savedItems} strategy={rectSortingStrategy}>
+          <div className="saved-items">
+            {savedItems.map((item, itemIndex) => (
+              <Card key={itemIndex} item={item} itemIndex={itemIndex} />
             ))}
           </div>
-        ))}
-      </div>
+        </SortableContext>
+      </DndContext>
+
     </div>
   );
 }

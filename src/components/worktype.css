@@ -50,6 +50,7 @@
   z-index: 1000;
   width: max-content;
   padding: 5px 0;
+  flex-direction: column;
 }
 
 .option-item {
