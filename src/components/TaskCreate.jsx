@@ -29,11 +29,6 @@ function TaskCreate() {
   const editableInputRef = useRef(null);
   const containerRef = useRef(null);
 
-
-
-
-  const colors = ['#FF5733', '#33FF57', '#3357FF', '#F33FF5', '#F5A623'];
-
   useEffect(() => {
     const handleGlobalKeyDown = (event) => {
       if (event.key === 'Escape' && !isSaving) {
@@ -64,29 +59,22 @@ function TaskCreate() {
     };
   }, []);
 
-
   const handleTextSelection = () => {
     const selection = window.getSelection();
     if (selection && selection.toString().length > 0) {
         const range = selection.getRangeAt(0);
-        setSavedSelection(range);  // Store the selection range
+        setSavedSelection(range);
         const rect = range.getBoundingClientRect();
-        let top = rect.top - 40; // Default position above the selection
+        let top = rect.top - 40;
         let left = rect.left;
-
-        // Check if the toolbar is going out of the viewport on the top
         if (top < 0) {
-            top = rect.bottom + 10; // Position below the selection if there's no space above
+            top = rect.bottom + 10;
         }
-
-        // Adjust to make sure the toolbar doesn't go out of the screen on the left side
         if (left < 0) {
-            left = 10; // Set it a little inside the screen
+            left = 10;
         }
-
-        // Adjust to make sure the toolbar doesn't go out of the screen on the right side
-        if (left + 200 > window.innerWidth) { // Assuming the toolbar width is 200px
-            left = window.innerWidth - 210; // Set it a little inside the screen
+        if (left + 200 > window.innerWidth) {
+            left = window.innerWidth - 210;
         }
 
         setToolbarPosition({ top, left });
@@ -94,38 +82,15 @@ function TaskCreate() {
     } else {
         setShowToolbar(false);
     }
-};
+  };
 
-const restoreSelection = () => {
-  if (savedSelection) {
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(savedSelection);
-  }
-};
-
-const applyBold = () => {
-  restoreSelection();
-  document.execCommand('bold');
-};
-
-const applyItalic = () => {
-  restoreSelection();
-  document.execCommand('italic');
-};
-
-const applyUnderline = () => {
-  restoreSelection();
-  document.execCommand('underline');
-};
-
-const applyHighlight = () => {
-  restoreSelection();
-  document.execCommand('backColor', false, 'yellow');
-};
-
-
-
+  const restoreSelection = () => {
+    if (savedSelection) {
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(savedSelection);
+    }
+  };
 
   const handleChange = (event) => {
     setInputValue(event.target.value);
@@ -216,7 +181,6 @@ const applyHighlight = () => {
     }
   };
 
-
   const createNewTaskAtIndex = (index) => {
     const newTask = {
       text: '',
@@ -235,8 +199,6 @@ const applyHighlight = () => {
     }, 0);
   };
 
-
-
   const handleTaskChange = (index, event) => {
     const newTasks = [...tasks];
     newTasks[index].text = event.target.value;
@@ -254,7 +216,6 @@ const applyHighlight = () => {
     newTasks[index].selectedTags = tags;
     setTasks(newTasks);
   };
-
 
   const handleDeleteTask = (index) => {
     setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
@@ -296,7 +257,7 @@ const applyHighlight = () => {
 
   const handleTaskDragStart = (e, cardIndex, taskIndex) => {
     setDraggingIndex({ cardIndex, taskIndex });
-};
+  };
 
   const handleTaskDragOver = (e) => {
     e.preventDefault();
@@ -347,7 +308,7 @@ const applyHighlight = () => {
         }
     }
     setDraggingIndex(null); // Reset dragging index after drop
-};
+  };
 
   const saveAllData = useCallback(() => {
     const dataToSave = {
@@ -370,8 +331,6 @@ const applyHighlight = () => {
     }
     setIsSaving(false);
   }, [tasks, inputValue]);
-
-
 
   const handleEditTask = (itemIndex) => {
     if (tasks.length > 0 || inputValue.trim()) {
@@ -416,23 +375,11 @@ const applyHighlight = () => {
     };
 
     return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        {...attributes}
-        {...listeners}
-        className={`card-item ${draggingIndex?.cardIndex === itemIndex && draggingIndex?.taskIndex === index ? 'dragging' : ''}`}
-      >
+      <div ref={setNodeRef} style={style} {...attributes}{...listeners} className={`card-item ${draggingIndex?.cardIndex === itemIndex && draggingIndex?.taskIndex === index ? 'dragging' : ''}`}>
         <DragIndicatorIcon className="drag_image_logo" style={{ fontSize: 20 }} />
-        <input
-          type="checkbox"
-          checked={task.completed || false}
-          onChange={(e) => handleTaskCheck(itemIndex, index, e.target.checked)}
-        />
+        <input type="checkbox" checked={task.completed || false} onChange={(e) => handleTaskCheck(itemIndex, index, e.target.checked)}/>
         <div className="task-content">
-          <p style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
-            {task.text}
-          </p>
+          <p style={{ textDecoration: task.completed ? 'line-through' : 'none' }}> {task.text} </p>
         </div>
       </div>
     );
@@ -461,94 +408,45 @@ const applyHighlight = () => {
     }
   }
 
-
-
   return (
-
     <div className="main_div">
       <div ref={containerRef} className="container">
         <button className="close_button" onClick={saveAllData}>
-        <CloseIcon className='close_icon'/>
-          {/* <img src={closebutton} className="close_icon" height={15} width={15} /> */}
+          <CloseIcon className='close_icon'/>
         </button>
-        <input
-          className="title_input"
-          type="text"
-          id="inputField"
-          value={inputValue}
-          onChange={handleChange}
-          onKeyDown={handleKeyPress}
-          autoFocus={true}
-          placeholder="Title"
-        />
+        <input className="title_input" type="text" id="inputField" value={inputValue} onChange={handleChange} onKeyDown={handleKeyPress} autoFocus={true} placeholder="Title" />
 
         <div className="editable-div-container">
           {tasks.map((task, index) => (
-            <div
-              key={index}
-              className={`new-div`}
-              draggable
-              onDragStart={(e) => handleTaskDragStart(e,null, index)}
-              onDragOver={handleTaskDragOver}
-              onDrop={(e) => handleTaskDrop(e, null,index)}
-            >
+            <div key={index} className={`new-div`} draggable onDragStart={(e) => handleTaskDragStart(e,null, index)} onDragOver={handleTaskDragOver} onDrop={(e) => handleTaskDrop(e, null,index)} >
               <DragIndicatorIcon className="drag_image_logo" style={{ fontSize: 30 }}/>
-              <input
-                type="checkbox"
-                className="new-div-checkbox"
-                checked={task.completed || false}
-                onChange={(e) => handleTaskCheck(null, index, e.target.checked)}
-              />
-              <input
-                type="text"
-                value={task.text}
-                onChange={(e) => handleTaskChange(index, e)}
-                onKeyDown={(e) => handleTaskKeyDown(index, e)}
-                ref={task.ref}
-                className="new-div-input"
-              />
-
-              <TaskList
-                    dateTime={task.datetime}
-                    onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
-                    onKeyDown={(e) => handleTaskKeyDown(index, e)}
-              />
+              <input type="checkbox" className="new-div-checkbox" checked={task.completed || false} onChange={(e) => handleTaskCheck(null, index, e.target.checked)} />
+              <input type="text" value={task.text} onChange={(e) => handleTaskChange(index, e)} onKeyDown={(e) => handleTaskKeyDown(index, e)} ref={task.ref} className="new-div-input" />
+              <TaskList dateTime={task.datetime} onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)} onKeyDown={(e) => handleTaskKeyDown(index, e)}/>
 
               <div id ='icon_div'>
                 <div>
-                  <CustomSelect
-                    selectedTags={task.selectedTags}
-                    onSelectTags={(tags) => handleLabelChange(index, tags)}
-                  />
+                  <CustomSelect selectedTags={task.selectedTags} onSelectTags={(tags) => handleLabelChange(index, tags)} />
                 </div>
-
                 <div>
                   <Comment/>
                 </div>
-
                 <div>
                   <FileUpload/>
                 </div>
-
                 <div className='timer_inp'>
                   <WorkType/>
                 </div>
-
               </div>
-
               <button className="delete-button" onClick={() => handleDeleteTask(index)}>
-              <DeleteForeverIcon style={{ fontSize: 30 }} />
+                <DeleteForeverIcon style={{ fontSize: 30 }} />
               </button>
             </div>
           ))}
+
           <div className="editable-input-container">
             <FontAwesomeIcon icon={faPlus} className="plus-icon" />
-            <input
-              id="editableInput"
-              ref={editableInputRef}
-              type="text"
-              onKeyDown={handleEditableKeyDown}
-              placeholder="Add Task"
+            <input id="editableInput" ref={editableInputRef} type="text" onKeyDown={handleEditableKeyDown}  placeholder="Add Task"
               style={{
                 padding: '5px',
                 minHeight: '20px',
@@ -561,10 +459,7 @@ const applyHighlight = () => {
         </div>
       </div>
 
-      <DndContext
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
+      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={savedItems} strategy={rectSortingStrategy}>
           <div className="saved-items">
             {savedItems.map((item, itemIndex) => (
@@ -573,7 +468,6 @@ const applyHighlight = () => {
           </div>
         </SortableContext>
       </DndContext>
-
     </div>
   );
 }
