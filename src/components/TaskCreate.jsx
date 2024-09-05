@@ -75,10 +75,36 @@ function TaskCreate() {
       ref: React.createRef(),
     };
     setTasks((prevTasks) => [...prevTasks, newTask]);
+  
     setTimeout(() => {
-      newTask.ref.current.focus();
+      const taskElement = newTask.ref.current;
+      if (taskElement) {
+        taskElement.focus();
+        moveCursorToEnd(taskElement);
+      }
     }, 0);
   };
+  
+  const moveCursorToEnd = (element) => {
+    const range = document.createRange();
+    const selection = window.getSelection();
+    range.selectNodeContents(element);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
+
+  const moveCursor = (element) => {
+    const range = document.createRange();
+    const selection = window.getSelection();
+    range.selectNodeContents(element);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    element.focus();
+  };
+  
+  
 
   const handleTaskKeyDown = (index, event) => {
     if (event.key === 'Escape' && !isSaving) {
@@ -86,36 +112,57 @@ function TaskCreate() {
       saveAllData();
       return;
     }
-    if (event.key === 'Backspace' && tasks[index].text === '') {
+    if (event.key === 'Backspace'&& tasks[index].ref.current.innerText.trim() === '') {
       event.preventDefault();
       handleDeleteTask(index);
-      if (index > 0) {
-        tasks[index - 1].ref.current.focus();
-      } else if (tasks.length > 0) {
-        editableInputRef.current.focus();
+      if (tasks.length > 0) {
+        if (index > 0) {
+          const previousTask = tasks[index - 1];
+          setTimeout(() => {
+            previousTask.ref.current.focus();
+            moveCursorToEnd(previousTask.ref.current);
+          }, 0);
+        } else {
+          setTimeout(() => editableInputRef.current.focus(), 0);
+        }
       }
-      return;
     }
+
+
+
     if (event.key === 'Enter') {
-      event.preventDefault();
+      event.preventDefault(); 
       if (index < tasks.length - 1) {
         createNewTaskAtIndex(index + 1);
       } else {
         editableInputRef.current.focus();
       }
-    } else if (event.key === 'ArrowUp') {
+    }else if (event.key === 'ArrowUp') {
       event.preventDefault();
       if (index > 0) {
-        tasks[index - 1].ref.current.focus();
+        setTimeout(() => moveCursor(tasks[index - 1].ref.current), 0); 
+      } else {
+        setTimeout(() => {
+          if (tasks.length > 0) {
+            const lastTaskIndex = tasks.length - 1;
+            const lastTaskElement = tasks[lastTaskIndex].ref.current;
+            lastTaskElement.focus();
+            moveCursor(lastTaskElement);  
+          }
+        }, 0);
       }
-    } else if (event.key === 'ArrowDown') {
+    }else if (event.key === 'ArrowDown') {
       event.preventDefault();
       if (index < tasks.length - 1) {
-        tasks[index + 1].ref.current.focus();
+        setTimeout(() => {
+          const nextTaskElement = tasks[index + 1].ref.current;
+          nextTaskElement.focus();
+          moveCursorToEnd(nextTaskElement);
+        }, 0);
       } else {
-        editableInputRef.current.focus();
+        setTimeout(() => editableInputRef.current.focus(), 0);
       }
-    }
+    }    
   };
   
   const handleEditableKeyDown = (event) => {
@@ -127,13 +174,12 @@ function TaskCreate() {
     if (event.key === 'Backspace' && tasks.length > 0) {
       event.preventDefault();
       const lastTask = tasks[tasks.length - 1];
-      if (lastTask.text === '') {
-        handleDeleteTask(tasks.length - 1);
-      } else {
-        lastTask.ref.current.focus();
-      }
+      setTimeout(() => moveCursor(lastTask.ref.current), 0);
+
     } else if (event.key === 'ArrowUp' && tasks.length > 0) {
       event.preventDefault();
+      const lastTask = tasks[tasks.length - 1];
+      setTimeout(() => moveCursor(lastTask.ref.current), 0);
       tasks[tasks.length - 1].ref.current.focus();
     } else if (event.key !== 'Enter' && /^[a-zA-Z0-9`~!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/? ]$/.test(event.key)) {
       event.preventDefault();
@@ -161,12 +207,6 @@ function TaskCreate() {
   };
   
   
-
-  const handleTaskChange = (index, event) => {
-    const newTasks = [...tasks];
-    newTasks[index].text = event.target.value;
-    setTasks(newTasks);
-  };
 
   const handleDatetimeChange = (index, datetime) => {
     const newTasks = [...tasks];
@@ -293,6 +333,18 @@ function TaskCreate() {
     setSavedItems((prevItems) => prevItems.filter((_, index) => index !== itemIndex));
     document.getElementById('inputField').focus();
   };
+
+  const handleTaskInput = (index, event) => {
+    if (event.type === 'blur' || event.key === 'Enter') {
+      const newTasks = [...tasks];
+      newTasks[index].text = event.currentTarget.textContent;
+      setTasks(newTasks);
+    }
+  };
+  
+  
+  
+  
   
   
 
@@ -331,14 +383,24 @@ function TaskCreate() {
                 checked={task.completed || false}
                 onChange={(e) => handleTaskCheck(null, index, e.target.checked)}
               />
-              <input
-                type="text"
-                value={task.text}
-                onChange={(e) => handleTaskChange(index, e)}
-                onKeyDown={(e) => handleTaskKeyDown(index, e)}
+              <div
+                contentEditable
+                suppressContentEditableWarning={true}
+                onInput={(e) => handleTaskInput(index, e)}
+                onBlur={(e) => handleTaskInput(index, e)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === 'Backspace' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Escape') {
+                    handleTaskKeyDown(index, e);
+                  }
+                }}
                 ref={task.ref}
                 className="new-div-input"
-              />
+                style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap' }}
+              >
+                {task.text}
+              </div>
+
+
               
               <TaskList
                     dateTime={task.datetime}
