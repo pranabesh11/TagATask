@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import './taskcreate.css';
+import './taskcreateCopy.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import deleteicon from '../assets/delete.png';
@@ -20,7 +20,7 @@ import { SortableContext, rectSortingStrategy, useSortable } from '@dnd-kit/sort
 import { CSS } from '@dnd-kit/utilities';
 
 
-function TaskCreate() {
+function TaskCreatCopy() {
   const [inputValue, setInputValue] = useState('');
   const [tasks, setTasks] = useState([]);
   const [savedItems, setSavedItems] = useState([]);
@@ -115,36 +115,10 @@ function TaskCreate() {
       ref: React.createRef(),
     };
     setTasks((prevTasks) => [...prevTasks, newTask]);
-
     setTimeout(() => {
-      const taskElement = newTask.ref.current;
-      if (taskElement) {
-        taskElement.focus();
-        moveCursorToEnd(taskElement);
-      }
+      newTask.ref.current.focus();
     }, 0);
   };
-
-  const moveCursorToEnd = (element) => {
-    const range = document.createRange();
-    const selection = window.getSelection();
-    range.selectNodeContents(element);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  };
-
-  const moveCursor = (element) => {
-    const range = document.createRange();
-    const selection = window.getSelection();
-    range.selectNodeContents(element);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
-    element.focus();
-  };
-
-
 
   const handleTaskKeyDown = (index, event) => {
     if (event.key === 'Escape' && !isSaving) {
@@ -152,24 +126,16 @@ function TaskCreate() {
       saveAllData();
       return;
     }
-    if (event.key === 'Backspace'&& tasks[index].ref.current.innerText.trim() === '') {
+    if (event.key === 'Backspace' && tasks[index].text === '') {
       event.preventDefault();
       handleDeleteTask(index);
-      if (tasks.length > 0) {
-        if (index > 0) {
-          const previousTask = tasks[index - 1];
-          setTimeout(() => {
-            previousTask.ref.current.focus();
-            moveCursorToEnd(previousTask.ref.current);
-          }, 0);
-        } else {
-          setTimeout(() => editableInputRef.current.focus(), 0);
-        }
+      if (index > 0) {
+        tasks[index - 1].ref.current.focus();
+      } else if (tasks.length > 0) {
+        editableInputRef.current.focus();
       }
+      return;
     }
-
-
-
     if (event.key === 'Enter') {
       event.preventDefault();
       if (index < tasks.length - 1) {
@@ -177,30 +143,17 @@ function TaskCreate() {
       } else {
         editableInputRef.current.focus();
       }
-    }else if (event.key === 'ArrowUp') {
+    } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       if (index > 0) {
-        setTimeout(() => moveCursor(tasks[index - 1].ref.current), 0);
-      } else {
-        setTimeout(() => {
-          if (tasks.length > 0) {
-            const lastTaskIndex = tasks.length - 1;
-            const lastTaskElement = tasks[lastTaskIndex].ref.current;
-            lastTaskElement.focus();
-            moveCursor(lastTaskElement);
-          }
-        }, 0);
+        tasks[index - 1].ref.current.focus();
       }
-    }else if (event.key === 'ArrowDown') {
+    } else if (event.key === 'ArrowDown') {
       event.preventDefault();
       if (index < tasks.length - 1) {
-        setTimeout(() => {
-          const nextTaskElement = tasks[index + 1].ref.current;
-          nextTaskElement.focus();
-          moveCursorToEnd(nextTaskElement);
-        }, 0);
+        tasks[index + 1].ref.current.focus();
       } else {
-        setTimeout(() => editableInputRef.current.focus(), 0);
+        editableInputRef.current.focus();
       }
     }
   };
@@ -214,12 +167,13 @@ function TaskCreate() {
     if (event.key === 'Backspace' && tasks.length > 0) {
       event.preventDefault();
       const lastTask = tasks[tasks.length - 1];
-      setTimeout(() => moveCursor(lastTask.ref.current), 0);
-
+      if (lastTask.text === '') {
+        handleDeleteTask(tasks.length - 1);
+      } else {
+        lastTask.ref.current.focus();
+      }
     } else if (event.key === 'ArrowUp' && tasks.length > 0) {
       event.preventDefault();
-      const lastTask = tasks[tasks.length - 1];
-      setTimeout(() => moveCursor(lastTask.ref.current), 0);
       tasks[tasks.length - 1].ref.current.focus();
     } else if (event.key !== 'Enter' && /^[a-zA-Z0-9`~!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/? ]$/.test(event.key)) {
       event.preventDefault();
@@ -245,7 +199,11 @@ function TaskCreate() {
     }, 0);
   };
 
-
+  const handleTaskChange = (index, event) => {
+    const newTasks = [...tasks];
+    newTasks[index].text = event.target.value;
+    setTasks(newTasks);
+  };
 
   const handleDatetimeChange = (index, datetime) => {
     const newTasks = [...tasks];
@@ -295,7 +253,6 @@ function TaskCreate() {
       });
     }
   };
-
 
   const handleTaskDragStart = (e, cardIndex, taskIndex) => {
     setDraggingIndex({ cardIndex, taskIndex });
@@ -349,7 +306,7 @@ function TaskCreate() {
             });
         }
     }
-    setDraggingIndex(null); // Reset dragging index after drop
+    setDraggingIndex(null);
   };
 
   const saveAllData = useCallback(() => {
@@ -393,19 +350,63 @@ function TaskCreate() {
     document.getElementById('inputField').focus();
   };
 
-  const handleTaskInput = (index, event) => {
-    if (event.type === 'blur' || event.key === 'Enter') {
-      const newTasks = [...tasks];
-      newTasks[index].text = event.currentTarget.textContent;
-      setTasks(newTasks);
+  function Card({ item, itemIndex }) {
+
+    return (
+      <div className="card" onClick={(e) => e.currentTarget === e.target && handleEditTask(itemIndex)}>
+        <h1>{item.title}</h1>
+        <SortableContext items={item.items} strategy={rectSortingStrategy}>
+          {item.items.map((task, index) => (
+            <DraggableTask key={index} task={task} itemIndex={itemIndex} index={index} />
+          ))}
+        </SortableContext>
+      </div>
+    );
+  }
+
+  function DraggableTask({ task, itemIndex, index }) {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+      id: `task-${itemIndex}-${index}`,
+    });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition: transition,
+    };
+
+    return (
+      <div ref={setNodeRef} style={style} {...attributes}{...listeners} className={`card-item ${draggingIndex?.cardIndex === itemIndex && draggingIndex?.taskIndex === index ? 'dragging' : ''}`}>
+        <DragIndicatorIcon className="drag_image_logo" style={{ fontSize: 20 }} />
+        <input type="checkbox" checked={task.completed || false} onChange={(e) => handleTaskCheck(itemIndex, index, e.target.checked)}/>
+        <div className="task-content">
+          <p style={{ textDecoration: task.completed ? 'line-through' : 'none', color: task.completed ? 'gray' : 'black',}}> {task.text} </p>
+        </div>
+      </div>
+    );
+  }
+
+  function handleDragEnd(event) {
+    const { active, over } = event;
+    if (!over) return;
+
+    const [activeItemIndex, activeTaskIndex] = active.id.split('-').slice(1).map(Number);
+    const [overItemIndex, overTaskIndex] = over.id.split('-').slice(1).map(Number);
+
+    // Handle reordering logic here
+    if (activeItemIndex === overItemIndex) {
+      // Reorder within the same card
+      const updatedItems = [...savedItems];
+      const [movedTask] = updatedItems[activeItemIndex].items.splice(activeTaskIndex, 1);
+      updatedItems[overItemIndex].items.splice(overTaskIndex, 0, movedTask);
+      setSavedItems(updatedItems);
+    } else {
+      // Move between different cards
+      const updatedItems = [...savedItems];
+      const [movedTask] = updatedItems[activeItemIndex].items.splice(activeTaskIndex, 1);
+      updatedItems[overItemIndex].items.splice(overTaskIndex, 0, movedTask);
+      setSavedItems(updatedItems);
     }
-  };
-
-
-
-
-
-
+  }
 
   return (
     <div className="main_div">
@@ -417,35 +418,13 @@ function TaskCreate() {
 
         <div className="editable-div-container">
           {tasks.map((task, index) => (
-            <div
-              key={index}
-              className={`new-div`}
-              draggable
-              onDragStart={(e) => handleTaskDragStart(e,null, index)}
-              onDragOver={handleTaskDragOver}
-              onDrop={(e) => handleTaskDrop(e, null,index)}
-            >
-              <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
-              <input
-                type="checkbox"
-                className="new-div-checkbox"
-                checked={task.completed || false}
-                onChange={(e) => handleTaskCheck(null, index, e.target.checked)}
+            <div key={index} className={`new-div`} draggable onDragStart={(e) => handleTaskDragStart(e,null, index)} onDragOver={handleTaskDragOver} onDrop={(e) => handleTaskDrop(e, null,index)} >
+              <DragIndicatorIcon className="drag_image_logo" style={{ fontSize: 30 }}/>
+              <input type="checkbox" className="new-div-checkbox" checked={task.completed || false} onChange={(e) => handleTaskCheck(null, index, e.target.checked)} />
+              <input type="text" value={task.text} onChange={(e) => handleTaskChange(index, e)} onKeyDown={(e) => handleTaskKeyDown(index, e)} ref={task.ref} className="new-div-input"
+                style={{ textDecoration: task.completed ? 'line-through' : 'none', color: task.completed ? 'gray' : 'black'}}
               />
-              <input
-                type="text"
-                value={task.text}
-                onChange={(e) => handleTaskChange(index, e)}
-                onKeyDown={(e) => handleTaskKeyDown(index, e)}
-                ref={task.ref}
-                className="new-div-input"
-              />
-
-              <TaskList
-                    dateTime={task.datetime}
-                    onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
-                    onKeyDown={(e) => handleTaskKeyDown(index, e)}
-              />
+              <TaskList dateTime={task.datetime} onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)} onKeyDown={(e) => handleTaskKeyDown(index, e)}/>
 
               <div id ='icon_div'>
                 <div>
@@ -495,4 +474,4 @@ function TaskCreate() {
   );
 }
 
-export default TaskCreate;
+export default TaskCreatCopy;

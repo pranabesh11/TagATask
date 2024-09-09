@@ -1,0 +1,364 @@
+.main_div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    padding: 10px;
+    border-radius: 7px;
+}
+
+.container {
+    width: 60vw;
+    padding: 10px;
+    border-radius: 7px;
+    margin-bottom: 20px;
+    border-style: none;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.title_input {
+    width: 94%;
+    height: 30px;
+    border: 1px solid lightgrey;
+    margin: 10px;
+    outline: none;
+    border-radius: 7px;
+    border-style: none;
+    font-weight: 600;
+    font-size: 22px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.title_input::placeholder {
+    font-family: 'Raleway', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 525;
+    font-style: normal;
+    font-size: large;
+}
+
+#editableInput::placeholder {
+    font-family: 'Raleway', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-size: large;
+}
+
+.new-div {
+    border-style: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#editableInput:focus {
+    outline: none;
+}
+
+.editable-input-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    width: 85%;
+    padding-left: 6%;
+}
+
+.editable-input-container .plus-icon {
+    margin-right: 10px;
+    color: #888;
+    font-size: 18px;
+}
+
+.editable-input-container input {
+    border-style: none;
+}
+
+#editableDiv {
+    outline: none;
+    border-radius: 7px;
+}
+
+.placeholder::before {
+    content: 'Description';
+    color: #aaa;
+}
+
+.editable-div-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.new-div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1px;
+    padding: 3px;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    position: relative;
+}
+
+.new-div.dragging {
+    opacity: 0.6;
+    transform: scale(1.05);
+}
+
+.cross_button {
+    color: black;
+}
+
+.new-div-checkbox {
+    display: inline-block;
+    position: relative;
+    width: 18px;
+    height: 18px;
+    border: 3px solid black;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.dragging-task {
+    opacity: 0.8;
+    transform: scale(1.05);
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.drag_button {
+    background: none;
+    border: none;
+    cursor: move;
+    font-size: 1.5rem;
+    display: none;
+    border-style: none;
+}
+
+.new-div:hover .drag-button {
+    display: block;
+}
+
+.drag_image {
+    cursor: move;
+    opacity: 0;
+    padding-right: 9px;
+}
+
+.new-div:hover .drag_image {
+    opacity: 1;
+    transition: transform 1s ease, opacity 0.2s ease;
+    border: 1% solid gray;
+}
+
+.new-div-checkbox {
+    margin-right: 10px;
+}
+
+.new-div-input {
+    margin-right: 10px;
+    padding: 5px;
+    border-radius: 7px;
+    outline: none;
+    border-style: none;
+    font-family: 'Raleway', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 17px;
+    width: 40%;
+}
+
+.close_button {
+    float: right;
+    background: none;
+    border: none;
+    margin: 10px;
+}
+
+.delete-button {
+    cursor: pointer;
+    color: grey;
+    border: none;
+    background: none;
+}
+
+.delete-button:hover {
+    cursor: pointer;
+    color: red;
+}
+
+.label_input {
+    border-style: none;
+    border: none;
+    font-size: large;
+}
+
+.label_input:focus {
+    border-style: none;
+    outline: none;
+    border: none;
+}
+
+.saved-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 90vw;
+    border-radius: 5px;
+}
+
+.card {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 7px;
+    color: black;
+    font-size: 16px;
+    min-width: 200px;
+    text-align: center;
+    border: 1px solid lightgray;
+    padding-bottom: 3%;
+}
+
+.card:hover {
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.card-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 10px;
+    width: 250px;
+    max-width: 100%;
+    vertical-align: top;
+
+    border: solid 1px #ccc;
+    min-height: 60px;
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    /* display: block; */
+}
+
+.card-item p {
+    margin: 0;
+    margin-left: 10px;
+    /* border: solid 1px #ccc;
+    min-height: 60px;
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    display: block; */
+}
+
+/* this is css for clock icon */
+.input-with-datetime {
+    position: relative;
+    display: inline-block;
+    display: flex;
+}
+
+.input-with-datetime .clock-icon,
+.input-with-datetime .selected-datetime {
+    cursor: pointer;
+    padding: 8px;
+    font-size: 16px;
+}
+
+.datetime-picker-wrapper {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+}
+
+.selected-datetime {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.drag_image_logo {
+    opacity: 0;
+}
+
+.new-div:hover .drag_image_logo {
+    opacity: 1;
+    color: gray;
+    cursor: move;
+}
+
+.label_select {
+    padding: 5px;
+    min-height: 20px;
+    width: 40%;
+    outline: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+}
+
+.clip_icon {
+    height: 30px;
+    width: 30px;
+}
+
+.message_icon {
+    height: 30px;
+    width: 30px;
+}
+
+#icon_div {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 40%;
+}
+
+.close_icon {
+    cursor: pointer;
+    margin: -2px
+}
+
+.card-item.dragging {
+    opacity: 0.5;
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+}
+/* .dragging {
+    opacity: 0.6;
+    transform: scale(1.05);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+} */
+
+.card-item {
+    transition: all 0.2s ease;
+}
+
+.text-toolbar {
+    display: flex;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.text-toolbar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.text-toolbar button:hover {
+    color: #007bff;
+}

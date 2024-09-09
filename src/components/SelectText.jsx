@@ -100,8 +100,7 @@ const SelectText = () => {
         contentEditable={true}
         placeholder="Select text to see options..."
         onClick={handleLinkClick}
-      > b
-        This is an editable text. Select any part to apply styling.
+      > This is an editable text. Select any part to apply styling.
       </div>
       {showOptions && (
         <div ref={optionsRef} className="options-popup" style={{ top: optionsPosition.top, left: optionsPosition.left }}>
