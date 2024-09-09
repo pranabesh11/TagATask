@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './selecttext.css';
 
-const SelectText = () => {
+const SelectText = ({ toggleBold, toggleItalic  }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [optionsPosition, setOptionsPosition] = useState({ top: 0, left: 0 });
   const [selectionRange, setSelectionRange] = useState(null);
-  const inputRef = useRef(null);
   const optionsRef = useRef(null);
 
   const handleTextSelection = () => {
@@ -13,10 +12,32 @@ const SelectText = () => {
     if (selection && selection.rangeCount > 0 && !selection.isCollapsed) {
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
+      
+      // Get the dimensions of the options div (if it exists)
+      const optionsHeight = optionsRef.current ? optionsRef.current.offsetHeight : 0;
+      const optionsWidth = optionsRef.current ? optionsRef.current.offsetWidth : 0;
+      
+      // Calculate the initial position (above the selected text)
+      let topPosition = rect.top + window.scrollY - optionsHeight - 10; // 10px buffer above
+      let leftPosition = rect.left + window.scrollX;
+      
+      // Adjust position if the options div goes out of viewport
+      if (topPosition < 0) {
+        topPosition = rect.bottom + window.scrollY + 10; // Position below the text if above is out of view
+      }
+      
+      if (leftPosition + optionsWidth > window.innerWidth) {
+        leftPosition = window.innerWidth - optionsWidth - 10; // Make sure it doesn't overflow the right edge
+      }
+      
+      if (leftPosition < 0) {
+        leftPosition = 10; // Make sure it doesn't overflow the left edge
+      }
 
+      // Set position and range
       setOptionsPosition({
-        top: rect.top - 360 + window.scrollY,
-        left: rect.left + window.scrollX,
+        top: topPosition,
+        left: leftPosition,
       });
       setSelectionRange(range);
       setShowOptions(true);
@@ -69,14 +90,6 @@ const SelectText = () => {
     }
   };
 
-  const handleLinkClick = (event) => {
-    const target = event.target;
-    if (target.tagName === 'A') {
-      window.open(target.href, '_blank');
-      event.preventDefault();
-    }
-  };
-
   const handleClickOutside = (event) => {
     if (optionsRef.current && !optionsRef.current.contains(event.target)) {
       setShowOptions(false);
@@ -93,17 +106,13 @@ const SelectText = () => {
   }, []);
 
   return (
-    <div className="select-text-container">
-      <div
-        ref={inputRef}
-        className="text-input"
-        contentEditable={true}
-        placeholder="Select text to see options..."
-        onClick={handleLinkClick}
-      > This is an editable text. Select any part to apply styling.
-      </div>
+    <>
       {showOptions && (
-        <div ref={optionsRef} className="options-popup" style={{ top: optionsPosition.top, left: optionsPosition.left }}>
+        <div
+          ref={optionsRef}
+          className="options-popup"
+          style={{ top: `${optionsPosition.top}px`, left: `${optionsPosition.left}px`, position: 'absolute' }}
+        >
           <button onClick={() => toggleStyle('fontWeight', 'bold')}>B</button>
           <button onClick={() => toggleStyle('fontStyle', 'italic')}>I</button>
           <button onClick={() => toggleStyle('backgroundColor', 'yellow')}>H</button>
@@ -111,7 +120,7 @@ const SelectText = () => {
           <button onClick={insertLink}>Link</button>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

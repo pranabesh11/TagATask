@@ -6,11 +6,12 @@ import deleteicon from '../assets/delete.png';
 import closebutton from '../assets/close.png';
 import drag from '../assets/drag.png';
 import TaskList from './TaskList';
-import moment from 'moment';
 import CustomSelect from './CustomSelect';
 import WorkType from './WorkType';
 import FileUpload from './FileUpload';
 import Comment from './Comment';
+import SelectText from './SelectText';
+import DOMPurify from 'dompurify';
 
 
 function TaskCreate() {
@@ -21,11 +22,8 @@ function TaskCreate() {
   const [isSaving, setIsSaving] = useState(false);
   const editableInputRef = useRef(null);
   const containerRef = useRef(null);
-
-
+  const [selectedTaskIndex, setSelectedTaskIndex] = useState(null);
   
-
-  const colors = ['#FF5733', '#33FF57', '#3357FF', '#F33FF5', '#F5A623'];
 
   useEffect(() => {
     const handleGlobalKeyDown = (event) => {
@@ -66,12 +64,31 @@ function TaskCreate() {
     }
   };
 
+  const toggleBold = () => {
+    if (selectedTaskIndex !== null) {
+      const selectedTask = tasks[selectedTaskIndex];
+      selectedTask.isBold = !selectedTask.isBold;
+      setTasks([...tasks]);
+    }
+  };
+  
+  const toggleItalic = () => {
+    if (selectedTaskIndex !== null) {
+      const selectedTask = tasks[selectedTaskIndex];
+      selectedTask.isItalic = !selectedTask.isItalic;
+      setTasks([...tasks]);
+    }
+  };
+
+
   const createNewTask = (initialChar) => {
     const newTask = {
       text: initialChar,
       completed: false,
       datetime: null,
       label: '',
+      isBold: false,
+      isItalic: false,
       ref: React.createRef(),
     };
     setTasks((prevTasks) => [...prevTasks, newTask]);
@@ -104,15 +121,21 @@ function TaskCreate() {
     element.focus();
   };
   
+  const handleTextSelect = (index) => {
+    setSelectedTaskIndex(index);
+  };
+  
   
 
   const handleTaskKeyDown = (index, event) => {
     if (event.key === 'Escape' && !isSaving) {
       setIsSaving(true);
       saveAllData();
+      setTasks([]);
       return;
     }
-    if (event.key === 'Backspace'&& tasks[index].ref.current.innerText.trim() === '') {
+  
+    if (event.key === 'Backspace' && tasks[index].ref.current.innerText.trim() === '') {
       event.preventDefault();
       handleDeleteTask(index);
       if (tasks.length > 0) {
@@ -127,31 +150,29 @@ function TaskCreate() {
         }
       }
     }
-
-
-
+  
     if (event.key === 'Enter') {
-      event.preventDefault(); 
+      event.preventDefault();
       if (index < tasks.length - 1) {
         createNewTaskAtIndex(index + 1);
       } else {
         editableInputRef.current.focus();
       }
-    }else if (event.key === 'ArrowUp') {
+    } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       if (index > 0) {
-        setTimeout(() => moveCursor(tasks[index - 1].ref.current), 0); 
+        setTimeout(() => moveCursor(tasks[index - 1].ref.current), 0);
       } else {
         setTimeout(() => {
           if (tasks.length > 0) {
             const lastTaskIndex = tasks.length - 1;
             const lastTaskElement = tasks[lastTaskIndex].ref.current;
             lastTaskElement.focus();
-            moveCursor(lastTaskElement);  
+            moveCursor(lastTaskElement);
           }
         }, 0);
       }
-    }else if (event.key === 'ArrowDown') {
+    } else if (event.key === 'ArrowDown') {
       event.preventDefault();
       if (index < tasks.length - 1) {
         setTimeout(() => {
@@ -162,8 +183,13 @@ function TaskCreate() {
       } else {
         setTimeout(() => editableInputRef.current.focus(), 0);
       }
-    }    
+    }
   };
+  
+
+
+  let debounceTimer = null;
+  let accumulatedChars = '';
   
   const handleEditableKeyDown = (event) => {
     if (event.key === 'Escape' && !isSaving) {
@@ -183,8 +209,17 @@ function TaskCreate() {
       tasks[tasks.length - 1].ref.current.focus();
     } else if (event.key !== 'Enter' && /^[a-zA-Z0-9`~!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/? ]$/.test(event.key)) {
       event.preventDefault();
-      createNewTask(event.key);
-    }
+      accumulatedChars += event.key;
+      clearTimeout(debounceTimer);
+      editableInputRef.current.value = accumulatedChars;
+        debounceTimer = setTimeout(() => {
+          if (accumulatedChars) {
+            createNewTask(accumulatedChars);
+            accumulatedChars = '';
+            editableInputRef.current.value = '';
+          }
+        }, 0);
+      }
   };
 
   
@@ -227,7 +262,6 @@ function TaskCreate() {
 
   const handleTaskCheck = (cardIndex, taskIndex, isChecked) => {
     if (cardIndex === null) {
-      // Handle for newly created tasks
       setTasks((prevTasks) => {
         const newTasks = [...prevTasks];
         if (newTasks[taskIndex]) {
@@ -240,7 +274,6 @@ function TaskCreate() {
         return newTasks;
       });
     } else {
-      // Handle for saved items
       setSavedItems((prevItems) => {
         const newItems = [...prevItems];
         const card = newItems[cardIndex];
@@ -257,11 +290,18 @@ function TaskCreate() {
       });
     }
   };
+
+  const cleanHTML = (dirty) => {
+    return DOMPurify.sanitize(dirty, {
+      ALLOWED_TAGS: ['strong', 'em'],
+      ALLOWED_ATTR: []
+    });
+  };
   
   
   const handleTaskDragStart = (e, cardIndex, taskIndex) => {
     setDraggingIndex({ cardIndex, taskIndex });
-};
+  };
 
   const handleTaskDragOver = (e) => {
     e.preventDefault();
@@ -294,15 +334,19 @@ function TaskCreate() {
   const saveAllData = useCallback(() => {
     const dataToSave = {
       title: inputValue.trim(),
-      items: tasks
-        .map((task) => ({
-          text: task.text.trim(),
+      items: tasks.map((task) => {
+        let formattedText = DOMPurify.sanitize(task.text);
+        return {
+          text: formattedText,
           completed: task.completed,
           datetime: task.datetime,
           selectedTags: task.selectedTags || [],
-        }))
-        .filter((item) => item.text !== '' || item.datetime || item.selectedTags.length > 0),
+          isBold: task.isBold || false,
+          isItalic: task.isItalic || false,
+        };
+      }).filter((item) => item.text !== '' || item.datetime || item.selectedTags.length > 0),
     };
+  
     if (dataToSave.title || dataToSave.items.length > 0) {
       setSavedItems((prevItems) => [...prevItems, dataToSave]);
       setTasks([]);
@@ -312,6 +356,8 @@ function TaskCreate() {
     }
     setIsSaving(false);
   }, [tasks, inputValue]);
+  
+  
   
   
 
@@ -337,15 +383,20 @@ function TaskCreate() {
   const handleTaskInput = (index, event) => {
     if (event.type === 'blur' || event.key === 'Enter') {
       const newTasks = [...tasks];
-      newTasks[index].text = event.currentTarget.textContent;
+      newTasks[index].text = DOMPurify.sanitize(event.currentTarget.innerHTML, {
+        ALLOWED_TAGS: ['b', 'i', 'strong', 'em'],
+      });
       setTasks(newTasks);
+      return;
     }
+    const taskElement = event.currentTarget;
+    taskElement.innerHTML = DOMPurify.sanitize(taskElement.innerHTML, {
+      ALLOWED_TAGS: ['b', 'i', 'strong', 'em'],
+    });
+    setTimeout(() => {
+      moveCursorToEnd(taskElement);
+    }, 0);
   };
-  
-  
-  
-  
-  
   
 
   return (
@@ -386,21 +437,27 @@ function TaskCreate() {
               <div
                 contentEditable
                 suppressContentEditableWarning={true}
-                onInput={(e) => handleTaskInput(index, e)}
-                onBlur={(e) => handleTaskInput(index, e)}
+                onInput={(e) => handleTaskInput(index, e)} // Typing input
+                onBlur={(e) => handleTaskInput(index, e)}  // Save on blur
+                onMouseUp={() => handleTextSelect(index)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === 'Backspace' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Escape') {
-                    handleTaskKeyDown(index, e);
+                    handleTaskKeyDown(index, e); // Handle other keys
                   }
                 }}
                 ref={task.ref}
                 className="new-div-input"
                 style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap' }}
-              >
-                {task.text}
-              </div>
+                dangerouslySetInnerHTML={{ __html: task.text }} // Only rendered when loading the tasks initially
+              />
 
-
+              {selectedTaskIndex === index && 
+                <SelectText 
+                  targetRef={task.ref} 
+                  toggleBold={toggleBold}
+                  toggleItalic={toggleItalic}
+                />
+              }
               
               <TaskList
                     dateTime={task.datetime}
@@ -465,14 +522,15 @@ function TaskCreate() {
               }}
                >
             <h1>{item.title}</h1>
+
             {item.items.map((task, index) => (
               <div
                 key={index}
                 className={`card-item ${draggingIndex && draggingIndex.cardIndex === itemIndex && draggingIndex.taskIndex === index ? 'dragging' : ''}`}
                 draggable
-                onDragStart={(e) => handleTaskDragStart(e,itemIndex, index)}
+                onDragStart={(e) => handleTaskDragStart(e, itemIndex, index)}
                 onDragOver={handleTaskDragOver}
-                onDrop={(e) => handleTaskDrop(e,itemIndex,  index)}
+                onDrop={(e) => handleTaskDrop(e, itemIndex, index)}
                 onDragEnd={() => setDraggingIndex(null)}
               >
                 <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
@@ -481,11 +539,9 @@ function TaskCreate() {
                   checked={task.completed || false}
                   onChange={(e) => handleTaskCheck(itemIndex, index, e.target.checked)}
                 />
-                <div className="task-content">
-                  <p style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
-                    {task.text}
-                  </p>                 
-                </div>
+                
+                {/* Use dangerouslySetInnerHTML to display the formatted content */}
+                <div className="task-content" dangerouslySetInnerHTML={{ __html: task.text }} />
               </div>
             ))}
           </div>
