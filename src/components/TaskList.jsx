@@ -3,6 +3,7 @@ import DateTime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
 import './tasklist.css';
 import clockicon from '../assets/clock.png';
+import AccessAlarmOutlinedIcon from '@mui/icons-material/AccessAlarmOutlined';
 
 function TaskList({ dateTime, onDatetimeChange }) {
     const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -47,13 +48,11 @@ function TaskList({ dateTime, onDatetimeChange }) {
                 onMouseEnter={handleMouseEnter} 
                 onMouseLeave={handleMouseLeave}
             >
-                <img
-                    className={`clock-icon ${dateTime ? 'black-icon' : 'grey-icon'}`}
-                    onClick={handleIconClick}
-                    src={clockicon}
-                    height={30}
-                    width={30}
-                />
+            <AccessAlarmOutlinedIcon
+                className={`clock-icon ${dateTime ? 'black-icon' : 'grey-icon'}`}
+                onClick={handleIconClick}
+                style={{ fontSize: 30,fontSize: 30 }}
+            />
                 {hovering && dateTime && (
                     <span className="hovered-datetime">
                         {dateTime.format('YYYY-MM-DD HH:mm')}

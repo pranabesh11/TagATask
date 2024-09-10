@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './customselect.css';
+import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined';
 
 const CustomSelect = ({ selectedTags = [], onSelectTags = () => {} }) => {
     const options = ['High', 'Medium', 'Low'];
@@ -43,7 +44,7 @@ const CustomSelect = ({ selectedTags = [], onSelectTags = () => {} }) => {
                   </span>
                 </div>
               ))
-            : 'Add Label'}
+            : <LabelOutlinedIcon style={{ fontSize: 30 }}/>}
         </div>
         {dropdownOpen && (
           <div className="dropdown-menu">

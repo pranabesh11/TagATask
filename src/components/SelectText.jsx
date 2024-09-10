@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './selecttext.css';
 
-const SelectText = ({ toggleBold, toggleItalic  }) => {
+const SelectText = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [optionsPosition, setOptionsPosition] = useState({ top: 0, left: 0 });
-  const [selectionRange, setSelectionRange] = useState(null);
+  const [selectionRange, setSelectionRange] = useState(null);  // Save the selection range
   const optionsRef = useRef(null);
 
   const handleTextSelection = () => {
@@ -12,81 +12,62 @@ const SelectText = ({ toggleBold, toggleItalic  }) => {
     if (selection && selection.rangeCount > 0 && !selection.isCollapsed) {
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
-      
-      // Get the dimensions of the options div (if it exists)
-      const optionsHeight = optionsRef.current ? optionsRef.current.offsetHeight : 0;
-      const optionsWidth = optionsRef.current ? optionsRef.current.offsetWidth : 0;
-      
-      // Calculate the initial position (above the selected text)
-      let topPosition = rect.top + window.scrollY - optionsHeight - 10; // 10px buffer above
-      let leftPosition = rect.left + window.scrollX;
-      
-      // Adjust position if the options div goes out of viewport
-      if (topPosition < 0) {
-        topPosition = rect.bottom + window.scrollY + 10; // Position below the text if above is out of view
-      }
-      
-      if (leftPosition + optionsWidth > window.innerWidth) {
-        leftPosition = window.innerWidth - optionsWidth - 10; // Make sure it doesn't overflow the right edge
-      }
-      
-      if (leftPosition < 0) {
-        leftPosition = 10; // Make sure it doesn't overflow the left edge
-      }
 
-      // Set position and range
+      // Position the options popup relative to the selected text
       setOptionsPosition({
-        top: topPosition,
-        left: leftPosition,
+        top: rect.top + window.scrollY - 40,
+        left: rect.left + window.scrollX,
       });
-      setSelectionRange(range);
+
+      setSelectionRange(range.cloneRange());  // Save a clone of the selection range
       setShowOptions(true);
     } else {
       setShowOptions(false);
     }
   };
 
-  const toggleStyle = (style, value) => {
+  // Restore the saved selection
+  const restoreSelection = () => {
+    const selection = window.getSelection();
+    selection.removeAllRanges();
     if (selectionRange) {
-      const selectedContent = selectionRange.extractContents();
+      selection.addRange(selectionRange);  // Restore the saved selection range
+    }
+  };
+
+  // Custom function to wrap the selected text with a <span> tag for styling
+  const wrapSelectedText = (style) => {
+    if (selectionRange) {
+      restoreSelection();  // Ensure the selection is restored before applying style
+      const selectedText = selectionRange.extractContents();
       const span = document.createElement('span');
-      span.appendChild(selectedContent);
-
-      const parentSpan = selectionRange.startContainer.parentElement;
-
-      switch (style) {
-        case 'backgroundColor':
-          span.style.backgroundColor = parentSpan.style.backgroundColor === value ? 'transparent' : value;
-          break;
-        case 'fontWeight':
-          span.style.fontWeight = parentSpan.style.fontWeight === 'bold' ? 'normal' : 'bold';
-          break;
-        case 'fontStyle':
-          span.style.fontStyle = parentSpan.style.fontStyle === 'italic' ? 'normal' : 'italic';
-          break;
-        case 'textDecoration':
-          span.style.textDecoration = parentSpan.style.textDecoration === 'underline' ? 'none' : 'underline';
-          break;
-        default:
-          break;
+      
+      if (style === 'bold') {
+        span.style.fontWeight = 'bold';
+      } else if (style === 'italic') {
+        span.style.fontStyle = 'italic';
+      } else if (style === 'underline') {
+        span.style.textDecoration = 'underline';
+      } else if (style === 'highlight') {
+        span.style.backgroundColor = 'yellow';
       }
 
-      selectionRange.deleteContents();
+      span.appendChild(selectedText);
       selectionRange.insertNode(span);
+      setSelectionRange(selectionRange.cloneRange()); // Update the range after styling
     }
   };
 
   const insertLink = () => {
-    if (selectionRange) {
-      const url = prompt('Enter the URL');
-      if (url) {
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.target = '_blank';
-        anchor.textContent = selectionRange.toString();
-        selectionRange.deleteContents();
-        selectionRange.insertNode(anchor);
-      }
+    const url = prompt('Enter the URL');
+    if (url && selectionRange) {
+      restoreSelection();  // Restore the selection before inserting the link
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.target = '_blank';
+      anchor.appendChild(selectionRange.extractContents());
+      selectionRange.insertNode(anchor);
+      setSelectionRange(selectionRange.cloneRange()); // Update the range after styling
     }
   };
 
@@ -113,10 +94,10 @@ const SelectText = ({ toggleBold, toggleItalic  }) => {
           className="options-popup"
           style={{ top: `${optionsPosition.top}px`, left: `${optionsPosition.left}px`, position: 'absolute' }}
         >
-          <button onClick={() => toggleStyle('fontWeight', 'bold')}>B</button>
-          <button onClick={() => toggleStyle('fontStyle', 'italic')}>I</button>
-          <button onClick={() => toggleStyle('backgroundColor', 'yellow')}>H</button>
-          <button onClick={() => toggleStyle('textDecoration', 'underline')}>U</button>
+          <button onClick={() => wrapSelectedText('bold')}>B</button>
+          <button onClick={() => wrapSelectedText('italic')}>I</button>
+          <button onClick={() => wrapSelectedText('underline')}>U</button>
+          <button onClick={() => wrapSelectedText('highlight')}>H</button>
           <button onClick={insertLink}>Link</button>
         </div>
       )}

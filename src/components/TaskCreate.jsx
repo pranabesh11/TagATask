@@ -3,6 +3,7 @@ import './taskcreate.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import deleteicon from '../assets/delete.png';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import closebutton from '../assets/close.png';
 import drag from '../assets/drag.png';
 import TaskList from './TaskList';
@@ -384,7 +385,8 @@ function TaskCreate() {
     if (event.type === 'blur' || event.key === 'Enter') {
       const newTasks = [...tasks];
       newTasks[index].text = DOMPurify.sanitize(event.currentTarget.innerHTML, {
-        ALLOWED_TAGS: ['b', 'i', 'strong', 'em'],
+        ALLOWED_TAGS: ['b', 'i', 'strong', 'em', 'u', 'a'],
+        ALLOWED_ATTR: ['href', 'target']
       });
       setTasks(newTasks);
       return;
@@ -453,9 +455,9 @@ function TaskCreate() {
 
               {selectedTaskIndex === index && 
                 <SelectText 
-                  targetRef={task.ref} 
-                  toggleBold={toggleBold}
-                  toggleItalic={toggleItalic}
+                  // targetRef={task.ref} 
+                  // toggleBold={toggleBold}
+                  // toggleItalic={toggleItalic}
                 />
               }
               
@@ -488,7 +490,7 @@ function TaskCreate() {
               </div>
 
               <button className="delete-button" onClick={() => handleDeleteTask(index)}>
-                <img src={deleteicon} className="cross_button" height={30} width={30} />
+                <DeleteOutlinedIcon className='cross_button' style={{ fontSize: 30 }}/>
               </button>
             </div>
           ))}

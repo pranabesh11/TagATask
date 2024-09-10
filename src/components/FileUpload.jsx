@@ -3,6 +3,7 @@ import './fileupload.css';
 import clip from '../assets/clip.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faDownload, faPlus } from '@fortawesome/free-solid-svg-icons';
+import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
 
 const FileUpload = () => {
   const [files, setFiles] = useState([]);
@@ -38,12 +39,10 @@ const FileUpload = () => {
           style={{ display: 'none' }}
         />
         <label htmlFor="file-upload" className="upload-icon-label">
-          <img 
-            src={clip} 
-            alt="Upload" 
-            className="upload-icon" 
-            style={{ opacity: files.length > 0 ? 1 : 0.3 }}
-          />
+        <AttachFileOutlinedIcon 
+          className="upload-icon" 
+          style={{ opacity: files.length > 0 ? 1 : 0.3,fontSize: 30 }}
+        />
           {files.length > 0 && (
             <div className="file-list">
               <ul>

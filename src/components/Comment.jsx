@@ -3,6 +3,7 @@ import './comment.css';
 import messengerIcon from '../assets/messenger.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 
 const Comment = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -68,13 +69,11 @@ const Comment = () => {
 
   return (
     <div className="comment-box-container">
-      <img
-        src={messengerIcon}
-        alt="Comment Icon"
-        className="comment-icon"
-        onClick={handleIconClick}
-        style={{ opacity: comments.length > 0 ? 1 : 0.3 }}
-      />
+      <ChatBubbleOutlineOutlinedIcon
+      className="comment-icon"
+      onClick={handleIconClick}
+      style={{ opacity: comments.length > 0 ? 1 : 0.3, cursor: 'pointer',fontSize: 30 }}
+    />
       {isPopupOpen && (
         <div ref={popupRef} className="popup-container">
           {comments.map((comment, index) => (
