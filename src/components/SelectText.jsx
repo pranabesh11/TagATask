@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './selecttext.css';
 
-const SelectText = () => {
+const SelectText = ({ targetRef }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [optionsPosition, setOptionsPosition] = useState({ top: 0, left: 0 });
   const [selectionRange, setSelectionRange] = useState(null);  // Save the selection range
@@ -13,10 +13,12 @@ const SelectText = () => {
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
 
-      // Position the options popup relative to the selected text
+      // Get the position relative to the targetRef (parent .new-div-input element)
+      const parentRect = targetRef.current.getBoundingClientRect();
+
       setOptionsPosition({
-        top: rect.top + window.scrollY - 40,
-        left: rect.left + window.scrollX,
+        top: rect.top - parentRect.top - 40,  // Adjust for height of options popup
+        left: rect.left - parentRect.left,
       });
 
       setSelectionRange(range.cloneRange());  // Save a clone of the selection range

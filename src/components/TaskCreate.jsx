@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './taskcreate.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import deleteicon from '../assets/delete.png';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import closebutton from '../assets/close.png';
 import drag from '../assets/drag.png';
@@ -130,6 +129,10 @@ function TaskCreate() {
 
   const handleTaskKeyDown = (index, event) => {
     if (event.key === 'Escape' && !isSaving) {
+      const taskElement = tasks[index]?.ref?.current;
+      if (taskElement) {
+        taskElement.blur();
+      }
       setIsSaving(true);
       saveAllData();
       setTasks([]);
@@ -455,7 +458,7 @@ function TaskCreate() {
 
               {selectedTaskIndex === index && 
                 <SelectText 
-                  // targetRef={task.ref} 
+                  targetRef={task.ref} 
                   // toggleBold={toggleBold}
                   // toggleItalic={toggleItalic}
                 />
@@ -541,8 +544,6 @@ function TaskCreate() {
                   checked={task.completed || false}
                   onChange={(e) => handleTaskCheck(itemIndex, index, e.target.checked)}
                 />
-                
-                {/* Use dangerouslySetInnerHTML to display the formatted content */}
                 <div className="task-content" dangerouslySetInnerHTML={{ __html: task.text }} />
               </div>
             ))}

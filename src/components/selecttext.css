@@ -16,6 +16,7 @@
   .options-popup {
     position: absolute;
     display: flex;
+    flex-direction: row;
     gap: 10px;
     background-color: white;
     border: 1px solid #ccc;
