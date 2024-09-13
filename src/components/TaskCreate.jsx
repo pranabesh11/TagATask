@@ -302,9 +302,16 @@ function TaskCreate() {
     });
   };
   
+  const handleTaskDragOverSmooth = (e) => {
+    e.preventDefault(); // Necessary to allow dropping
+  };
+  
   
   const handleTaskDragStart = (e, cardIndex, taskIndex) => {
     setDraggingIndex({ cardIndex, taskIndex });
+    const draggedTask = savedItems[cardIndex].items[taskIndex];
+    // alert(`Dragging task: ${draggedTask.text} (Task index: ${taskIndex}, Card index: ${cardIndex})`);
+    console.log(`Dragging task: ${draggedTask.text} (Task index: ${taskIndex}, Card index: ${cardIndex})`);
   };
 
   const handleTaskDragOver = (e) => {
@@ -333,6 +340,47 @@ function TaskCreate() {
       setDraggingIndex(null);
     }
   };
+
+  const handleTaskReorder = (e, cardIndex, targetTaskIndex) => {
+    e.preventDefault();
+  
+    if (draggingIndex && draggingIndex.cardIndex === cardIndex && draggingIndex.taskIndex !== targetTaskIndex) {
+      setSavedItems((prevItems) => {
+        // Create a deep copy of the savedItems array
+        const newItems = prevItems.map((item, i) =>
+          i === cardIndex ? { ...item, items: [...item.items] } : item
+        );
+        const tasks = newItems[cardIndex].items; // Copy of the tasks array for immutability  
+        // Log the task order before the drop
+        console.log('Final task order before drop:', tasks.map(task => task.text));  
+        const movedTask = tasks[draggingIndex.taskIndex]; // The task being moved  
+        // Remove the moved task from its original position
+        const updatedTasks = tasks.filter((_, i) => i !== draggingIndex.taskIndex);
+        // Insert the dragged task at the correct position
+        let insertIndex = targetTaskIndex;
+        // If dragging downwards (from a lower index to a higher index), insert after the dropped-over item
+        if (draggingIndex.taskIndex < targetTaskIndex) {
+          insertIndex += 0; // Place the dragged task after the target task
+        }
+        // Insert the task at the correct position
+        updatedTasks.splice(insertIndex, 0, movedTask);
+        // Log the task order after the drop
+        console.log('Final task order after drop:', updatedTasks.map(task => task.text));
+        // Update the items array with the reordered tasks
+        newItems[cardIndex].items = updatedTasks;
+        return newItems; // Return the updated state
+      });
+      setDraggingIndex(null); // Reset the dragging index after drop
+    }
+  };
+  
+  
+  
+  
+  
+  
+  
+
   
 
   const saveAllData = useCallback(() => {
@@ -533,9 +581,9 @@ function TaskCreate() {
                 key={index}
                 className={`card-item ${draggingIndex && draggingIndex.cardIndex === itemIndex && draggingIndex.taskIndex === index ? 'dragging' : ''}`}
                 draggable
-                onDragStart={(e) => handleTaskDragStart(e, itemIndex, index)}
-                onDragOver={handleTaskDragOver}
-                onDrop={(e) => handleTaskDrop(e, itemIndex, index)}
+                onDragStart={(e) => handleTaskDragStart(e, itemIndex, index)} // Start dragging
+                onDragOver={handleTaskDragOverSmooth} // Allow drag over
+                onDrop={(e) => handleTaskReorder(e, itemIndex, index)} // Handle the drop and reordering
                 onDragEnd={() => setDraggingIndex(null)}
               >
                 <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
@@ -544,7 +592,11 @@ function TaskCreate() {
                   checked={task.completed || false}
                   onChange={(e) => handleTaskCheck(itemIndex, index, e.target.checked)}
                 />
-                <div className="task-content" dangerouslySetInnerHTML={{ __html: task.text }} />
+                <div 
+                  className="task-content"
+                  dangerouslySetInnerHTML={{ __html: task.text }}
+                  style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+                />
               </div>
             ))}
           </div>

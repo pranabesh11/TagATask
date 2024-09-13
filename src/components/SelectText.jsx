@@ -4,7 +4,7 @@ import './selecttext.css';
 const SelectText = ({ targetRef }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [optionsPosition, setOptionsPosition] = useState({ top: 0, left: 0 });
-  const [selectionRange, setSelectionRange] = useState(null);  // Save the selection range
+  const [selectionRange, setSelectionRange] = useState(null);
   const optionsRef = useRef(null);
 
   const handleTextSelection = () => {
@@ -13,34 +13,33 @@ const SelectText = ({ targetRef }) => {
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
 
-      // Get the position relative to the targetRef (parent .new-div-input element)
       const parentRect = targetRef.current.getBoundingClientRect();
 
       setOptionsPosition({
-        top: rect.top - parentRect.top - 40,  // Adjust for height of options popup
+        top: rect.top - parentRect.top - 40,
         left: rect.left - parentRect.left,
       });
 
-      setSelectionRange(range.cloneRange());  // Save a clone of the selection range
+      setSelectionRange(range.cloneRange());  
       setShowOptions(true);
     } else {
       setShowOptions(false);
     }
   };
 
-  // Restore the saved selection
+  
   const restoreSelection = () => {
     const selection = window.getSelection();
     selection.removeAllRanges();
     if (selectionRange) {
-      selection.addRange(selectionRange);  // Restore the saved selection range
+      selection.addRange(selectionRange);
     }
   };
 
-  // Custom function to wrap the selected text with a <span> tag for styling
+  
   const wrapSelectedText = (style) => {
     if (selectionRange) {
-      restoreSelection();  // Ensure the selection is restored before applying style
+      restoreSelection();
       const selectedText = selectionRange.extractContents();
       const span = document.createElement('span');
       
@@ -56,20 +55,20 @@ const SelectText = ({ targetRef }) => {
 
       span.appendChild(selectedText);
       selectionRange.insertNode(span);
-      setSelectionRange(selectionRange.cloneRange()); // Update the range after styling
+      setSelectionRange(selectionRange.cloneRange());
     }
   };
 
   const insertLink = () => {
     const url = prompt('Enter the URL');
     if (url && selectionRange) {
-      restoreSelection();  // Restore the selection before inserting the link
+      restoreSelection();
       const anchor = document.createElement('a');
       anchor.href = url;
       anchor.target = '_blank';
       anchor.appendChild(selectionRange.extractContents());
       selectionRange.insertNode(anchor);
-      setSelectionRange(selectionRange.cloneRange()); // Update the range after styling
+      setSelectionRange(selectionRange.cloneRange());
     }
   };
 
