@@ -24,7 +24,6 @@ function TaskCreate() {
   const containerRef = useRef(null);
   const [selectedTaskIndex, setSelectedTaskIndex] = useState(null);
   const [options, setOptions] = useState([]);
-  const [file, setFiles] = useState([]);
   
   // Fetch options from Rails API
   useEffect(() => {
@@ -75,9 +74,7 @@ function TaskCreate() {
     };
   }, [isSaving]);
 
-  const handleFilesChange = (newFiles) => {
-    setFiles(newFiles);  // Update the state when files change
-  };
+  
 
   const handleChange = (event) => {
     setInputValue(event.target.value);
@@ -413,47 +410,48 @@ function TaskCreate() {
   
 
   const saveAllData = useCallback(() => {
-    const dataToSave = new FormData();  // Create a new FormData object
+    const dataToSave = {
+      title: inputValue.trim(),
+      taskList: taskListValue,
+      labels: labels || [],
+      comment: commentValue.trim() || '',
+      file: file || null,
+      workType: workTypeValue || '',
+      items: tasks.map((task) => {
+        let formattedText = DOMPurify.sanitize(task.text);
+        return {
+          text: formattedText,
+          completed: task.completed,
+          datetime: task.datetime,
+          selectedTags: task.selectedTags || [],
+          isBold: task.isBold || false,
+          isItalic: task.isItalic || false,
+        };
+      }).filter((item) => item.text !== '' || item.datetime || item.selectedTags.length > 0),
+    };
   
-    dataToSave.append('title', inputValue.trim());
-    dataToSave.append('taskList', taskListValue);
-    dataToSave.append('labels', JSON.stringify(labels || []));  // Convert labels to JSON string
-    dataToSave.append('comment', commentValue.trim() || '');
-    if (file) {
-      dataToSave.append('file', file);  // Append the file if available
+    if (dataToSave.title || dataToSave.items.length > 0) {
+      setSavedItems((prevItems) => [...prevItems, dataToSave]);
+      setTasks([]);
+      setInputValue('');
+      if (editableInputRef.current) editableInputRef.current.value = '';
+      document.getElementById('inputField').focus();
+      
+      // Send data to Rails backend
+      fetch('http://localhost:3000/dream/index', {  // This is your Rails endpoint
+        method: 'POST',  // Sending a POST request
+        headers: {
+          'Content-Type': 'application/json',  // Inform Rails that we're sending JSON
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(dataToSave),  // Convert the data to JSON string
+      })
+      .then(response => response.json())  // Convert the response back to JSON
+      .then(data => console.log('Success:', data))  // Handle success
+      .catch((error) => console.error('Error:', error));  // Handle error
     }
-    dataToSave.append('workType', workTypeValue || '');
-  
-    // Append task items to FormData
-    tasks.forEach((task, index) => {
-      let formattedText = DOMPurify.sanitize(task.text);
-      if (formattedText || task.datetime || task.selectedTags.length > 0) {
-        dataToSave.append(`items[${index}][text]`, formattedText);
-        dataToSave.append(`items[${index}][completed]`, task.completed);
-        dataToSave.append(`items[${index}][datetime]`, task.datetime || '');
-        dataToSave.append(`items[${index}][selectedTags]`, JSON.stringify(task.selectedTags || []));
-        dataToSave.append(`items[${index}][isBold]`, task.isBold || false);
-        dataToSave.append(`items[${index}][isItalic]`, task.isItalic || false);
-      }
-    });
-  
-    // Send data to Rails backend
-    fetch('http://localhost:3000/dream/index', {  // This is your Rails endpoint
-      method: 'POST',
-      body: dataToSave,  // Send FormData object
-    })
-    .then(response => response.json())  // Convert the response back to JSON
-    .then(data => console.log('Success:', data))  // Handle success
-    .catch((error) => console.error('Error:', error));  // Handle error
-  
-    setSavedItems((prevItems) => [...prevItems, dataToSave]);
-    setTasks([]);
-    setInputValue('');
-    if (editableInputRef.current) editableInputRef.current.value = '';
-    document.getElementById('inputField').focus();
     setIsSaving(false);
   }, [tasks, inputValue, taskListValue, labels, commentValue, file, workTypeValue]);
-  
   
   
   
@@ -583,7 +581,7 @@ function TaskCreate() {
                 </div>
 
                 <div>
-                  <FileUpload onFilesChange={handleFilesChange}/>
+                  <FileUpload/>
                 </div>
 
                 <div className='timer_inp'>
