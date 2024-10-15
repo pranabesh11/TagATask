@@ -24,7 +24,7 @@ function TaskCreate() {
   const containerRef = useRef(null);
   const [selectedTaskIndex, setSelectedTaskIndex] = useState(null);
   const [options, setOptions] = useState([]);
-  const [files, setFiles] = useState([]);
+  const [file, setFiles] = useState([]);
   
   // Fetch options from Rails API
   useEffect(() => {
