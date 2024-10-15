@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import './fileupload.css';
-import clip from '../assets/clip.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faDownload, faPlus } from '@fortawesome/free-solid-svg-icons';
 import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
 
-const FileUpload = () => {
+const FileUpload = ({ onFilesChange }) => {
   const [files, setFiles] = useState([]);
 
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-  };
+    const updatedFiles = [...files, ...selectedFiles];
+    setFiles(updatedFiles);
+    onFilesChange(updatedFiles);  // Call the callback to update the parent component
+  };  
 
   const handleDeleteFile = (index) => {
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    const updatedFiles = files.filter((_, i) => i !== index);
+    setFiles(updatedFiles);
+    onFilesChange(updatedFiles);  // Call the callback to update the parent component
   };
 
   const handleDownloadFile = (file) => {
