@@ -649,7 +649,7 @@ function TaskCreate() {
       </div>
 
       <div>
-        
+        <h2>Personnel Options</h2>
         <ul>
           {options.map((option, index) => (
             <li key={index}>{option.name}</li>
