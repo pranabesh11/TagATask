@@ -23,6 +23,32 @@ function TaskCreate() {
   const editableInputRef = useRef(null);
   const containerRef = useRef(null);
   const [selectedTaskIndex, setSelectedTaskIndex] = useState(null);
+  const [options, setOptions] = useState([]);
+  
+  // Fetch options from Rails API
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const response = await fetch('https://1315-49-37-11-79.ngrok-free.app/allot');
+        console.log(response);
+        
+        // Check if the response is actually JSON
+        // const contentType = response.headers.get('content-type');
+        // if (!contentType || !contentType.includes('application/json')) {
+        //   throw new Error('Expected JSON, but got something else');
+        // }
+  
+        const result = await response.json();
+        setOptions(result.data); // Assuming "data" contains the array of personnel
+        console.log(result);
+      } catch (error) {
+        console.error('Error fetching options:', error);
+      }
+    };
+  
+    fetchOptions();
+  }, []);
+  
   
 
   useEffect(() => {
@@ -405,6 +431,19 @@ function TaskCreate() {
       setInputValue('');
       if (editableInputRef.current) editableInputRef.current.value = '';
       document.getElementById('inputField').focus();
+      
+      // Send data to Rails backend
+      fetch('http://localhost:3000/dream/index', {  // This is your Rails endpoint
+        method: 'POST',  // Sending a POST request
+        headers: {
+          'Content-Type': 'application/json',  // Inform Rails that we're sending JSON
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(dataToSave),  // Convert the data to JSON string
+      })
+      .then(response => response.json())  // Convert the response back to JSON
+      .then(data => console.log('Success:', data))  // Handle success
+      .catch((error) => console.error('Error:', error));  // Handle error
     }
     setIsSaving(false);
   }, [tasks, inputValue]);
@@ -450,6 +489,12 @@ function TaskCreate() {
       moveCursorToEnd(taskElement);
     }, 0);
   };
+  
+
+  
+    
+  
+    
   
 
   return (
@@ -602,6 +647,16 @@ function TaskCreate() {
           </div>
         ))}
       </div>
+
+      <div>
+        <h2>Personnel Options</h2>
+        <ul>
+          {options.map((option, index) => (
+            <li key={index}>{option.name}</li>
+          ))}
+        </ul>
+      </div>
+
     </div>
   );
 }

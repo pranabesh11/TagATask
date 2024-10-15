@@ -51,7 +51,7 @@ function TaskList({ dateTime, onDatetimeChange }) {
             <AccessAlarmOutlinedIcon
                 className={`clock-icon ${dateTime ? 'black-icon' : 'grey-icon'}`}
                 onClick={handleIconClick}
-                style={{ fontSize: 30,fontSize: 30 }}
+                style={{ fontSize: 30 }}
             />
                 {hovering && dateTime && (
                     <span className="hovered-datetime">
