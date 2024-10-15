@@ -29,7 +29,7 @@ function TaskCreate() {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const response = await fetch('https://1315-49-37-11-79.ngrok-free.app/allot');
+        const response = await fetch('https://ee65-49-37-9-67.ngrok-free.app/allot');
         console.log(response);
         
         // Check if the response is actually JSON
@@ -649,7 +649,6 @@ function TaskCreate() {
       </div>
 
       <div>
-        <h2>Personnel Options</h2>
         <ul>
           {options.map((option, index) => (
             <li key={index}>{option.name}</li>
