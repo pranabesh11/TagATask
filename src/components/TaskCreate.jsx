@@ -412,11 +412,6 @@ function TaskCreate() {
   const saveAllData = useCallback(() => {
     const dataToSave = {
       title: inputValue.trim(),
-      taskList: taskListValue,
-      labels: labels || [],
-      comment: commentValue.trim() || '',
-      file: file || null,
-      workType: workTypeValue || '',
       items: tasks.map((task) => {
         let formattedText = DOMPurify.sanitize(task.text);
         return {
@@ -451,7 +446,7 @@ function TaskCreate() {
       .catch((error) => console.error('Error:', error));  // Handle error
     }
     setIsSaving(false);
-  }, [tasks, inputValue, taskListValue, labels, commentValue, file, workTypeValue]);
+  }, [tasks, inputValue]);
   
   
   
