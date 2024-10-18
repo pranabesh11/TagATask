@@ -12,7 +12,7 @@ import FileUpload from './FileUpload';
 import Comment from './Comment';
 import SelectText from './SelectText';
 import DOMPurify from 'dompurify';
-
+import { Axios } from 'axios';
 
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
@@ -26,35 +26,53 @@ function TaskCreate() {
   const [options, setOptions] = useState([]);
   const [comments, setComments] = useState([]);
 
-  
+  const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
   // Fetch options from Rails API
   useEffect(() => {
-    const fetchOptions = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('https://ee65-49-37-9-67.ngrok-free.app/allot');
+        const response = await axios.get('https://7f27-49-37-9-67.ngrok-free.app/allot', {
+          headers: {
+            'Accept': 'application/json',  // Ensure the server understands it's JSON
+          },
+          mode: 'cors'  // Enable CORS for the request
+        });
 
-        // Check if the response is successful (status 200-299)
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // Check if the response is JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          throw new Error('Expected JSON, but got something else');
-        }
-
-        const result = await response.json();
-        setOptions(result.data); // Assuming "data" contains the array of personnel
-        console.log(result);
+        // Check the data and set it to state
+        setData(response.data.names);  // Assuming the response has 'names' field
+        console.log('Response data:', response.data);
 
       } catch (error) {
-        console.error('Error fetching options:', error);
+        // Handle errors (e.g., network, CORS, or API errors)
+        console.error('Error fetching data:', error);
+        setError('Error fetching data. Please check the console for more details.');
       }
     };
 
-    fetchOptions();
+    fetchData();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchOptions = async () => {
+  //     try {
+  //       const response = await fetch('http://localhost:3000/allot');
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! status: ${response.status}`);
+  //       }
+  //       const contentType = response.headers.get('content-type');
+  //       if (!contentType || !contentType.includes('application/json')) {
+  //         throw new Error('Expected JSON, but got something else');
+  //       }
+  //       const result = await response.json();
+  //       setOptions(result.data);
+  //       console.log(result);
+  //     } catch (error) {
+  //       console.error('Error fetching options:', error);
+  //     }
+  //   };
+  //   fetchOptions();
+  // }, []);
   
 
   useEffect(() => {
