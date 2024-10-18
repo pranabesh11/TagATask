@@ -24,31 +24,37 @@ function TaskCreate() {
   const containerRef = useRef(null);
   const [selectedTaskIndex, setSelectedTaskIndex] = useState(null);
   const [options, setOptions] = useState([]);
+  const [comments, setComments] = useState([]);
+
   
   // Fetch options from Rails API
   useEffect(() => {
     const fetchOptions = async () => {
       try {
         const response = await fetch('https://ee65-49-37-9-67.ngrok-free.app/allot');
-        console.log(response);
-        
-        // Check if the response is actually JSON
-        // const contentType = response.headers.get('content-type');
-        // if (!contentType || !contentType.includes('application/json')) {
-        //   throw new Error('Expected JSON, but got something else');
-        // }
-  
+
+        // Check if the response is successful (status 200-299)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Check if the response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Expected JSON, but got something else');
+        }
+
         const result = await response.json();
         setOptions(result.data); // Assuming "data" contains the array of personnel
         console.log(result);
+
       } catch (error) {
         console.error('Error fetching options:', error);
       }
     };
-  
+
     fetchOptions();
   }, []);
-  
   
 
   useEffect(() => {
@@ -58,6 +64,7 @@ function TaskCreate() {
         saveAllData();
       }
     };
+    
 
     const handleClick = (event) => {
       if (!containerRef.current.contains(event.target)) {
@@ -113,6 +120,8 @@ function TaskCreate() {
       completed: false,
       datetime: null,
       label: '',
+      workType: '',
+      comments: [],
       isBold: false,
       isItalic: false,
       ref: React.createRef(),
@@ -418,6 +427,8 @@ function TaskCreate() {
           text: formattedText,
           completed: task.completed,
           datetime: task.datetime,
+          workType: task.workType,
+          comments: task.comments,
           selectedTags: task.selectedTags || [],
           isBold: task.isBold || false,
           isItalic: task.isItalic || false,
@@ -432,21 +443,20 @@ function TaskCreate() {
       if (editableInputRef.current) editableInputRef.current.value = '';
       document.getElementById('inputField').focus();
       
-      // Send data to Rails backend
-      fetch('http://localhost:3000/dream/index', {  // This is your Rails endpoint
-        method: 'POST',  // Sending a POST request
+      fetch('http://localhost:3000/dream/index', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',  // Inform Rails that we're sending JSON
+          'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify(dataToSave),  // Convert the data to JSON string
+        body: JSON.stringify(dataToSave),
       })
-      .then(response => response.json())  // Convert the response back to JSON
-      .then(data => console.log('Success:', data))  // Handle success
-      .catch((error) => console.error('Error:', error));  // Handle error
+      .then(response => response.json())
+      .then(data => console.log('Success:', data))
+      .catch((error) => console.error('Error:', error));
     }
     setIsSaving(false);
-  }, [tasks, inputValue]);
+  }, [tasks, inputValue ]);
   
   
   
@@ -489,6 +499,14 @@ function TaskCreate() {
       moveCursorToEnd(taskElement);
     }, 0);
   };
+
+  const handleCommentsChange = (index, updatedComments) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index].comments = updatedComments;
+    setTasks(updatedTasks);
+  };
+  
+
   
 
   
@@ -558,9 +576,9 @@ function TaskCreate() {
               }
               
               <TaskList
-                    dateTime={task.datetime}
-                    onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
-                    onKeyDown={(e) => handleTaskKeyDown(index, e)}
+                dateTime={task.datetime}
+                onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
+                onKeyDown={(e) => handleTaskKeyDown(index, e)}
               />
                 
               <div id ='icon_div'>
@@ -572,7 +590,10 @@ function TaskCreate() {
                 </div>
 
                 <div>
-                  <Comment/>
+                  <Comment
+                    comments={Array.isArray(task.comments) ? task.comments : []}
+                    setComments={(updatedComments) => handleCommentsChange(index, updatedComments)}
+                  />
                 </div>
 
                 <div>
@@ -580,7 +601,13 @@ function TaskCreate() {
                 </div>
 
                 <div className='timer_inp'>
-                  <WorkType/>
+                  <WorkType  selectedOption={task.workType}
+                    setSelectedOption={(value) => {
+                      const updatedTasks = [...tasks];
+                      updatedTasks[index].workType = value;
+                      setTasks(updatedTasks);
+                    }}
+                  />
                 </div>
 
               </div>

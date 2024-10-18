@@ -5,9 +5,8 @@ import workflowIcon from '../assets/workflow.png';
 import AllInclusiveOutlinedIcon from '@mui/icons-material/AllInclusiveOutlined';
 import SignpostOutlinedIcon from '@mui/icons-material/SignpostOutlined';
 
-const DropdownSelector = () => {
+const WorkType = ({ selectedOption, setSelectedOption }) => {
   const options = ['Daily', 'Weekly', 'Bi-weekly', 'Monthly', 'Quarterly', 'Annually', 'WorkFlow'];
-  const [selectedOption, setSelectedOption] = useState('');
   const [showOptions, setShowOptions] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -59,4 +58,4 @@ const DropdownSelector = () => {
   );
 };
 
-export default DropdownSelector;
+export default WorkType;
