@@ -12,7 +12,7 @@ import FileUpload from './FileUpload';
 import Comment from './Comment';
 import SelectText from './SelectText';
 import DOMPurify from 'dompurify';
-import { Axios } from 'axios';
+import axios from 'axios';
 
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
@@ -32,7 +32,7 @@ function TaskCreate() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://7f27-49-37-9-67.ngrok-free.app/allot', {
+        const response = await axios.get('http://localhost:3000/allot', {
           headers: {
             'Accept': 'application/json',  // Ensure the server understands it's JSON
           },
@@ -41,7 +41,7 @@ function TaskCreate() {
 
         // Check the data and set it to state
         setData(response.data.names);  // Assuming the response has 'names' field
-        console.log('Response data:', response.data);
+        console.log('Response data:', response.data.names);
 
       } catch (error) {
         // Handle errors (e.g., network, CORS, or API errors)
@@ -528,10 +528,6 @@ function TaskCreate() {
   
 
   
-    
-  
-    
-  
 
   return (
     
@@ -700,7 +696,7 @@ function TaskCreate() {
           ))}
         </ul>
       </div>
-
+          <h1>hello</h1>
     </div>
   );
 }
