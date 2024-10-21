@@ -536,16 +536,24 @@ function TaskCreate() {
         <button className="close_button" onClick={saveAllData}>
           <img src={closebutton} className="close_icon" height={15} width={15} />
         </button>
-        <input
-          className="title_input"
-          type="text"
+        <select
+          className="select_allottee"
           id="inputField"
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyPress}
           autoFocus={true}
-          placeholder="Title"
-        />
+        >
+          <option value="" disabled>
+          Select Allottee
+          </option>
+          {data.map((name, index) => (
+            <option key={index} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+
 
         <div className="editable-div-container">
           {tasks.map((task, index) => (
