@@ -32,7 +32,7 @@ function TaskCreate() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/allot', {
+        const response = await axios.get('https://e0688dfc79a88c.lhr.life/allot', {
           headers: {
             'Accept': 'application/json',  // Ensure the server understands it's JSON
           },
@@ -696,7 +696,6 @@ function TaskCreate() {
           ))}
         </ul>
       </div>
-          <h1>hi, i am pranabesh</h1>
     </div>
   );
 }
