@@ -44,6 +44,12 @@ function TaskCreate() {
           // Send the userId to the Rails backend via a POST request
           const response = await axios.post('https://b791-49-37-9-67.ngrok-free.app/allot', {
             user_id: userId,
+          }, {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json', // Ensure Content-Type is set
+              'ngrok-skip-browser-warning': "any" // Keep if necessary
+            },
           });
   
           console.log('User ID sent successfully:', response.data);
