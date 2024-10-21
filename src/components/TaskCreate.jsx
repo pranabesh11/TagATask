@@ -13,6 +13,7 @@ import Comment from './Comment';
 import SelectText from './SelectText';
 import DOMPurify from 'dompurify';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
@@ -25,27 +26,51 @@ function TaskCreate() {
   const [selectedTaskIndex, setSelectedTaskIndex] = useState(null);
   const [options, setOptions] = useState([]);
   const [comments, setComments] = useState([]);
+  const { userId } = useParams();
 
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
+
+
+
+  useEffect(() => {
+    const sendUserId = async () => {
+      // Parse the query parameters from the URL
+      const params = new URLSearchParams(window.location.search);
+      const userId = params.get('id'); // Extract the 'id' parameter
+  
+      if (userId) {
+        try {
+          // Send the userId to the Rails backend via a POST request
+          const response = await axios.post('https://b791-49-37-9-67.ngrok-free.app/allot', {
+            user_id: userId,
+          });
+  
+          console.log('User ID sent successfully:', response.data);
+        } catch (error) {
+          console.error('Error sending User ID:', error);
+        }
+      }
+    };
+  
+    sendUserId();
+  }, []); // Empty dependency array ensures this runs once on mount
+
+  
+
   // Fetch options from Rails API
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get('https://b791-49-37-9-67.ngrok-free.app/allot', {
           headers: {
-            'Accept': 'application/json',  // Explicitly request JSON
+            'Accept': 'application/json',
             'ngrok-skip-browser-warning': "any"
-            // Removed 'Accept-Encoding' and 'Connection' headers
           },
-          // Removed `mode: 'cors'` as it's not applicable to Axios
         });
-  
-        // Check the data and set it to state
-        setData(response.data.names);  // Assuming you want the 'names' array
+        setData(response.data.names);
         console.log('Response data:', response.data);
       } catch (error) {
-        // Handle errors (e.g., network, CORS, or API errors)
         console.error('Error fetching data:', error);
         setError('Error fetching data. Please check the console for more details.');
       }
