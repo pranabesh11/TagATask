@@ -32,27 +32,29 @@ function TaskCreate() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://11e4ec1fcd83de.lhr.life/allot', {
+        const response = await axios.get('https://b791-49-37-9-67.ngrok-free.app/allot', {
           headers: {
-            'Accept': 'application/json',  // Ensure the server understands it's JSON
+            'Accept': 'application/json',  // Explicitly request JSON
+            'ngrok-skip-browser-warning': "any"
+            // Removed 'Accept-Encoding' and 'Connection' headers
           },
-          mode: 'cors'  // Enable CORS for the request
+          // Removed `mode: 'cors'` as it's not applicable to Axios
         });
-
+  
         // Check the data and set it to state
-        setData(response.data.names);  // Assuming the response has 'names' field
-        console.log('Response data:', response.data.names);
-
+        setData(response.data.names);  // Assuming you want the 'names' array
+        console.log('Response data:', response.data);
       } catch (error) {
         // Handle errors (e.g., network, CORS, or API errors)
         console.error('Error fetching data:', error);
         setError('Error fetching data. Please check the console for more details.');
       }
     };
-
+  
     fetchData();
   }, []);
-
+  
+  
   // useEffect(() => {
   //   const fetchOptions = async () => {
   //     try {
