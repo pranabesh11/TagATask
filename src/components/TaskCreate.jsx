@@ -14,7 +14,6 @@ import SelectText from './SelectText';
 import DOMPurify from 'dompurify';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { sendUserId, fetchAllottees } from './TaskApi';
 
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
@@ -35,21 +34,64 @@ function TaskCreate() {
 
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const userId = params.get('id');
-    if (userId) {
-      sendUserId(userId) // Use the function from taskApi.js
-        .then((names) => setData(names))
-        .catch((error) => setError('Error sending User ID'));
-    }
-  }, []);
+    const sendUserId = async () => {
+      // Parse the query parameters from the URL
+      const params = new URLSearchParams(window.location.search);
+      const userId = params.get('id'); // Extract the 'id' parameter
+  
+      if (userId) {
+        try {
+          // Send the userId to the Rails backend via a POST request
+          const response = await axios.post('https://b791-49-37-9-67.ngrok-free.app/allot', {
+            user_id: userId,
+          }, {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json', // Ensure Content-Type is set
+              'ngrok-skip-browser-warning': "any" // Keep if necessary
+            },
+          });
+          if (response.data && response.data.names) {
+            setData(response.data.names);
+          } else {
+            setError('Unexpected response structure');
+          }
+        } catch (error) {
+          console.error('Error sending User ID:', error);
+        }
+      }
+    };
+  
+    sendUserId();
+  }, []); // Empty dependency array ensures this runs once on mount
+
   
 
+  // Fetch options from Rails API
   useEffect(() => {
-    fetchAllottees() // Use the function from taskApi.js
-      .then((names) => setData(names))
-      .catch((error) => setError('Error fetching allotments'));
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://b791-49-37-9-67.ngrok-free.app/allot', {
+          headers: {
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': "any"
+          },
+        });
+        if (Array.isArray(response.data.names) && response.data.names.every(item => Array.isArray(item) && item.length === 2)) {
+          setData(response.data.names);
+        } else {
+          console.error('Unexpected data structure:', response.data.names);
+          setError('Invalid data format received.');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Error fetching data. Please check the console for more details.');
+      }
+    };
+  
+    fetchData();
   }, []);
+  
   
   // useEffect(() => {
   //   const fetchOptions = async () => {
