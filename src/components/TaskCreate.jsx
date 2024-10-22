@@ -46,7 +46,7 @@ function TaskCreate() {
   
 
   useEffect(() => {
-    fetchAllotments() // Use the function from taskApi.js
+    fetchAllottees() // Use the function from taskApi.js
       .then((names) => setData(names))
       .catch((error) => setError('Error fetching allotments'));
   }, []);
