@@ -18,7 +18,7 @@ export const sendUserId = async (userId) => {
   }
 };
 
-export const fetchAllotments = async () => {
+export const fetchAllottees = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/allot`, {
       headers: {
