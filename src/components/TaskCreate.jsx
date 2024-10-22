@@ -27,7 +27,7 @@ function TaskCreate() {
   const [options, setOptions] = useState([]);
   const [comments, setComments] = useState([]);
   const { userId } = useParams();
-
+  
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
 
@@ -51,8 +51,11 @@ function TaskCreate() {
               'ngrok-skip-browser-warning': "any" // Keep if necessary
             },
           });
-  
-          console.log('User ID sent successfully:', response.data);
+          if (response.data && response.data.names) {
+            setData(response.data.names);
+          } else {
+            setError('Unexpected response structure');
+          }
         } catch (error) {
           console.error('Error sending User ID:', error);
         }
@@ -74,8 +77,12 @@ function TaskCreate() {
             'ngrok-skip-browser-warning': "any"
           },
         });
-        setData(response.data.names);
-        console.log('Response data:', response.data);
+        if (Array.isArray(response.data.names) && response.data.names.every(item => Array.isArray(item) && item.length === 2)) {
+          setData(response.data.names);
+        } else {
+          console.error('Unexpected data structure:', response.data.names);
+          setError('Invalid data format received.');
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
         setError('Error fetching data. Please check the console for more details.');
