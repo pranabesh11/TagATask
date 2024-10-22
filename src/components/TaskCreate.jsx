@@ -47,8 +47,8 @@ function TaskCreate() {
           }, {
             headers: {
               'Accept': 'application/json',
-              'Content-Type': 'application/json', // Ensure Content-Type is set
-              'ngrok-skip-browser-warning': "any" // Keep if necessary
+              'Content-Type': 'application/json',
+              'ngrok-skip-browser-warning': "any"
             },
           });
           if (response.data && response.data.names) {
@@ -63,7 +63,7 @@ function TaskCreate() {
     };
   
     sendUserId();
-  }, []); // Empty dependency array ensures this runs once on mount
+  }, []);
 
   
 
@@ -501,7 +501,7 @@ function TaskCreate() {
       if (editableInputRef.current) editableInputRef.current.value = '';
       document.getElementById('inputField').focus();
       
-      fetch('http://localhost:3000/dream/index', {
+      fetch('http://localhost:3000/api_list/create_task', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -509,6 +509,7 @@ function TaskCreate() {
         },
         body: JSON.stringify(dataToSave),
       })
+      
       .then(response => response.json())
       .then(data => console.log('Success:', data))
       .catch((error) => console.error('Error:', error));
