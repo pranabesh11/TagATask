@@ -134,9 +134,9 @@ function TaskCreate() {
 
   
 
-  const handleChange = (event) => {
-    setInputValue(event.target.value);
-  };
+  // const handleChange = (event) => {
+  //   setInputValue(event.target.value);
+  // };
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -573,16 +573,17 @@ function TaskCreate() {
           className="select_allottee"
           id="inputField"
           value={inputValue}
-          onChange={handleChange}
+          onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyPress}
+
           autoFocus={true}
         >
           <option value="" disabled>
           Select Allottee
           </option>
-          {data.map((name, index) => (
-            <option key={index} value={name}>
-              {name}
+          {data.map(([id, name]) => (
+            <option key={id} value={id}>
+              {name} 
             </option>
           ))}
         </select>
