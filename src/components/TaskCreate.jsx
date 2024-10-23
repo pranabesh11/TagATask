@@ -479,6 +479,7 @@ function TaskCreate() {
   const saveAllData = useCallback(() => {
     const dataToSave = {
       title: inputValue.trim(),
+      user_id: userId,
       items: tasks.map((task) => {
         let formattedText = DOMPurify.sanitize(task.text);
         return {
