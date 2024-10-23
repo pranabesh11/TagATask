@@ -42,7 +42,7 @@ function TaskCreate() {
       if (userId) {
         try {
           // Send the userId to the Rails backend via a POST request
-          const response = await axios.post('https://b791-49-37-9-67.ngrok-free.app/allot', {
+          const response = await axios.post('https://0319-49-37-9-67.ngrok-free.app/allot', {
             user_id: userId,
           }, {
             headers: {
@@ -71,7 +71,7 @@ function TaskCreate() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://b791-49-37-9-67.ngrok-free.app/allot', {
+        const response = await axios.get('https://0319-49-37-9-67.ngrok-free.app/allot', {
           headers: {
             'Accept': 'application/json',
             'ngrok-skip-browser-warning': "any"
