@@ -30,7 +30,6 @@ function TaskCreate() {
   const [options, setOptions] = useState([]);
   const [comments, setComments] = useState([]);
   const { userId } = useParams();
-  toast.configure();
 
   
   const [data, setData] = useState([]);
@@ -483,6 +482,9 @@ function TaskCreate() {
 
   const saveAllData = useCallback(() => {
     const params = new URLSearchParams(window.location.search);
+    const notify_success = () => toast("Task Created Successfully");
+    const notify_failed = () => toast("Task Created UnSuccessfully");
+
     const userId = params.get('id');
     const dataToSave = {
       title: inputValue.trim(),
@@ -521,12 +523,14 @@ function TaskCreate() {
       .then(response => response.json())
       .then(data => {
         console.log('Success:', data);
+        notify_success();
         toast.success("Task saved successfully!", {
           position: toast.POSITION.TOP_RIGHT
         });
       })
       .catch((error) => {
         console.error('Error:', error);
+        notify_failed();
         toast.error("Failed to save the task", {
           position: toast.POSITION.TOP_RIGHT
         });
