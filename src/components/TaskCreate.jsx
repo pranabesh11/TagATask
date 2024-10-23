@@ -477,9 +477,11 @@ function TaskCreate() {
   
 
   const saveAllData = useCallback(() => {
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get('id');
     const dataToSave = {
       title: inputValue.trim(),
-      user_id: 26,
+      user_id: userId,
       items: tasks.map((task) => {
         let formattedText = DOMPurify.sanitize(task.text);
         return {
