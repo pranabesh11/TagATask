@@ -14,6 +14,9 @@ import SelectText from './SelectText';
 import DOMPurify from 'dompurify';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
@@ -27,6 +30,8 @@ function TaskCreate() {
   const [options, setOptions] = useState([]);
   const [comments, setComments] = useState([]);
   const { userId } = useParams();
+  toast.configure();
+
   
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
@@ -514,8 +519,18 @@ function TaskCreate() {
       })
       
       .then(response => response.json())
-      .then(data => console.log('Success:', data))
-      .catch((error) => console.error('Error:', error));
+      .then(data => {
+        console.log('Success:', data);
+        toast.success("Task saved successfully!", {
+          position: toast.POSITION.TOP_RIGHT
+        });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        toast.error("Failed to save the task", {
+          position: toast.POSITION.TOP_RIGHT
+        });
+      });
     }
     setIsSaving(false);
   }, [tasks, inputValue , userId]);
