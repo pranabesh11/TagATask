@@ -809,14 +809,14 @@ function TaskCreate() {
 
       <div>
         {
-          Allottee.map((index,Allottee_name)=>{
-            <div className='allottee_container'>
+          Allottee.map((Allottee_name, index) => (
+            <div className='allottee_container' key={index}>
               <h1>{Allottee_name}</h1>
               <div>
-
+                
               </div>
             </div>
-          })
+          ))
         }
       </div>
     </div>

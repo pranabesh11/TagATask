@@ -362,9 +362,19 @@
     color: #007bff;
   }
 
-  .allottee_container{
+  .allottee_container {
     background-color: #f0f2f3;
     border: 1px solid rgb(235, 232, 232);
-    height: 200px;
-    width: 100px;
-  }
+    padding: 10px;
+    margin: 10px;
+    height: auto;
+    width: auto;
+    min-height: 100px;
+    min-width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
