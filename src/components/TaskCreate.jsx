@@ -110,7 +110,7 @@ function TaskCreate() {
         });
         console.log(response.data.personnels);
         if (response.data && response.data.Allottee) {
-          setAllottee(response.data.Allottee);
+          setAllottee(response.data.personnels);
         } else {
           setError('Unexpected response structure');
         }
@@ -805,6 +805,19 @@ function TaskCreate() {
             <li key={index}>{option.name}</li>
           ))}
         </ul>
+      </div>
+
+      <div>
+        {
+          Allottee.map((index,Allottee_name)=>{
+            <div className='allottee_container'>
+              <h1>{Allottee_name}</h1>
+              <div>
+
+              </div>
+            </div>
+          })
+        }
       </div>
     </div>
   );
