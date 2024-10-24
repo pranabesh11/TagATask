@@ -810,14 +810,16 @@ function TaskCreate() {
       <div className='task_container'>
         <h1>tasks</h1>
         {
-          Allottee.map((Allottee_name) => (
+          Allottee.map((Allottee_name) => {
+            console.log('Allottee name',Allottee_name);
+            return(
             <div className='allottee_container' >
               <h1>{Allottee_name}</h1>
               <div>
                 
               </div>
-            </div>
-          ))
+            </div>);
+})
         }
       </div>
     </div>
