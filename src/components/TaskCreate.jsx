@@ -811,12 +811,12 @@ function TaskCreate() {
             console.log('Allottee name',Allottee_name);
             return(
             <div className='allottee_container' >
-              <h1>{Allottee_name}</h1>
+              <p>{Allottee_name}</p>
               <div>
                 
               </div>
             </div>);
-})
+          })
         }
       </div>
     </div>
