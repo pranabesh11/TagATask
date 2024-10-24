@@ -379,7 +379,7 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.main{
+.task_container{
     height: 400px;
     background-color: #007bff;
     width: 100vw;
