@@ -382,4 +382,5 @@
 .main{
     height: 400px;
     background-color: #007bff;
+    width: 100vw;
 }
