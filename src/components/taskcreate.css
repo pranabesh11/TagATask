@@ -372,8 +372,6 @@
     min-height: 100px;
     min-width: 150px;
     display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -382,8 +380,12 @@
 }
 
 .task_container{
-    height: 400px;
-    background-color: #007bff;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #cecfcf;
     width: 96vw;
     margin: 20px;
 }
