@@ -529,8 +529,6 @@ function TaskCreate() {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: "light",
-          transition: Slide,
         });
 
         axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data')
@@ -552,8 +550,6 @@ function TaskCreate() {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: "light",
-          transition: Slide,
         });
       });
     }
