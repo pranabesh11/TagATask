@@ -108,7 +108,7 @@ function TaskCreate() {
             'ngrok-skip-browser-warning': "any"
           },
         });
-        console.log(response);
+        console.log(response.data.personnels);
         if (response.data && response.data.Allottee) {
           setAllottee(response.data.Allottee);
         } else {
