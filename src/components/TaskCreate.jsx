@@ -99,6 +99,7 @@ function TaskCreate() {
 
 
   useEffect(() => {
+    console.log("this is the task data");
     const fetchallottee = async () => {
       try {
         const response = await axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data', {
