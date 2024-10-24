@@ -362,11 +362,20 @@
     color: #007bff;
   }
 
+  .tasks{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
   .allottee_container {
     background-color: #f0f2f3;
     border: 1px solid rgb(235, 232, 232);
     padding: 10px;
-    margin: 10px;
+    margin: 3%;
     height: 30vh;
     width: 30%;
     min-height: 100px;
@@ -382,7 +391,7 @@
 .task_container{
     display: flex;
     flex-wrap: wrap;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: #cecfcf;

@@ -31,7 +31,7 @@ function TaskCreate() {
   const [comments, setComments] = useState([]);
   const { userId } = useParams();
 
-  
+
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [Allottee, setAllottee] = useState([]);
@@ -43,7 +43,7 @@ function TaskCreate() {
       // Parse the query parameters from the URL
       const params = new URLSearchParams(window.location.search);
       const userId = params.get('id'); // Extract the 'id' parameter
-  
+
       if (userId) {
         try {
           // Send the userId to the Rails backend via a POST request
@@ -66,11 +66,11 @@ function TaskCreate() {
         }
       }
     };
-  
+
     sendUserId();
   }, []);
 
-  
+
 
   // Fetch options from Rails API
   useEffect(() => {
@@ -93,7 +93,7 @@ function TaskCreate() {
         setError('Error fetching data. Please check the console for more details.');
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -116,11 +116,11 @@ function TaskCreate() {
         setError('Error fetching data. Please check the console for more details.');
       }
     };
-  
+
     fetchallottee();
   }, []);
-  
-  
+
+
   // useEffect(() => {
   //   const fetchOptions = async () => {
   //     try {
@@ -141,7 +141,7 @@ function TaskCreate() {
   //   };
   //   fetchOptions();
   // }, []);
-  
+
 
   useEffect(() => {
     const handleGlobalKeyDown = (event) => {
@@ -150,7 +150,7 @@ function TaskCreate() {
         saveAllData();
       }
     };
-    
+
 
     const handleClick = (event) => {
       if (!containerRef.current.contains(event.target)) {
@@ -167,7 +167,7 @@ function TaskCreate() {
     };
   }, [isSaving]);
 
-  
+
 
   // const handleChange = (event) => {
   //   setInputValue(event.target.value);
@@ -190,7 +190,7 @@ function TaskCreate() {
       setTasks([...tasks]);
     }
   };
-  
+
   const toggleItalic = () => {
     if (selectedTaskIndex !== null) {
       const selectedTask = tasks[selectedTaskIndex];
@@ -213,7 +213,7 @@ function TaskCreate() {
       ref: React.createRef(),
     };
     setTasks((prevTasks) => [...prevTasks, newTask]);
-  
+
     setTimeout(() => {
       const taskElement = newTask.ref.current;
       if (taskElement) {
@@ -222,7 +222,7 @@ function TaskCreate() {
       }
     }, 0);
   };
-  
+
   const moveCursorToEnd = (element) => {
     const range = document.createRange();
     const selection = window.getSelection();
@@ -241,12 +241,12 @@ function TaskCreate() {
     selection.addRange(range);
     element.focus();
   };
-  
+
   const handleTextSelect = (index) => {
     setSelectedTaskIndex(index);
   };
-  
-  
+
+
 
   const handleTaskKeyDown = (index, event) => {
     if (event.key === 'Escape' && !isSaving) {
@@ -259,7 +259,7 @@ function TaskCreate() {
       setTasks([]);
       return;
     }
-  
+
     if (event.key === 'Backspace' && tasks[index].ref.current.innerText.trim() === '') {
       event.preventDefault();
       handleDeleteTask(index);
@@ -275,7 +275,7 @@ function TaskCreate() {
         }
       }
     }
-  
+
     if (event.key === 'Enter') {
       event.preventDefault();
       if (index < tasks.length - 1) {
@@ -310,12 +310,12 @@ function TaskCreate() {
       }
     }
   };
-  
+
 
 
   let debounceTimer = null;
   let accumulatedChars = '';
-  
+
   const handleEditableKeyDown = (event) => {
     if (event.key === 'Escape' && !isSaving) {
       setIsSaving(true);
@@ -337,17 +337,17 @@ function TaskCreate() {
       accumulatedChars += event.key;
       clearTimeout(debounceTimer);
       editableInputRef.current.value = accumulatedChars;
-        debounceTimer = setTimeout(() => {
-          if (accumulatedChars) {
-            createNewTask(accumulatedChars);
-            accumulatedChars = '';
-            editableInputRef.current.value = '';
-          }
-        }, 0);
-      }
+      debounceTimer = setTimeout(() => {
+        if (accumulatedChars) {
+          createNewTask(accumulatedChars);
+          accumulatedChars = '';
+          editableInputRef.current.value = '';
+        }
+      }, 0);
+    }
   };
 
-  
+
   const createNewTaskAtIndex = (index) => {
     const newTask = {
       text: '',
@@ -365,8 +365,8 @@ function TaskCreate() {
       newTask.ref.current.focus();
     }, 0);
   };
-  
-  
+
+
 
   const handleDatetimeChange = (index, datetime) => {
     const newTasks = [...tasks];
@@ -379,7 +379,7 @@ function TaskCreate() {
     newTasks[index].selectedTags = tags;
     setTasks(newTasks);
   };
-  
+
 
   const handleDeleteTask = (index) => {
     setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
@@ -402,7 +402,7 @@ function TaskCreate() {
       setSavedItems((prevItems) => {
         const newItems = [...prevItems];
         const card = newItems[cardIndex];
-    
+
         if (card && card.items && card.items[taskIndex]) {
           card.items[taskIndex].completed = isChecked;
           if (isChecked) {
@@ -410,7 +410,7 @@ function TaskCreate() {
             card.items.push(completedTask);
           }
         }
-    
+
         return newItems;
       });
     }
@@ -422,12 +422,12 @@ function TaskCreate() {
       ALLOWED_ATTR: []
     });
   };
-  
+
   const handleTaskDragOverSmooth = (e) => {
     e.preventDefault(); // Necessary to allow dropping
   };
-  
-  
+
+
   const handleTaskDragStart = (e, cardIndex, taskIndex) => {
     setDraggingIndex({ cardIndex, taskIndex });
     const draggedTask = savedItems[cardIndex].items[taskIndex];
@@ -464,7 +464,7 @@ function TaskCreate() {
 
   const handleTaskReorder = (e, cardIndex, targetTaskIndex) => {
     e.preventDefault();
-  
+
     if (draggingIndex && draggingIndex.cardIndex === cardIndex && draggingIndex.taskIndex !== targetTaskIndex) {
       setSavedItems((prevItems) => {
         // Create a deep copy of the savedItems array
@@ -473,7 +473,7 @@ function TaskCreate() {
         );
         const tasks = newItems[cardIndex].items; // Copy of the tasks array for immutability  
         // Log the task order before the drop
-        console.log('Final task order before drop:', tasks.map(task => task.text));  
+        console.log('Final task order before drop:', tasks.map(task => task.text));
         const movedTask = tasks[draggingIndex.taskIndex]; // The task being moved  
         // Remove the moved task from its original position
         const updatedTasks = tasks.filter((_, i) => i !== draggingIndex.taskIndex);
@@ -494,15 +494,15 @@ function TaskCreate() {
       setDraggingIndex(null); // Reset the dragging index after drop
     }
   };
-  
-  
-  
-  
-  
-  
-  
 
-  
+
+
+
+
+
+
+
+
 
   const saveAllData = useCallback(() => {
     const params = new URLSearchParams(window.location.search);
@@ -528,14 +528,14 @@ function TaskCreate() {
         };
       }).filter((item) => item.text !== '' || item.datetime || item.selectedTags.length > 0),
     };
-  
+
     if (dataToSave.title || dataToSave.items.length > 0) {
       setSavedItems((prevItems) => [...prevItems, dataToSave]);
       setTasks([]);
       setInputValue('');
       if (editableInputRef.current) editableInputRef.current.value = '';
       document.getElementById('inputField').focus();
-      
+
       fetch('http://localhost:3000/api_list/create_task', {
         method: 'POST',
         headers: {
@@ -544,45 +544,45 @@ function TaskCreate() {
         },
         body: JSON.stringify(dataToSave),
       })
-      
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        notify_success();
-        
-        axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data',{
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': "any"
-          },
+
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          notify_success();
+
+          axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'ngrok-skip-browser-warning': "any"
+            },
+          })
+            .then(response => {
+              console.log('Fetched tasks:', response.data);
+              // setTasks(response.data);
+            })
+            .catch(error => {
+              console.error('Error fetching task data:', error);
+            });
         })
-        .then(response => {
-          console.log('Fetched tasks:', response.data);
-          // setTasks(response.data);
-        })
-        .catch(error => {
-          console.error('Error fetching task data:', error);
+        .catch((error) => {
+          console.error('Error:', error);
+          notify_fail();
         });
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        notify_fail();
-      });
     }
     setIsSaving(false);
-  }, [tasks, inputValue , userId]);
-  
-  
-  
-  
+  }, [tasks, inputValue, userId]);
+
+
+
+
 
   const handleEditTask = (itemIndex) => {
     if (tasks.length > 0 || inputValue.trim()) {
       saveAllData();
     }
-  
+
     const item = savedItems[itemIndex];
     setInputValue(item.title);
     setTasks(
@@ -592,7 +592,7 @@ function TaskCreate() {
         selectedTags: task.selectedTags || [],
       }))
     );
-  
+
     setSavedItems((prevItems) => prevItems.filter((_, index) => index !== itemIndex));
     document.getElementById('inputField').focus();
   };
@@ -621,14 +621,14 @@ function TaskCreate() {
     updatedTasks[index].comments = updatedComments;
     setTasks(updatedTasks);
   };
-  
 
-  
 
-  
+
+
+
 
   return (
-    
+
     <div className="main_div">
       <div ref={containerRef} className="container">
         <button className="close_button" onClick={saveAllData}>
@@ -644,11 +644,11 @@ function TaskCreate() {
           autoFocus={true}
         >
           <option value="" disabled>
-          Select Allottee
+            Select Allottee
           </option>
           {data.map(([id, name]) => (
             <option key={id} value={id}>
-              {name} 
+              {name}
             </option>
           ))}
         </select>
@@ -660,9 +660,9 @@ function TaskCreate() {
               key={index}
               className={`new-div`}
               draggable
-              onDragStart={(e) => handleTaskDragStart(e,null, index)}
+              onDragStart={(e) => handleTaskDragStart(e, null, index)}
               onDragOver={handleTaskDragOver}
-              onDrop={(e) => handleTaskDrop(e, null,index)}
+              onDrop={(e) => handleTaskDrop(e, null, index)}
             >
               <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
               <input
@@ -688,24 +688,24 @@ function TaskCreate() {
                 dangerouslySetInnerHTML={{ __html: task.text }} // Only rendered when loading the tasks initially
               />
 
-              {selectedTaskIndex === index && 
-                <SelectText 
-                  targetRef={task.ref} 
-                  // toggleBold={toggleBold}
-                  // toggleItalic={toggleItalic}
+              {selectedTaskIndex === index &&
+                <SelectText
+                  targetRef={task.ref}
+                // toggleBold={toggleBold}
+                // toggleItalic={toggleItalic}
                 />
               }
-              
+
               <TaskList
                 dateTime={task.datetime}
                 onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
                 onKeyDown={(e) => handleTaskKeyDown(index, e)}
               />
-                
-              <div id ='icon_div'>
+
+              <div id='icon_div'>
                 <div>
                   <CustomSelect
-                    selectedTags={task.selectedTags} 
+                    selectedTags={task.selectedTags}
                     onSelectTags={(tags) => handleLabelChange(index, tags)}
                   />
                 </div>
@@ -718,11 +718,11 @@ function TaskCreate() {
                 </div>
 
                 <div>
-                  <FileUpload/>
+                  <FileUpload />
                 </div>
 
                 <div className='timer_inp'>
-                  <WorkType  selectedOption={task.workType}
+                  <WorkType selectedOption={task.workType}
                     setSelectedOption={(value) => {
                       const updatedTasks = [...tasks];
                       updatedTasks[index].workType = value;
@@ -734,7 +734,7 @@ function TaskCreate() {
               </div>
 
               <button className="delete-button" onClick={() => handleDeleteTask(index)}>
-                <DeleteOutlinedIcon className='cross_button' style={{ fontSize: 30 }}/>
+                <DeleteOutlinedIcon className='cross_button' style={{ fontSize: 30 }} />
               </button>
             </div>
           ))}
@@ -759,14 +759,14 @@ function TaskCreate() {
       </div>
       <div className="saved-items">
         {savedItems.map((item, itemIndex) => (
-          <div key={itemIndex} 
-               className="card"
-               onClick={(e) => {
-                if (e.target === e.currentTarget) {
-                  handleEditTask(itemIndex);
-                }
-              }}
-               >
+          <div key={itemIndex}
+            className="card"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                handleEditTask(itemIndex);
+              }
+            }}
+          >
             <h1>{item.title}</h1>
 
             {item.items.map((task, index) => (
@@ -785,7 +785,7 @@ function TaskCreate() {
                   checked={task.completed || false}
                   onChange={(e) => handleTaskCheck(itemIndex, index, e.target.checked)}
                 />
-                <div 
+                <div
                   className="task-content"
                   dangerouslySetInnerHTML={{ __html: task.text }}
                   style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
@@ -806,18 +806,20 @@ function TaskCreate() {
 
       <div className='task_container'>
         <h1>tasks</h1>
-        {
-          Allottee.map((Allottee_name) => {
-            console.log('Allottee name',Allottee_name);
-            return(
-            <div className='allottee_container' >
-              <p>{Allottee_name}</p>
-              <div>
-                
-              </div>
-            </div>);
-          })
-        }
+        <div className='tasks'>
+          {
+            Allottee.map((Allottee_name) => {
+              console.log('Allottee name', Allottee_name);
+              return (
+                <div className='allottee_container' >
+                  <p>{Allottee_name}</p>
+                  <div>
+
+                  </div>
+                </div>);
+            })
+          }
+        </div>
       </div>
     </div>
   );
