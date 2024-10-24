@@ -526,7 +526,14 @@ function TaskCreate() {
         console.log('Success:', data);
         notify_success();
         
-        axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data')
+        axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data',{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': "any"
+          },
+        })
         .then(response => {
           console.log('Fetched tasks:', response.data);
           // setTasks(response.data);
