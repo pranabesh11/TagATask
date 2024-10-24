@@ -482,6 +482,9 @@ function TaskCreate() {
 
   const saveAllData = useCallback(() => {
     const params = new URLSearchParams(window.location.search);
+    const notify_success = () => toast.success("Task Created Successfully !");
+    const notify_fail = () => toast.success("Task Creation Failed !");
+
 
     const userId = params.get('id');
     const dataToSave = {
@@ -521,16 +524,8 @@ function TaskCreate() {
       .then(response => response.json())
       .then(data => {
         console.log('Success:', data);
-        toast.success("Task saved successfully!", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-
+        notify_success();
+        
         axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data')
         .then(response => {
           console.log('Fetched tasks:', response.data);
@@ -542,15 +537,7 @@ function TaskCreate() {
       })
       .catch((error) => {
         console.error('Error:', error);
-        toast.error("Failed to save the task", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        notify_fail();
       });
     }
     setIsSaving(false);
