@@ -110,6 +110,7 @@ function TaskCreate() {
         });
         console.log(response.data.personnels);
         setAllottee(response.data.personnels);
+        console.log(Allottee);
       } catch (error) {
         console.error('Error fetching data:', error);
         setError('Error fetching data. Please check the console for more details.');
