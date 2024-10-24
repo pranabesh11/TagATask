@@ -109,11 +109,7 @@ function TaskCreate() {
           },
         });
         console.log(response.data.personnels);
-        if (response.data && response.data.Allottee) {
-          setAllottee(response.data.personnels);
-        } else {
-          setError('Unexpected response structure');
-        }
+        setAllottee(response.data.personnels);
       } catch (error) {
         console.error('Error fetching data:', error);
         setError('Error fetching data. Please check the console for more details.');
