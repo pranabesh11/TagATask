@@ -483,7 +483,7 @@ function TaskCreate() {
   const saveAllData = useCallback(() => {
     const params = new URLSearchParams(window.location.search);
     const notify_success = () => toast.success("Task Created Successfully !");
-    const notify_fail = () => toast.success("Task Creation Failed !");
+    const notify_fail = () => toast.error("Task Creation Failed !");
 
 
     const userId = params.get('id');
