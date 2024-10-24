@@ -34,6 +34,7 @@ function TaskCreate() {
   
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
+  const [Allottee, setAllottee] = useState([]);
 
 
 
@@ -94,6 +95,30 @@ function TaskCreate() {
     };
   
     fetchData();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchallottee = async () => {
+      try {
+        const response = await axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data', {
+          headers: {
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': "any"
+          },
+        });
+        if (response.data && response.data.Allottee) {
+          setAllottee(response.data.Allottee);
+        } else {
+          setError('Unexpected response structure');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Error fetching data. Please check the console for more details.');
+      }
+    };
+  
+    fetchallottee();
   }, []);
   
   
