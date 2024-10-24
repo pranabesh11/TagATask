@@ -522,13 +522,38 @@ function TaskCreate() {
       .then(data => {
         console.log('Success:', data);
         toast.success("Task saved successfully!", {
-          position: toast.POSITION.TOP_RIGHT
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+
+        axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data')
+        .then(response => {
+          console.log('Fetched tasks:', response.data);
+          // setTasks(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching task data:', error);
         });
       })
       .catch((error) => {
         console.error('Error:', error);
         toast.error("Failed to save the task", {
-          position: toast.POSITION.TOP_RIGHT
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
         });
       });
     }
