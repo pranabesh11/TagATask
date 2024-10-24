@@ -807,7 +807,7 @@ function TaskCreate() {
         </ul>
       </div>
 
-      <div>
+      <div className='main'>
         {
           Allottee.map((Allottee_name) => (
             <div className='allottee_container' >
