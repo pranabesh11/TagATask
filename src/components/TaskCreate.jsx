@@ -811,7 +811,8 @@ function TaskCreate() {
               <div>
                 {tasks.map(([taskId, taskDescription]) => (
                   <div key={taskId}>
-                    <span>Task ID: {taskId}</span> - <span>{taskDescription}</span>
+                    {/* <span>Task ID: {taskId}</span> -*/} 
+                    <div className='each_task'>{taskDescription}</div> 
                   </div>
                 ))}
               </div>

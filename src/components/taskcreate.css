@@ -376,7 +376,7 @@
     border: 1px solid rgb(235, 232, 232);
     padding: 10px;
     margin: 3%;
-    height: 30vh;
+    height: auto;
     width: 25%;
     min-height: 100px;
     min-width: 150px;
@@ -403,4 +403,10 @@
     background-color: #f1f5f5;
     width: 96vw;
     margin: 20px;
+}
+.each_task{
+   width: 90%;
+   padding: 10px;
+   border: 1px solid gainsboro;
+   margin: 10px;
 }
