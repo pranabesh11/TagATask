@@ -813,9 +813,6 @@ function TaskCreate() {
               return (
                 <div className='allottee_container' >
                   <p>{Allottee_name}</p>
-                  <div>
-
-                  </div>
                 </div>);
             })
           }
