@@ -605,16 +605,19 @@ function TaskCreate() {
 
 
   const editTask = (taskId, taskDescription, allotteeName) => {
-    
-    setInputValue(allotteeName);
+    // Set the dropdown to the allottee name associated with the task
+    setInputValue(allotteeName); // Correctly set the allotteeName in the dropdown
+  
+    // Enter edit mode for the specific task by setting the task description
     setTasks([{ text: taskDescription, ref: React.createRef() }]);
     
-    
+    // Define the data to edit, including taskId and updated text
     const dataToEdit = {
       task_id: taskId,
       text: taskDescription,
     };
   
+    // Call the API to save the edited task
     fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
       method: 'POST',
       headers: {
@@ -627,12 +630,13 @@ function TaskCreate() {
       .then((response) => response.json())
       .then((data) => {
         console.log('Edit Success:', data);
-        fetchAllotteeData(); 
+        fetchAllotteeData(); // Fetch updated data after editing
       })
       .catch((error) => {
         console.error('Error editing task:', error);
       });
   };
+  
   
   
   
@@ -843,17 +847,17 @@ function TaskCreate() {
               <p className='name_text'>{allotteeName}</p>
               <div>
               {tasks.map(([taskId, taskDescription]) => (
-            <div key={taskId} onClick={() => editTask(taskId, taskDescription,allotteeName)}>
-              <div
-                suppressContentEditableWarning={true}
-                onInput={(e) => handleTaskInput(0, e)}
-                onBlur={(e) => handleTaskInput(0, e)}
-                className='each_task'
-                style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap' }}
-                dangerouslySetInnerHTML={{ __html: taskDescription }}
-              />
-            </div>
-          ))}
+              <div key={taskId} onClick={() => editTask(taskId, taskDescription,allotteeName)}>
+                <div
+                  suppressContentEditableWarning={true}
+                  onInput={(e) => handleTaskInput(0, e)}
+                  onBlur={(e) => handleTaskInput(0, e)}
+                  className='each_task'
+                  style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap' }}
+                  dangerouslySetInnerHTML={{ __html: taskDescription }}
+                />
+              </div>
+              ))}
               </div>
             </div>
           ))
