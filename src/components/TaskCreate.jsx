@@ -611,7 +611,7 @@ function TaskCreate() {
 
         if (allotteeId) {
             setInputValue(allotteeId); // Set the dropdown to the allottee ID
-            console.log(`Allottee ID set to ${allotteeId} for name: ${allotteeName}`);
+            console.log(`Allottee ID set to ${allotteeId.id_name_converter} for name: ${allotteeName}`);
         } else {
             console.error('ID not found for the provided name.');
         }
