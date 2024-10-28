@@ -657,6 +657,36 @@ function TaskCreate() {
       });
   };
   
+  const fetchAllotteeId = async (allotteeName) => {
+    try {
+      // Post the allottee name and fetch the corresponding ID
+      const response = await axios.post('https://0319-49-37-9-67.ngrok-free.app/id_name_converter', 
+        { name: allotteeName },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'any'
+          }
+        }
+      );
+      return response.data.id; // Assuming the response returns an 'id' field
+    } catch (error) {
+      console.error('Error fetching ID for allottee name:', error);
+      return null;
+    }
+  };
+  
+  const handleTaskClick = async (taskId, taskDescription, allotteeName) => {
+    // Fetch the allottee ID based on the allotteeName
+    const allotteeId = await fetchAllotteeId(allotteeName);
+  
+    if (allotteeId) {
+      setInputValue(allotteeId); // Set the dropdown input value to the fetched allottee ID
+    }
+  
+    // Additional logic to set the task description for editing...
+  };
   
   
   
