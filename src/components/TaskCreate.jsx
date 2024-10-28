@@ -34,7 +34,7 @@ function TaskCreate() {
 
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
-  const [Allottee, setAllottee] = useState([]);
+  const [Allottee, setAllottee] = useState({});
 
 
 
