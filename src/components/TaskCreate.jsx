@@ -648,20 +648,24 @@ function TaskCreate() {
 };
 
   
-  const fetchAllotteeId = async (allotteeName) => {
-    try {
-        const response = await axios.post(
-            'https://0319-49-37-9-67.ngrok-free.app/id_name_converter',
-            { name: allotteeName },
-            { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
-        );
-        console.log("this is response",response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching ID for allottee name:', error);
-        return null;
-    }
-  };
+const fetchAllotteeId = async (allotteeName) => {
+  try {
+      const response = await axios.post(
+          'https://0319-49-37-9-67.ngrok-free.app/id_name_converter',
+          { name: allotteeName },
+          { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
+      );
+      
+      // Adjust this line to directly access the ID if nested
+      const allotteeId = response.data.id_name_converter; // Adjust based on API response structure
+      console.log("Fetched Allottee ID:", allotteeId); // Confirm if ID is correctly accessed here
+      return allotteeId;
+  } catch (error) {
+      console.error('Error fetching ID for allottee name:', error);
+      return null;
+  }
+};
+
 
   
   
