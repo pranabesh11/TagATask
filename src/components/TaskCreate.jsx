@@ -604,6 +604,37 @@ function TaskCreate() {
   };
 
 
+  const editTask = (taskId, taskDescription) => {
+    // Enter edit mode for a specific task by setting the inputValue and taskId to edit
+    setInputValue(taskDescription);
+    setTasks([{ text: taskDescription, ref: React.createRef() }]);
+  
+    // Call the API to save the edited task
+    const dataToEdit = {
+      task_id: taskId, // Include the taskId for editing specific task
+      text: inputValue, // Send updated text
+    };
+  
+    fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': "any",
+      },
+      body: JSON.stringify(dataToEdit),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Edit Success:', data);
+        fetchAllotteeData(); // Fetch updated data after editing
+      })
+      .catch((error) => {
+        console.error('Error editing task:', error);
+      });
+  };
+  
+
 
 
 
@@ -810,7 +841,7 @@ function TaskCreate() {
               <p className='name_text'>{allotteeName}</p>
               <div>
                 {tasks.map(([taskId, taskDescription]) => (
-                  <div key={taskId}>
+                  <div key={taskId} onClick={() => editTask(taskId, taskDescription)}>
                     {/* <span>Task ID: {taskId}</span> -*/} 
                     <div className='each_task'>{taskDescription}</div> 
                   </div>
