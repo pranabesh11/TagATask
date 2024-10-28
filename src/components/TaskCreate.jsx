@@ -659,22 +659,32 @@ function TaskCreate() {
   
   const fetchAllotteeId = async (allotteeName) => {
     try {
-      const response = await axios.post('https://0319-49-37-9-67.ngrok-free.app/id_name_converter', 
+      // Post the name to get the corresponding ID in the response
+      const response = await axios.post(
+        'https://0319-49-37-9-67.ngrok-free.app/id_name_converter',
         { name: allotteeName },
         {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'ngrok-skip-browser-warning': 'any'
-          }
+            'ngrok-skip-browser-warning': 'any',
+          },
         }
       );
-      return response.data.id_name_converter?.[0]; // Access first item if API returns array
+  
+      // Access the ID from the JSON response
+      const allotteeId = response.data.id_name_converter;
+      
+      // Print the retrieved ID to the console
+      console.log("Fetched Allottee ID:", allotteeId);
+  
+      return allotteeId;
     } catch (error) {
       console.error('Error fetching ID for allottee name:', error);
       return null;
     }
   };
+  
   
   const handleTaskClick = async (taskId, taskDescription, allotteeName) => {
     // Fetch the allottee ID based on the allotteeName
