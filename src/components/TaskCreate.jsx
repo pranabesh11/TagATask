@@ -493,8 +493,8 @@ function TaskCreate() {
       style: { backgroundColor: "#ffcc00", color: "#fff" }
     });
     if (inputValue==="") { 
-      notify_warning();
-      return;
+      // notify_warning();
+      
     }
 
     const userId = params.get('id');
