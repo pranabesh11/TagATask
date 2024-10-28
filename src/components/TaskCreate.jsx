@@ -617,27 +617,26 @@ function TaskCreate() {
           }
         }
       );
-
-      const allotteeId = response.data.id_name_converter?.[0]; // Accessing the ID from the response array
-
+  
+      const allotteeId = response.data.id; // Assuming the API response contains an 'id' field
       if (allotteeId) {
-        setInputValue(allotteeId); // Set the dropdown value to the allottee ID
+        setInputValue(allotteeId); // Set the dropdown to the correct allottee ID
       } else {
         console.error('ID not found for the provided name.');
       }
     } catch (error) {
       console.error('Error fetching ID for allottee name:', error);
     }
-
+  
     // Set task description and ref in edit mode
     setTasks([{ text: taskDescription, ref: React.createRef() }]);
-
+  
     // Prepare the data for editing
     const dataToEdit = {
       task_id: taskId,
       text: taskDescription,
     };
-
+  
     // Post to edit task endpoint
     fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
       method: 'POST',
@@ -656,6 +655,41 @@ function TaskCreate() {
       .catch((error) => {
         console.error('Error editing task:', error);
       });
+  };
+  
+  const fetchAllotteeId = async (allotteeName) => {
+    try {
+      const response = await axios.post('https://0319-49-37-9-67.ngrok-free.app/id_name_converter', 
+        { name: allotteeName },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'any'
+          }
+        }
+      );
+      return response.data.id_name_converter?.[0]; // Access first item if API returns array
+    } catch (error) {
+      console.error('Error fetching ID for allottee name:', error);
+      return null;
+    }
+  };
+  
+  const handleTaskClick = async (taskId, taskDescription, allotteeName) => {
+    // Fetch the allottee ID based on the allotteeName
+    const allotteeId = await fetchAllotteeId(allotteeName);
+  
+    if (allotteeId) {
+      setInputValue(allotteeId); // Set the dropdown input value to the fetched allottee ID
+    } else {
+      console.error("Allottee ID not found");
+    }
+  
+    // Set task description for editing
+    setTasks([{ text: taskDescription, ref: React.createRef() }]);
+  
+    // Additional logic if needed...
   };
   
   
