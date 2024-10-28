@@ -529,6 +529,7 @@ function TaskCreate() {
         .then(data => {
           console.log('Success:', data);
           notify_success();
+          fetchAllotteeData();
 
           axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data', {
             method: 'GET',
