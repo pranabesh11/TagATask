@@ -604,26 +604,46 @@ function TaskCreate() {
   };
 
 
-  const editTask = (taskId, taskDescription, allotteeName) => {
-    // Set the dropdown to the allottee name associated with the task
-    setInputValue(allotteeName); // Correctly set the allotteeName in the dropdown
+  const editTask = async (taskId, taskDescription, allotteeName) => {
+    try {
+      // Fetch the ID corresponding to the allotteeName
+      const response = await axios.post('https://0319-49-37-9-67.ngrok-free.app/id_name_converter', 
+        { name: allotteeName },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'any'
+          }
+        }
+      );
   
-    // Enter edit mode for the specific task by setting the task description
+      const allotteeId = response.data.id; // Assuming the API response contains an 'id' field
+      if (allotteeId) {
+        setInputValue(allotteeId); // Set the dropdown to the correct allottee ID
+      } else {
+        console.error('ID not found for the provided name.');
+      }
+    } catch (error) {
+      console.error('Error fetching ID for allottee name:', error);
+    }
+  
+    // Set task description and ref in edit mode
     setTasks([{ text: taskDescription, ref: React.createRef() }]);
-    
-    // Define the data to edit, including taskId and updated text
+  
+    // Prepare the data for editing
     const dataToEdit = {
       task_id: taskId,
       text: taskDescription,
     };
   
-    // Call the API to save the edited task
+    // Post to edit task endpoint
     fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'ngrok-skip-browser-warning': "any",
+        'ngrok-skip-browser-warning': 'any',
       },
       body: JSON.stringify(dataToEdit),
     })
@@ -636,6 +656,7 @@ function TaskCreate() {
         console.error('Error editing task:', error);
       });
   };
+  
   
   
   
