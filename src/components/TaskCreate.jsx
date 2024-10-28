@@ -804,7 +804,7 @@ function TaskCreate() {
         </ul>
       </div>
 
-      <div className='task_container'>
+      {/* <div className='task_container'>
         <h1>tasks</h1>
         <div className='tasks'>
           {
@@ -817,7 +817,30 @@ function TaskCreate() {
             })
           }
         </div>
+      </div> */}
+
+
+<div className='task_container'>
+      <h1>Tasks</h1>
+      <div className='tasks'>
+        {
+          Object.entries(Allottee).map(([allotteeName, tasks]) => (
+            <div className='allottee_container' key={allotteeName}>
+              <p className='name_text'>{allotteeName}</p>
+              <div>
+                {tasks.map(([taskId, taskDescription]) => (
+                  <div key={taskId}>
+                    <span>Task ID: {taskId}</span> - <span>{taskDescription}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        }
       </div>
+    </div>
+
+
     </div>
   );
 }

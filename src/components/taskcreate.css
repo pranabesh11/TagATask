@@ -381,11 +381,17 @@
     min-height: 100px;
     min-width: 150px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
+    flex-direction: column;
     border-radius: 5px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.name_text{
+    font-weight: bolder;
+    font-size: larger;
 }
 
 .task_container{
