@@ -488,7 +488,14 @@ function TaskCreate() {
     const params = new URLSearchParams(window.location.search);
     const notify_success = () => toast.success("Task Created Successfully !");
     const notify_fail = () => toast.error("Task Creation Failed !");
-
+    const notify_warning = () => toast.warn("Please select Allottee Name", {
+      position: "top-center", 
+      style: { backgroundColor: "#ffcc00", color: "#fff" }
+    });
+    if (!inputValue) { 
+      notify_warning();
+      return;
+    }
 
     const userId = params.get('id');
     const dataToSave = {
@@ -606,29 +613,22 @@ function TaskCreate() {
 
   const editTask = async (taskId, taskDescription, allotteeName) => {
     try {
-        // Fetch the allottee ID for the selected name
-        const allotteeId = await fetchAllotteeId(allotteeName); 
-
-        if (allotteeId) {
-            setInputValue(allotteeId); // Set the dropdown to the allottee ID
-            console.log(`Allottee ID set to ${allotteeId.id_name_converter} for name: ${allotteeName}`);
-        } else {
-            console.error('ID not found for the provided name.');
-        }
+      const allotteeId = await fetchAllotteeId(allotteeName); 
+      if (allotteeId) {
+        setInputValue(allotteeId);
+        console.log(`Allottee ID set to ${allotteeId.id_name_converter} for name: ${allotteeName}`);
+      } else {
+        console.error('ID not found for the provided name.');
+      }
     } catch (error) {
-        console.error('Error fetching ID for allottee name:', error);
+      console.error('Error fetching ID for allottee name:', error);
     }
-
-    // Set task description and reference in edit mode
     setTasks([{ text: taskDescription, ref: React.createRef() }]);
-
-    // Prepare data for editing
     const dataToEdit = {
         task_id: taskId,
         text: taskDescription,
     };
 
-    // Post to edit task endpoint
     try {
         const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
             method: 'POST',
@@ -641,7 +641,7 @@ function TaskCreate() {
         });
         const data = await response.json();
         console.log('Edit Success:', data);
-        fetchAllotteeData(); // Refresh data after editing
+        fetchAllotteeData();
     } catch (error) {
         console.error('Error editing task:', error);
     }
@@ -651,47 +651,21 @@ function TaskCreate() {
 const fetchAllotteeId = async (allotteeName) => {
   try {
       const response = await axios.post(
-          'https://0319-49-37-9-67.ngrok-free.app/id_name_converter',
-          { name: allotteeName },
-          { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
+        'https://0319-49-37-9-67.ngrok-free.app/id_name_converter',
+        { name: allotteeName },
+        { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
       );
-      
-      // Adjust this line to directly access the ID if nested
-      const allotteeId = response.data.id_name_converter; // Adjust based on API response structure
-      console.log("Fetched Allottee ID:", allotteeId); // Confirm if ID is correctly accessed here
+      const allotteeId = response.data.id_name_converter;
+      console.log("Fetched Allottee ID:", allotteeId);
       return allotteeId;
   } catch (error) {
-      console.error('Error fetching ID for allottee name:', error);
-      return null;
+    console.error('Error fetching ID for allottee name:', error);
+    return null;
   }
 };
 
 
   
-  
-  
-  // const handleTaskClick = async (taskId, taskDescription, allotteeName) => {
-  //   // Fetch the allottee ID based on the allotteeName
-  //   const allotteeId = await fetchAllotteeId(allotteeName);
-  
-  //   if (allotteeId) {
-  //     setInputValue(allotteeId); // Set the dropdown input value to the fetched allottee ID
-  //   } else {
-  //     console.error("Allottee ID not found");
-  //   }
-  
-  //   // Set task description for editing
-  //   setTasks([{ text: taskDescription, ref: React.createRef() }]);
-  
-  //   // Additional logic if needed...
-  // };
-  
-  
-  
-  
-  
-
-
 
 
   return (
