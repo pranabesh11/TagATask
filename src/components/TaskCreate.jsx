@@ -492,7 +492,7 @@ function TaskCreate() {
       position: "top-center", 
       style: { backgroundColor: "#ffcc00", color: "#fff" }
     });
-    if (!inputValue) { 
+    if (inputValue==="") { 
       notify_warning();
       return;
     }
