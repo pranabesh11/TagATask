@@ -494,7 +494,7 @@ function TaskCreate() {
     });
     if (inputValue==="") { 
       // notify_warning();
-      
+      return;
     }
 
     const userId = params.get('id');
