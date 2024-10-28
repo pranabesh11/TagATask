@@ -604,11 +604,36 @@ function TaskCreate() {
   };
 
 
-  const editTask = (taskId, taskDescription) => {
-    // Set the state to edit a specific task with a taskId
-    setInputValue(taskDescription);
-    setTasks([{ text: taskDescription, taskId, ref: React.createRef() }]);
+  const editTask = (taskId, taskDescription, allotteeName) => {
+    // Enter edit mode for a specific task by setting inputValue and taskId to edit
+    setInputValue(allotteeName); // Set dropdown to allotteeName
+    setTasks([{ text: taskDescription, ref: React.createRef() }]);
+    
+    // Call the API to save the edited task
+    const dataToEdit = {
+      task_id: taskId, // Include taskId for editing specific task
+      text: taskDescription, // Send updated text
+    };
+  
+    fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': "any",
+      },
+      body: JSON.stringify(dataToEdit),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Edit Success:', data);
+        fetchAllotteeData(); // Fetch updated data after editing
+      })
+      .catch((error) => {
+        console.error('Error editing task:', error);
+      });
   };
+  
   
   
   
@@ -818,12 +843,12 @@ function TaskCreate() {
               <p className='name_text'>{allotteeName}</p>
               <div>
               {tasks.map(([taskId, taskDescription]) => (
-            <div key={taskId} onClick={() => editTask(taskId, taskDescription)}>
+            <div key={taskId} onClick={() => editTask(taskId, taskDescription,allotteeName)}>
               <div
                 contentEditable
                 suppressContentEditableWarning={true}
-                onInput={(e) => handleTaskInput(0, e)} // handle input for this specific task
-                onBlur={(e) => handleTaskInput(0, e)} // save on blur
+                onInput={(e) => handleTaskInput(0, e)}
+                onBlur={(e) => handleTaskInput(0, e)}
                 className='each_task'
                 style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap' }}
                 dangerouslySetInnerHTML={{ __html: taskDescription }}
