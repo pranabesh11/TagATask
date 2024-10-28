@@ -121,27 +121,7 @@ function TaskCreate() {
   }, []);
 
 
-  // useEffect(() => {
-  //   const fetchOptions = async () => {
-  //     try {
-  //       const response = await fetch('http://localhost:3000/allot');
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-  //       const contentType = response.headers.get('content-type');
-  //       if (!contentType || !contentType.includes('application/json')) {
-  //         throw new Error('Expected JSON, but got something else');
-  //       }
-  //       const result = await response.json();
-  //       setOptions(result.data);
-  //       console.log(result);
-  //     } catch (error) {
-  //       console.error('Error fetching options:', error);
-  //     }
-  //   };
-  //   fetchOptions();
-  // }, []);
-
+  
 
   useEffect(() => {
     const handleGlobalKeyDown = (event) => {
@@ -551,7 +531,7 @@ function TaskCreate() {
           notify_success();
 
           axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data', {
-            method: 'POST',
+            method: 'GET',
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
@@ -560,7 +540,7 @@ function TaskCreate() {
           })
             .then(response => {
               console.log('Fetched tasks:', response.data);
-              // setTasks(response.data);
+              setAllottee(response.data.personnels);
             })
             .catch(error => {
               console.error('Error fetching task data:', error);
