@@ -466,7 +466,22 @@ function TaskCreate() {
       setDraggingIndex(null);
     }
   };
-
+  const fetchAllotteeData = async () => {
+    try {
+      const response = await axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': "any"
+        },
+      });
+      console.log('Fetched tasks:', response.data);
+      setAllottee(response.data.personnels);
+    } catch (error) {
+      console.error('Error fetching task data:', error);
+    }
+  };
+  
 
 
 
@@ -528,23 +543,7 @@ function TaskCreate() {
         .then(data => {
           console.log('Success:', data);
           notify_success();
-          fetchallottee();
-
-          axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'ngrok-skip-browser-warning': "any"
-            },
-          })
-            .then(response => {
-              console.log('Fetched tasks:', response.data);
-              setAllottee(response.data.personnels);
-            })
-            .catch(error => {
-              console.error('Error fetching task data:', error);
-            });
+          fetchAllotteeData();
         })
         .catch((error) => {
           console.error('Error:', error);
