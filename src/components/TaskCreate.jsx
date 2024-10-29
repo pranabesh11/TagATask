@@ -500,7 +500,7 @@ function TaskCreate() {
       style: { backgroundColor: "#ffcc00", color: "#fff" }
     });
     if (inputValue==="") { 
-      // notify_warning();
+      notify_warning();
       return;
     }
 
@@ -850,21 +850,6 @@ const fetchAllotteeId = async (allotteeName) => {
           ))}
         </ul>
       </div>
-
-      {/* <div className='task_container'>
-        <h1>tasks</h1>
-        <div className='tasks'>
-          {
-            Allottee.map((Allottee_name) => {
-              console.log('Allottee name', Allottee_name);
-              return (
-                <div className='allottee_container' >
-                  <p>{Allottee_name}</p>
-                </div>);
-            })
-          }
-        </div>
-      </div> */}
 
 
 <div className='task_container'>
