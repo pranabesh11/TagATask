@@ -623,6 +623,7 @@ function TaskCreate() {
                     event.preventDefault();
                     const updatedText = taskRef.current.innerText;
                     saveEditTask(taskId, allotteeId, updatedText);
+                    fetchAllotteeData();
                 }
             });
         }
@@ -632,9 +633,9 @@ function TaskCreate() {
 const saveEditTask = async (taskId, allotteeId, updatedText) => {
     try {
         const dataToEdit = {
-            task_id: taskId,
-            allottee_id: allotteeId,
-            text: updatedText,
+          task_id: taskId,
+          allottee_id: allotteeId,
+          text: updatedText,
         };
         const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
             method: 'POST',
