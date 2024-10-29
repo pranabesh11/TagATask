@@ -538,8 +538,12 @@ function TaskCreate() {
         },
         body: JSON.stringify(dataToSave),
       })
-
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to save data');
+          }
+          return response.json();
+        })
         .then(data => {
           console.log('Success:', data);
           notify_success();
@@ -548,7 +552,7 @@ function TaskCreate() {
         .catch((error) => {
           console.error('Error:', error);
           notify_fail();
-        });
+        });      
     }
     setIsSaving(false);
   }, [tasks, inputValue, userId]);
