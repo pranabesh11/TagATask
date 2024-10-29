@@ -604,7 +604,6 @@ function TaskCreate() {
 
 
   const editTask = async (taskId, taskDescription, allotteeName) => {
-    // Fetch allottee ID first
     const allotteeId = await fetchAllotteeId(allotteeName);
     if (allotteeId) {
         setInputValue(allotteeId);
@@ -612,19 +611,15 @@ function TaskCreate() {
     } else {
         console.error('ID not found for the provided name.');
     }
-
-    // Set task description for editing
-    const taskRef = React.createRef(); // Create a new ref for the task text
+    const taskRef = React.createRef();
     setTasks([{ text: taskDescription, ref: taskRef }]);
-
-    // Set up event listener for Escape or Enter keys only after setting the task for editing
     setTimeout(() => {
         if (taskRef.current) {
             taskRef.current.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter' || event.key === 'Escape') {
                     event.preventDefault();
                     const updatedText = taskRef.current.innerText;
-                    saveEditTask(taskId, allotteeId, updatedText); // Pass taskId, allotteeId, and updated text
+                    saveEditTask(taskId, allotteeId, updatedText);
                 }
             });
         }
@@ -633,14 +628,11 @@ function TaskCreate() {
 
 const saveEditTask = async (taskId, allotteeId, updatedText) => {
     try {
-        // Prepare data to be sent to the server
         const dataToEdit = {
             task_id: taskId,
             allottee_id: allotteeId,
             text: updatedText,
         };
-
-        // Post data to edit task API
         const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
             method: 'POST',
             headers: {
@@ -650,8 +642,6 @@ const saveEditTask = async (taskId, allotteeId, updatedText) => {
             },
             body: JSON.stringify(dataToEdit),
         });
-
-        // Check if the response is okay before parsing JSON
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
         const data = await response.json();
         console.log('Edit Success:', data);
