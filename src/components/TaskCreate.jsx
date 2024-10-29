@@ -646,9 +646,15 @@ const saveEditTask = async (taskId, allotteeId, updatedText) => {
             body: JSON.stringify(dataToEdit),
         });
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-        const data = await response.json();
-        console.log('Edit Success:', data);
-        fetchAllotteeData();
+        const responseText = await response.text();
+        const data = responseText ? JSON.parse(responseText) : null;
+        
+        if (data) {
+          console.log('Edit Success:', data);
+          await fetchAllotteeData();
+        } else {
+          console.error('No data returned from edit task API');
+        }
     } catch (error) {
         console.error('Error saving edited task:', error);
     }
