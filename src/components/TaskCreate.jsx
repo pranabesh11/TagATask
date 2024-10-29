@@ -616,6 +616,17 @@ function TaskCreate() {
       console.error('Error fetching ID for allottee name:', error);
     }
     setTasks([{ text: taskDescription, ref: React.createRef() }]);
+    setTimeout(() => {
+      if (tasks[0] && tasks[0].ref.current) {
+          tasks[0].ref.current.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === 'Escape') {
+                  event.preventDefault();
+                  const updatedText = tasks[0].ref.current.innerText; // Get updated text from ref
+                  saveEditTask(taskId, updatedText); // Call the save function
+              }
+          });
+      }
+  }, 0);
     const dataToEdit = {
         task_id: taskId,
         allottee_id: allotteeId,
@@ -640,6 +651,32 @@ function TaskCreate() {
         console.error('Error editing task:', error);
     }
 };
+
+const saveEditTask = async (taskId, updatedText) => {
+  try {
+      const dataToEdit = {
+          task_id: taskId,
+          text: updatedText,
+      };
+
+      const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'ngrok-skip-browser-warning': 'any',
+          },
+          body: JSON.stringify(dataToEdit),
+      });
+
+      const data = await response.json();
+      console.log('Edit Success:', data);
+      // Optionally: Refresh the list or fetch the updated data if needed
+  } catch (error) {
+      console.error('Error editing task:', error);
+  }
+};
+
 
   
 const fetchAllotteeId = async (allotteeName) => {
