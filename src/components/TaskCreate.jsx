@@ -623,7 +623,6 @@ function TaskCreate() {
                     event.preventDefault();
                     const updatedText = taskRef.current.innerText;
                     saveEditTask(taskId, allotteeId, updatedText);
-                    fetchAllotteeData();
                 }
             });
         }
@@ -649,6 +648,7 @@ const saveEditTask = async (taskId, allotteeId, updatedText) => {
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
         const data = await response.json();
         console.log('Edit Success:', data);
+        fetchAllotteeData();
     } catch (error) {
         console.error('Error saving edited task:', error);
     }
