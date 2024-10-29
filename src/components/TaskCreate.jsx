@@ -604,8 +604,8 @@ function TaskCreate() {
 
 
   const editTask = async (taskId, taskDescription, allotteeName) => {
-    try {
-      const allotteeId = await fetchAllotteeId(allotteeName); 
+    const allotteeId = await fetchAllotteeId(allotteeName);
+    try { 
       if (allotteeId) {
         setInputValue(allotteeId);
         console.log(`Allottee ID set to ${allotteeId.id_name_converter} for name: ${allotteeName}`);
@@ -618,19 +618,20 @@ function TaskCreate() {
     setTasks([{ text: taskDescription, ref: React.createRef() }]);
     const dataToEdit = {
         task_id: taskId,
+        allottee_id: allotteeId,
         text: taskDescription,
     };
 
     try {
-        const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'ngrok-skip-browser-warning': 'any',
-            },
-            body: JSON.stringify(dataToEdit),
-        });
+      const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'any',
+        },
+        body: JSON.stringify(dataToEdit),
+      });
         const data = await response.json();
         console.log('Edit Success:', data);
         // fetchAllotteeData();
