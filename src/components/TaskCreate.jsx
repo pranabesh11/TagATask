@@ -688,7 +688,7 @@ const fetchAllotteeId = async (allotteeName) => {
       );
       const allotteeId = response.data.id_name_converter;
       console.log("Fetched Allottee ID:", allotteeId);
-      return allotteeId;
+      return allotteeId[0];
   } catch (error) {
     console.error('Error fetching ID for allottee name:', error);
     return null;
