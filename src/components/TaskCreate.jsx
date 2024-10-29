@@ -604,96 +604,78 @@ function TaskCreate() {
 
 
   const editTask = async (taskId, taskDescription, allotteeName) => {
+    // Fetch allottee ID first
     const allotteeId = await fetchAllotteeId(allotteeName);
-    try { 
-      if (allotteeId) {
+    if (allotteeId) {
         setInputValue(allotteeId);
-        console.log(`Allottee ID set to ${allotteeId.id_name_converter} for name: ${allotteeName}`);
-      } else {
+        console.log(`Allottee ID set to ${allotteeId} for name: ${allotteeName}`);
+    } else {
         console.error('ID not found for the provided name.');
-      }
-    } catch (error) {
-      console.error('Error fetching ID for allottee name:', error);
     }
-    setTasks([{ text: taskDescription, ref: React.createRef() }]);
-    setTimeout(() => {
-      if (tasks[0] && tasks[0].ref.current) {
-          tasks[0].ref.current.addEventListener('keydown', (event) => {
-              if (event.key === 'Enter' || event.key === 'Escape') {
-                  event.preventDefault();
-                  const updatedText = tasks[0].ref.current.innerText; // Get updated text from ref
-                  saveEditTask(taskId, updatedText); // Call the save function
-              }
-          });
-      }
-  }, 0);
-    const dataToEdit = {
-        task_id: taskId,
-        allottee_id: allotteeId,
-        text: taskDescription,
-    };
 
+    // Set task description for editing
+    const taskRef = React.createRef(); // Create a new ref for the task text
+    setTasks([{ text: taskDescription, ref: taskRef }]);
+
+    // Set up event listener for Escape or Enter keys only after setting the task for editing
+    setTimeout(() => {
+        if (taskRef.current) {
+            taskRef.current.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === 'Escape') {
+                    event.preventDefault();
+                    const updatedText = taskRef.current.innerText;
+                    saveEditTask(taskId, allotteeId, updatedText); // Pass taskId, allotteeId, and updated text
+                }
+            });
+        }
+    }, 0);
+};
+
+const saveEditTask = async (taskId, allotteeId, updatedText) => {
     try {
-      const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'any',
-        },
-        body: JSON.stringify(dataToEdit),
-      });
+        // Prepare data to be sent to the server
+        const dataToEdit = {
+            task_id: taskId,
+            allottee_id: allotteeId,
+            text: updatedText,
+        };
+
+        // Post data to edit task API
+        const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'ngrok-skip-browser-warning': 'any',
+            },
+            body: JSON.stringify(dataToEdit),
+        });
+
+        // Check if the response is okay before parsing JSON
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
         const data = await response.json();
         console.log('Edit Success:', data);
-        // fetchAllotteeData();
-        fetchAllotteeId();
     } catch (error) {
-        console.error('Error editing task in edittask:', error);
+        console.error('Error saving edited task:', error);
     }
 };
 
-const saveEditTask = async (taskId, updatedText) => {
-  try {
-      const dataToEdit = {
-          task_id: taskId,
-          text: updatedText,
-      };
-
-      const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'ngrok-skip-browser-warning': 'any',
-          },
-          body: JSON.stringify(dataToEdit),
-      });
-
-      const data = await response.json();
-      console.log('Edit Success:', data);
-      // Optionally: Refresh the list or fetch the updated data if needed
-  } catch (error) {
-      console.error('Error editing task:', error);
-  }
-};
-
-
-  
 const fetchAllotteeId = async (allotteeName) => {
-  try {
-      const response = await axios.post(
-        'https://0319-49-37-9-67.ngrok-free.app/id_name_converter',
-        { name: allotteeName },
-        { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
-      );
-      const allotteeId = response.data.id_name_converter;
-      console.log("Fetched Allottee ID:", allotteeId);
-      return allotteeId;
-  } catch (error) {
-    console.error('Error fetching ID for allottee name:', error);
-    return null;
-  }
+    try {
+        const response = await axios.post(
+            'https://0319-49-37-9-67.ngrok-free.app/id_name_converter',
+            { name: allotteeName },
+            { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
+        );
+        const allotteeId = response.data.id_name_converter;
+        console.log("Fetched Allottee ID:", allotteeId);
+        return allotteeId;
+    } catch (error) {
+        console.error('Error fetching ID for allottee name:', error);
+        return null;
+    }
 };
+
 
 
   
