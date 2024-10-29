@@ -447,31 +447,23 @@ function TaskCreate() {
 
     if (draggingIndex && draggingIndex.cardIndex === cardIndex && draggingIndex.taskIndex !== targetTaskIndex) {
       setSavedItems((prevItems) => {
-        // Create a deep copy of the savedItems array
         const newItems = prevItems.map((item, i) =>
           i === cardIndex ? { ...item, items: [...item.items] } : item
         );
-        const tasks = newItems[cardIndex].items; // Copy of the tasks array for immutability  
-        // Log the task order before the drop
+        const tasks = newItems[cardIndex].items;  
         console.log('Final task order before drop:', tasks.map(task => task.text));
-        const movedTask = tasks[draggingIndex.taskIndex]; // The task being moved  
-        // Remove the moved task from its original position
+        const movedTask = tasks[draggingIndex.taskIndex];  
         const updatedTasks = tasks.filter((_, i) => i !== draggingIndex.taskIndex);
-        // Insert the dragged task at the correct position
         let insertIndex = targetTaskIndex;
-        // If dragging downwards (from a lower index to a higher index), insert after the dropped-over item
         if (draggingIndex.taskIndex < targetTaskIndex) {
-          insertIndex += 0; // Place the dragged task after the target task
+          insertIndex += 0;
         }
-        // Insert the task at the correct position
         updatedTasks.splice(insertIndex, 0, movedTask);
-        // Log the task order after the drop
         console.log('Final task order after drop:', updatedTasks.map(task => task.text));
-        // Update the items array with the reordered tasks
         newItems[cardIndex].items = updatedTasks;
-        return newItems; // Return the updated state
+        return newItems;
       });
-      setDraggingIndex(null); // Reset the dragging index after drop
+      setDraggingIndex(null);
     }
   };
 
@@ -641,7 +633,8 @@ function TaskCreate() {
         });
         const data = await response.json();
         console.log('Edit Success:', data);
-        fetchAllotteeData();
+        // fetchAllotteeData();
+        fetchAllotteeId();
     } catch (error) {
         console.error('Error editing task:', error);
     }
