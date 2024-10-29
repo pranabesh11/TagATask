@@ -811,7 +811,7 @@ const fetchAllotteeId = async (allotteeName) => {
           </div>
         </div>
       </div>
-      <div className="saved-items">
+      {/* <div className="saved-items">
         {savedItems.map((item, itemIndex) => (
           <div key={itemIndex}
             className="card"
@@ -848,7 +848,7 @@ const fetchAllotteeId = async (allotteeName) => {
             ))}
           </div>
         ))}
-      </div>
+      </div> */}
 
       <div>
         <ul>
