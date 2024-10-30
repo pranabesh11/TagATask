@@ -653,6 +653,7 @@ const saveEditTask = async (taskId, allotteeId, updatedText) => {
           console.log('Edit Success:', data);
           setTimeout(fetchAllotteeData, 200);
           setTasks([]);
+          setInputValue('');
         } else {
           console.error('No data returned from edit task API');
         }
