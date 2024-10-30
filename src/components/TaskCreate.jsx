@@ -607,6 +607,7 @@ function TaskCreate() {
 
 
   const editTask = async (taskId, taskDescription, allotteeName) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const allotteeId = await fetchAllotteeId(allotteeName);
     if (allotteeId) {
         setInputValue(allotteeId);
