@@ -680,6 +680,29 @@ const fetchAllotteeId = async (allotteeName) => {
 };
 
 
+const handleCheckboxChange = async (taskId, completed) => {
+  try {
+    const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/done_mark', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ task_id: taskId, completed }),
+    });
+    if (response.ok) {
+      console.log('Task status updated successfully');
+      // Optionally, fetch the updated tasks data
+      fetchAllotteeData();
+    } else {
+      console.error('Failed to update task status');
+    }
+  } catch (error) {
+    console.error('Error updating task status:', error);
+  }
+};
+
+
 
   
 
@@ -862,7 +885,7 @@ const fetchAllotteeId = async (allotteeName) => {
       </div>
 
 
-<div className='task_container'>
+    <div className='task_container'>
       <h1>Tasks</h1>
       <div className='tasks'>
         {
@@ -871,8 +894,15 @@ const fetchAllotteeId = async (allotteeName) => {
               <p className='name_text'>{allotteeName}</p>
               <div>
               {tasks.map(([taskId, taskDescription]) => (
-              <div key={taskId} onClick={() => editTask(taskId, taskDescription,allotteeName)}>
+              <div key={taskId} className="task-item-container">
+                <input
+                  type="checkbox"
+                  checked={taskDescription.completed || false}
+                  onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
+                  style={{ marginRight: '10px' }}
+                />
                 <div
+                  onClick={() => editTask(taskId, taskDescription,allotteeName)}
                   suppressContentEditableWarning={true}
                   onInput={(e) => handleTaskInput(0, e)}
                   onBlur={(e) => handleTaskInput(0, e)}
