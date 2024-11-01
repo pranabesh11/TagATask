@@ -411,3 +411,8 @@
    margin: 10px;
    cursor: pointer;
 }
+.task-item-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
