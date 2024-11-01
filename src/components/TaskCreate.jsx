@@ -681,30 +681,6 @@ const fetchAllotteeId = async (allotteeName) => {
 };
 
 
-// const handleCheckboxChange = async (taskId, completed) => {
-//   try {
-//     const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/done_mark', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Accept': 'application/json',
-//       },
-//       body: JSON.stringify({ task_id: taskId, completed }),
-//     });
-//     if (response.ok) {
-//       console.log('Task status updated successfully');
-//       // Optionally, fetch the updated tasks data
-//       fetchAllotteeData();
-//     } else {
-//       console.error('Failed to update task status');
-//     }
-//   } catch (error) {
-//     console.error('Error updating task status:', error);
-//   }
-// };
-
-
-
   
 
 
