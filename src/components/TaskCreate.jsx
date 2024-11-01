@@ -893,11 +893,12 @@ const handleCheckboxChange = async (taskId, completed) => {
             <div className='allottee_container' key={allotteeName}>
               <p className='name_text'>{allotteeName}</p>
               <div>
-              {tasks.map(([taskId, taskDescription]) => (
+              {tasks.map(([taskId, taskDescription, datetime]) => (
               <div key={taskId} className="task-item-container">
                 <input
                   type="checkbox"
-                  checked={taskDescription.completed || false}
+                  checked={!!datetime}
+                  onClick={(e) => e.stopPropagation()}
                   onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
                   style={{ marginRight: '10px' }}
                 />
