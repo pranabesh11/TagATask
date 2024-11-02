@@ -16,7 +16,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { handleCheckboxChange } from './ApiList';
+import { handleCheckboxChange,sendUserId, fetchData, fetchAllottee } from './ApiList';
 
 
 function TaskCreate() {
@@ -37,92 +37,12 @@ function TaskCreate() {
   const [error, setError] = useState(null);
   const [Allottee, setAllottee] = useState({});
 
-
-
-  useEffect(() => {
-    const sendUserId = async () => {
-      // Parse the query parameters from the URL
-      const params = new URLSearchParams(window.location.search);
-      const userId = params.get('id'); // Extract the 'id' parameter
-
-      if (userId) {
-        try {
-          // Send the userId to the Rails backend via a POST request
-          const response = await axios.post('https://0319-49-37-9-67.ngrok-free.app/allot', {
-            user_id: userId,
-          }, {
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'ngrok-skip-browser-warning': "any"
-            },
-          });
-          if (response.data && response.data.names) {
-            setData(response.data.names);
-          } else {
-            setError('Unexpected response structure');
-          }
-        } catch (error) {
-          console.error('Error sending User ID:', error);
-        }
-      }
-    };
-
-    sendUserId();
-  }, []);
-
-
-
-  // Fetch options from Rails API
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('https://0319-49-37-9-67.ngrok-free.app/allot', {
-          headers: {
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': "any"
-          },
-        });
-        if (Array.isArray(response.data.names) && response.data.names.every(item => Array.isArray(item) && item.length === 2)) {
-          setData(response.data.names);
-        } else {
-          console.error('Unexpected data structure:', response.data.names);
-          setError('Invalid data format received.');
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Error fetching data. Please check the console for more details.');
-      }
-    };
-
-    fetchData();
-  }, []);
-
-
-  useEffect(() => {
-    console.log("this is the task data");
-    const fetchallottee = async () => {
-      try {
-        const response = await axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data', {
-          headers: {
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': "any"
-          },
-        });
-        console.log(response.data.personnels);
-        setAllottee(response.data.personnels);
-        console.log(Allottee);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Error fetching data. Please check the console for more details.');
-      }
-    };
-
-    fetchallottee();
-  }, []);
-
-
   
+  useEffect(() => {
+    sendUserId(setData, setError);
+    fetchData(setData, setError);
+    fetchAllottee(setAllottee, setError);
+  }, []);
 
   useEffect(() => {
     const handleGlobalKeyDown = (event) => {
