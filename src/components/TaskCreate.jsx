@@ -31,6 +31,7 @@ function TaskCreate() {
   const [options, setOptions] = useState([]);
   const [comments, setComments] = useState([]);
   const { userId } = useParams();
+  const [draggingTask, setDraggingTask] = useState(null);
 
 
   const [data, setData] = useState([]);
@@ -389,9 +390,11 @@ function TaskCreate() {
   // };
 
   const handleTaskDragStart = (e, allotteeName, taskIndex) => {
-    if (!Allottee[allotteeName] || !Allottee[allotteeName][taskIndex]) return;
-    
+    const draggedTask = Allottee[allotteeName][taskIndex];
+    if (!draggedTask) return;
+  
     setDraggingIndex({ allotteeName, taskIndex });
+    setDraggingTask(draggedTask); // Set dragged task details
     e.dataTransfer.effectAllowed = 'move';
   };
   
@@ -402,9 +405,12 @@ function TaskCreate() {
   const handleTaskReorder = (e, targetAllotteeName, targetTaskIndex) => {
     e.preventDefault();
   
-    if (!draggingIndex || !Allottee[draggingIndex.allotteeName] || draggingIndex.taskIndex === undefined) return;
+    if (!draggingIndex || !Allottee[draggingIndex.allotteeName]) return;
   
     const { allotteeName, taskIndex } = draggingIndex;
+  
+    // Get the previous order
+    const previousOrder = [...Allottee[allotteeName]];
   
     if (allotteeName === targetAllotteeName && taskIndex !== targetTaskIndex) {
       setAllottee((prevAllottee) => {
@@ -416,11 +422,21 @@ function TaskCreate() {
         const [movedTask] = taskList.splice(taskIndex, 1);
         taskList.splice(targetTaskIndex, 0, movedTask);
   
+        // Get the new order
+        const newOrder = [...taskList];
+  
+        // Log the previous order, new order, and dragged task
+        console.log("Dragged Task:", draggingTask);
+        console.log("Previous Order:", previousOrder.map(task => task[1])); // Map to task descriptions for clarity
+        console.log("New Order:", newOrder.map(task => task[1])); // Map to task descriptions for clarity
+  
         return updatedAllottee;
       });
     }
   
+    // Reset dragging states
     setDraggingIndex(null);
+    setDraggingTask(null);
   };
   
   const fetchAllotteeData = async () => {
