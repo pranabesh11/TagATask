@@ -300,7 +300,7 @@
     opacity: 0;
   }
   
-  .new-div:hover .drag_image_logo{
+  .drag_image_logo:hover{
     opacity: 1;
   }
 
