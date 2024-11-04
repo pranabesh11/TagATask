@@ -389,62 +389,52 @@ function TaskCreate() {
   //   }
   // };
 
-  const handleTaskDragStart = (e, allotteeName, taskIndex) => {
-    const draggedTask = Allottee[allotteeName][taskIndex];
-    if (!draggedTask) return;
-  
-    setDraggingIndex({ allotteeName, taskIndex });
-    setDraggingTask(draggedTask); // Set dragged task details
-    e.dataTransfer.effectAllowed = 'move';
-  };
-  
-  const handleTaskDragOver = (e) => {
-    e.preventDefault();
-  };
-  
-  const handleTaskReorder = (e, targetAllotteeName, targetTaskIndex) => {
-    e.preventDefault();
-  
-    if (!draggingIndex || !Allottee[draggingIndex.allotteeName]) return;
-  
-    const { allotteeName, taskIndex } = draggingIndex;
-  
-    // Get the previous order
-    const previousOrder = [...Allottee[allotteeName]];
-  
-    if (allotteeName === targetAllotteeName && taskIndex !== targetTaskIndex) {
-      setAllottee((prevAllottee) => {
-        const updatedAllottee = { ...prevAllottee };
-        const taskList = updatedAllottee[allotteeName];
-        if (!taskList) return prevAllottee;
-  
-        // Reorder tasks
-        const [movedTask] = taskList.splice(taskIndex, 1);
-        taskList.splice(targetTaskIndex, 0, movedTask);
-  
-        // Get the new order
-        const newOrder = [...taskList];
-  
-        // Log the previous order, new order, and dragged task
-        console.log("Dragged Task:", draggingTask);
-        console.log("Previous Order:", previousOrder.map(task => task[1])); // Map to task descriptions for clarity
-        console.log("New Order:", newOrder.map(task => task[1])); // Map to task descriptions for clarity
-  
-        return updatedAllottee;
-      });
-    }
-  
-    // Reset dragging states
-    setDraggingIndex(null);
-    setDraggingTask(null);
-  };
-  
-  const fetchAllotteeData = async () => {
-    try {
-      const response = await axios.get('https://2a5f-49-37-9-67.ngrok-free.app/task_data', {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+  // Initiate drag with task details
+const handleTaskDragStart = (taskId, taskDescription, allotteeName) => {
+  setDraggingTask({ taskId, taskDescription, allotteeName });
+};
+
+// Enable drag over by preventing default behavior
+const handleTaskDragOver = (e) => {
+  e.preventDefault();
+};
+
+// Handle task reordering on drop
+const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
+  if (!draggingTask) return;
+
+  // Clone Allottee to safely update
+  const updatedAllottee = { ...Allottee };
+
+  // Find source and target task lists
+  const sourceTasks = updatedAllottee[draggingTask.allotteeName];
+  const targetTasks = updatedAllottee[targetAllotteeName];
+
+  // Locate dragged task index within the source
+  const draggedTaskIndex = sourceTasks.findIndex(task => task[0] === draggingTask.taskId);
+
+  // Remove the task from source and insert at target position
+  const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
+  targetTasks.splice(targetTaskIndex, 0, draggedTask);
+
+  // Update Allottee state with new order
+  setAllottee(updatedAllottee);
+
+  // Clear dragging task state after drop
+  setDraggingTask(null);
+
+  // Optional: Console logs for debugging
+  console.log('Previous Order:', sourceTasks);
+  console.log('New Order:', targetTasks);
+};
+
+
+const fetchAllotteeData = async () => {
+  try {
+    const response = await axios.get('https://2a5f-49-37-9-67.ngrok-free.app/task_data', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
           'ngrok-skip-browser-warning': "any"
         },
       });
