@@ -402,26 +402,41 @@ const handleTaskDragOver = (e) => {
 const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
   if (!draggingTask) return;
 
-  // Clone Allottee to safely update
-  const updatedAllottee = { ...Allottee };
+  // Retrieve source and target task lists
+  const sourceTasks = Allottee[draggingTask.allotteeName];
+  const targetTasks = Allottee[targetAllotteeName];
 
-  // Find source and target task lists
-  const sourceTasks = updatedAllottee[draggingTask.allotteeName];
-  const targetTasks = updatedAllottee[targetAllotteeName];
+  // Check if source or target task lists are undefined
+  if (!sourceTasks) {
+    console.error(`Source tasks not found for allottee: ${draggingTask.allotteeName}`);
+    return;
+  }
+  if (!targetTasks) {
+    console.error(`Target tasks not found for allottee: ${targetAllotteeName}`);
+    return;
+  }
 
   // Find the index of the dragged task in the source list
   const draggedTaskIndex = sourceTasks.findIndex(task => task[0] === draggingTask.taskId);
+  if (draggedTaskIndex === -1) {
+    console.error(`Dragged task with ID ${draggingTask.taskId} not found in source tasks`);
+    return;
+  }
 
   // Remove task from source and add it to target position
   const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
   targetTasks.splice(targetTaskIndex, 0, draggedTask);
 
-  // Console logs for task IDs in previous and new order
-  console.log('Previous Order (IDs):', sourceTasks.map(task => task[0])); // Logs task IDs in previous order
-  console.log('New Order (IDs):', targetTasks.map(task => task[0])); // Logs task IDs in new order
+  // Log task IDs for previous and new order
+  console.log('Previous Order (IDs):', sourceTasks.map(task => task[0]));
+  console.log('New Order (IDs):', targetTasks.map(task => task[0]));
 
-  // Update Allottee state with new order
-  setAllottee(updatedAllottee);
+  // Update Allottee state with the new order
+  setAllottee({
+    ...Allottee,
+    [draggingTask.allotteeName]: sourceTasks,
+    [targetAllotteeName]: targetTasks,
+  });
 
   // Reset draggingTask state after drop
   setDraggingTask(null);
