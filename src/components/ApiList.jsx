@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
   try {
-    const response = await axios.post('https://0319-49-37-9-67.ngrok-free.app/done_mark', {
+    const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/done_mark', {
       task_id: taskId,
       completed: isChecked,
     });
@@ -35,7 +35,7 @@ export const sendUserId = async (setData, setError) => {
 
   if (userId) {
     try {
-      const response = await axios.post('https://0319-49-37-9-67.ngrok-free.app/allot', {
+      const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/allot', {
         user_id: userId,
       }, {
         headers: {
@@ -58,7 +58,7 @@ export const sendUserId = async (setData, setError) => {
 // Function to fetch options from Rails API
 export const fetchData = async (setData, setError) => {
   try {
-    const response = await axios.get('https://0319-49-37-9-67.ngrok-free.app/allot', {
+    const response = await axios.get('https://2a5f-49-37-9-67.ngrok-free.app/allot', {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any"
@@ -79,7 +79,7 @@ export const fetchData = async (setData, setError) => {
 // Function to fetch allottee data
 export const fetchAllottee = async (setAllottee, setError) => {
   try {
-    const response = await axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data', {
+    const response = await axios.get('https://2a5f-49-37-9-67.ngrok-free.app/task_data', {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any"
