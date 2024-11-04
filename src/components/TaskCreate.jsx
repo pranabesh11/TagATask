@@ -389,7 +389,7 @@ function TaskCreate() {
   };
   const fetchAllotteeData = async () => {
     try {
-      const response = await axios.get('https://0319-49-37-9-67.ngrok-free.app/task_data', {
+      const response = await axios.get('https://2a5f-49-37-9-67.ngrok-free.app/task_data', {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -558,7 +558,7 @@ const saveEditTask = async (taskId, allotteeId, updatedText) => {
           allottee_id: allotteeId,
           text: updatedText,
         };
-        const response = await fetch('https://0319-49-37-9-67.ngrok-free.app/edit_task', {
+        const response = await fetch('https://2a5f-49-37-9-67.ngrok-free.app/edit_task', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -587,7 +587,7 @@ const saveEditTask = async (taskId, allotteeId, updatedText) => {
 const fetchAllotteeId = async (allotteeName) => {
     try {
         const response = await axios.post(
-            'https://0319-49-37-9-67.ngrok-free.app/id_name_converter',
+            'https://2a5f-49-37-9-67.ngrok-free.app/id_name_converter',
             { name: allotteeName },
             { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
         );
