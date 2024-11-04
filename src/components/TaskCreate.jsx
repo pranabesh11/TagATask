@@ -390,9 +390,11 @@ function TaskCreate() {
   // };
 
   // Initiate drag with task details
-const handleTaskDragStart = (taskId, taskDescription, allotteeName) => {
-  setDraggingTask({ taskId, taskDescription, allotteeName });
-};
+  const handleTaskDragStart = (taskId, taskDescription, allotteeName) => {
+    console.log(`Dragging Task ID: ${taskId} from Allottee: ${allotteeName}`);
+    setDraggingTask({ taskId, taskDescription, allotteeName });
+  };
+  
 
 // Enable drag over by preventing default behavior
 const handleTaskDragOver = (e) => {
@@ -402,16 +404,13 @@ const handleTaskDragOver = (e) => {
 const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
   if (!draggingTask) return;
 
-  // Retrieve source and target task lists
   const sourceTasks = Allottee[draggingTask.allotteeName];
   const targetTasks = Allottee[targetAllotteeName];
 
-  // Check if source or target task lists are undefined
   if (!sourceTasks) {
     console.error(`Source tasks not found for allottee: ${draggingTask.allotteeName}`);
     return;
-  }
-  if (!targetTasks) {
+  }  if (!targetTasks) {
     console.error(`Target tasks not found for allottee: ${targetAllotteeName}`);
     return;
   }
@@ -852,10 +851,9 @@ const fetchAllotteeId = async (allotteeName) => {
                 key={taskId} 
                 className="task-item-container"
                 draggable
-                onDragStart={(e) => handleTaskDragStart(e, allotteeName, index)}
+                onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)} // Passing correct allotteeName
                 onDragOver={handleTaskDragOver}
-                onDrop={(e) => handleTaskReorder(e, allotteeName, index)}
-                onDragEnd={() => setDraggingIndex(null)}
+                onDrop={() => handleTaskReorder(allotteeName, index)}
               >
                 <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
                 <input
