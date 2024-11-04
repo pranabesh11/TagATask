@@ -329,16 +329,16 @@ function TaskCreate() {
   };
 
 
-  const handleTaskDragStart = (e, cardIndex, taskIndex) => {
-    setDraggingIndex({ cardIndex, taskIndex });
-    const draggedTask = savedItems[cardIndex].items[taskIndex];
-    // alert(`Dragging task: ${draggedTask.text} (Task index: ${taskIndex}, Card index: ${cardIndex})`);
-    console.log(`Dragging task: ${draggedTask.text} (Task index: ${taskIndex}, Card index: ${cardIndex})`);
-  };
+  // const handleTaskDragStart = (e, cardIndex, taskIndex) => {
+  //   setDraggingIndex({ cardIndex, taskIndex });
+  //   const draggedTask = savedItems[cardIndex].items[taskIndex];
+  //   // alert(`Dragging task: ${draggedTask.text} (Task index: ${taskIndex}, Card index: ${cardIndex})`);
+  //   console.log(`Dragging task: ${draggedTask.text} (Task index: ${taskIndex}, Card index: ${cardIndex})`);
+  // };
 
-  const handleTaskDragOver = (e) => {
-    e.preventDefault();
-  };
+  // const handleTaskDragOver = (e) => {
+  //   e.preventDefault();
+  // };
 
   const handleTaskDrop = (e, cardIndex, targetTaskIndex) => {
     e.preventDefault();
@@ -363,30 +363,66 @@ function TaskCreate() {
     }
   };
 
-  const handleTaskReorder = (e, cardIndex, targetTaskIndex) => {
-    e.preventDefault();
+  // const handleTaskReorder = (e, cardIndex, targetTaskIndex) => {
+  //   e.preventDefault();
 
-    if (draggingIndex && draggingIndex.cardIndex === cardIndex && draggingIndex.taskIndex !== targetTaskIndex) {
-      setSavedItems((prevItems) => {
-        const newItems = prevItems.map((item, i) =>
-          i === cardIndex ? { ...item, items: [...item.items] } : item
-        );
-        const tasks = newItems[cardIndex].items;  
-        console.log('Final task order before drop:', tasks.map(task => task.text));
-        const movedTask = tasks[draggingIndex.taskIndex];  
-        const updatedTasks = tasks.filter((_, i) => i !== draggingIndex.taskIndex);
-        let insertIndex = targetTaskIndex;
-        if (draggingIndex.taskIndex < targetTaskIndex) {
-          insertIndex += 0;
-        }
-        updatedTasks.splice(insertIndex, 0, movedTask);
-        console.log('Final task order after drop:', updatedTasks.map(task => task.text));
-        newItems[cardIndex].items = updatedTasks;
-        return newItems;
-      });
-      setDraggingIndex(null);
-    }
+  //   if (draggingIndex && draggingIndex.cardIndex === cardIndex && draggingIndex.taskIndex !== targetTaskIndex) {
+  //     setSavedItems((prevItems) => {
+  //       const newItems = prevItems.map((item, i) =>
+  //         i === cardIndex ? { ...item, items: [...item.items] } : item
+  //       );
+  //       const tasks = newItems[cardIndex].items;  
+  //       console.log('Final task order before drop:', tasks.map(task => task.text));
+  //       const movedTask = tasks[draggingIndex.taskIndex];  
+  //       const updatedTasks = tasks.filter((_, i) => i !== draggingIndex.taskIndex);
+  //       let insertIndex = targetTaskIndex;
+  //       if (draggingIndex.taskIndex < targetTaskIndex) {
+  //         insertIndex += 0;
+  //       }
+  //       updatedTasks.splice(insertIndex, 0, movedTask);
+  //       console.log('Final task order after drop:', updatedTasks.map(task => task.text));
+  //       newItems[cardIndex].items = updatedTasks;
+  //       return newItems;
+  //     });
+  //     setDraggingIndex(null);
+  //   }
+  // };
+
+  const handleTaskDragStart = (e, allotteeName, taskIndex) => {
+    if (!Allottee[allotteeName] || !Allottee[allotteeName][taskIndex]) return;
+    
+    setDraggingIndex({ allotteeName, taskIndex });
+    e.dataTransfer.effectAllowed = 'move';
   };
+  
+  const handleTaskDragOver = (e) => {
+    e.preventDefault();
+  };
+  
+  const handleTaskReorder = (e, targetAllotteeName, targetTaskIndex) => {
+    e.preventDefault();
+  
+    if (!draggingIndex || !Allottee[draggingIndex.allotteeName] || draggingIndex.taskIndex === undefined) return;
+  
+    const { allotteeName, taskIndex } = draggingIndex;
+  
+    if (allotteeName === targetAllotteeName && taskIndex !== targetTaskIndex) {
+      setAllottee((prevAllottee) => {
+        const updatedAllottee = { ...prevAllottee };
+        const taskList = updatedAllottee[allotteeName];
+        if (!taskList) return prevAllottee;
+  
+        // Reorder tasks
+        const [movedTask] = taskList.splice(taskIndex, 1);
+        taskList.splice(targetTaskIndex, 0, movedTask);
+  
+        return updatedAllottee;
+      });
+    }
+  
+    setDraggingIndex(null);
+  };
+  
   const fetchAllotteeData = async () => {
     try {
       const response = await axios.get('https://2a5f-49-37-9-67.ngrok-free.app/task_data', {
