@@ -297,12 +297,12 @@
     margin-left: 10px;
 }
 .drag_image_logo{
-    opacity: 0;
-  }
-  
-  .drag_image_logo:hover{
     opacity: 1;
   }
+  
+.drag_image_logo:hover{
+    opacity: 0;
+}
 
 .label_select {
     padding: 5px;
