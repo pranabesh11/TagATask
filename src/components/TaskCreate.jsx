@@ -790,8 +790,17 @@ const fetchAllotteeId = async (allotteeName) => {
             <div className='allottee_container' key={allotteeName}>
               <p className='name_text'>{allotteeName}</p>
               <div>
-              {tasks.map(([taskId, taskDescription, datetime]) => (
-              <div key={taskId} className="task-item-container">
+              {tasks.map(([taskId, taskDescription, datetime], index) => (
+              <div 
+                key={taskId} 
+                className="task-item-container"
+                draggable
+                onDragStart={(e) => handleTaskDragStart(e, allotteeName, index)}
+                onDragOver={handleTaskDragOver}
+                onDrop={(e) => handleTaskReorder(e, allotteeName, index)}
+                onDragEnd={() => setDraggingIndex(null)}
+              >
+                <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
                 <input
                   type="checkbox"
                   checked={!!datetime}
