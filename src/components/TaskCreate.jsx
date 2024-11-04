@@ -399,7 +399,6 @@ const handleTaskDragOver = (e) => {
   e.preventDefault();
 };
 
-// Handle task reordering on drop
 const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
   if (!draggingTask) return;
 
@@ -410,23 +409,24 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
   const sourceTasks = updatedAllottee[draggingTask.allotteeName];
   const targetTasks = updatedAllottee[targetAllotteeName];
 
-  // Locate dragged task index within the source
+  // Find the index of the dragged task in the source list
   const draggedTaskIndex = sourceTasks.findIndex(task => task[0] === draggingTask.taskId);
 
-  // Remove the task from source and insert at target position
+  // Remove task from source and add it to target position
   const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
   targetTasks.splice(targetTaskIndex, 0, draggedTask);
+
+  // Console logs for task IDs in previous and new order
+  console.log('Previous Order (IDs):', sourceTasks.map(task => task[0])); // Logs task IDs in previous order
+  console.log('New Order (IDs):', targetTasks.map(task => task[0])); // Logs task IDs in new order
 
   // Update Allottee state with new order
   setAllottee(updatedAllottee);
 
-  // Clear dragging task state after drop
+  // Reset draggingTask state after drop
   setDraggingTask(null);
-
-  // Optional: Console logs for debugging
-  console.log('Previous Order:', sourceTasks);
-  console.log('New Order:', targetTasks);
 };
+
 
 
 const fetchAllotteeData = async () => {
