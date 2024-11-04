@@ -389,66 +389,58 @@ function TaskCreate() {
   //   }
   // };
 
-  // Initiate drag with task details
   const handleTaskDragStart = (taskId, taskDescription, allotteeName) => {
-    console.log(`Dragging Task ID: ${taskId} from Allottee: ${allotteeName}`);
-    setDraggingTask({ taskId, taskDescription, allotteeName });
+    setDraggingTask({ taskId, taskDescription, allotteeName }); // Setting task information in state
+};
+
+  
+  const handleTaskDragOver = (e) => {
+    e.preventDefault();
   };
   
-
-// Enable drag over by preventing default behavior
-const handleTaskDragOver = (e) => {
-  e.preventDefault();
-};
-
-const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
-  if (!draggingTask) return;
-
-  const sourceTasks = Allottee[draggingTask.allotteeName];
-  const targetTasks = Allottee[targetAllotteeName];
-
-  if (!sourceTasks) {
-    console.error(`Source tasks not found for allottee: ${draggingTask.allotteeName}`);
-    return;
-  }  if (!targetTasks) {
-    console.error(`Target tasks not found for allottee: ${targetAllotteeName}`);
-    return;
-  }
-
-  // Find the index of the dragged task in the source list
-  const draggedTaskIndex = sourceTasks.findIndex(task => task[0] === draggingTask.taskId);
-  if (draggedTaskIndex === -1) {
-    console.error(`Dragged task with ID ${draggingTask.taskId} not found in source tasks`);
-    return;
-  }
-
-  // Remove task from source and add it to target position
-  const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
-  targetTasks.splice(targetTaskIndex, 0, draggedTask);
-
-  // Log task IDs for previous and new order
-  console.log('Previous Order (IDs):', sourceTasks.map(task => task[0]));
-  console.log('New Order (IDs):', targetTasks.map(task => task[0]));
-
-  // Update Allottee state with the new order
-  setAllottee({
-    ...Allottee,
-    [draggingTask.allotteeName]: sourceTasks,
-    [targetAllotteeName]: targetTasks,
-  });
-
-  // Reset draggingTask state after drop
-  setDraggingTask(null);
-};
-
-
-
-const fetchAllotteeData = async () => {
-  try {
-    const response = await axios.get('https://2a5f-49-37-9-67.ngrok-free.app/task_data', {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+  const handleTaskReorder = (e, targetAllotteeName, targetTaskIndex) => {
+    e.preventDefault();
+  
+    if (!draggingIndex || !Allottee[draggingIndex.allotteeName]) return;
+  
+    const { allotteeName, taskIndex } = draggingIndex;
+  
+    // Get the previous order
+    const previousOrder = [...Allottee[allotteeName]];
+  
+    if (allotteeName === targetAllotteeName && taskIndex !== targetTaskIndex) {
+      setAllottee((prevAllottee) => {
+        const updatedAllottee = { ...prevAllottee };
+        const taskList = updatedAllottee[allotteeName];
+        if (!taskList) return prevAllottee;
+  
+        // Reorder tasks
+        const [movedTask] = taskList.splice(taskIndex, 1);
+        taskList.splice(targetTaskIndex, 0, movedTask);
+  
+        // Get the new order
+        const newOrder = [...taskList];
+  
+        // Log the previous order, new order, and dragged task
+        console.log("Dragged Task:", draggingTask);
+        console.log("Previous Order:", previousOrder.map(task => task[1])); // Map to task descriptions for clarity
+        console.log("New Order:", newOrder.map(task => task[1])); // Map to task descriptions for clarity
+  
+        return updatedAllottee;
+      });
+    }
+  
+    // Reset dragging states
+    setDraggingIndex(null);
+    setDraggingTask(null);
+  };
+  
+  const fetchAllotteeData = async () => {
+    try {
+      const response = await axios.get('https://2a5f-49-37-9-67.ngrok-free.app/task_data', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
           'ngrok-skip-browser-warning': "any"
         },
       });
@@ -851,9 +843,10 @@ const fetchAllotteeId = async (allotteeName) => {
                 key={taskId} 
                 className="task-item-container"
                 draggable
-                onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)} // Passing correct allotteeName
+                onDragStart={(e) => handleTaskDragStart(e, allotteeName, index)}
                 onDragOver={handleTaskDragOver}
-                onDrop={() => handleTaskReorder(allotteeName, index)}
+                onDrop={(e) => handleTaskReorder(e, allotteeName, index)}
+                onDragEnd={() => setDraggingIndex(null)}
               >
                 <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
                 <input
