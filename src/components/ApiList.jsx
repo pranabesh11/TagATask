@@ -1,11 +1,34 @@
 import axios from 'axios';
 
-export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
-  // Save the current state in case we need to roll back
-  const previousAllottee = setAllottee(prev => prev);
+// export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
+//   try {
+//     const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/done_mark', {
+//       task_id: taskId,
+//       completed: isChecked,
+//     });
 
-  // Optimistically update the state
-  setAllottee(prevAllottee => {
+//     if (response.data.success) {
+//       setAllottee((prevAllottee) => {
+//         const updatedAllottee = { ...prevAllottee };
+//         for (const [allotteeName, tasks] of Object.entries(updatedAllottee)) {
+//           const taskIndex = tasks.findIndex(task => task[0] === taskId);
+//           if (taskIndex !== -1) {
+//             updatedAllottee[allotteeName][taskIndex][2] = isChecked;
+//           }
+//         }
+//         return updatedAllottee;
+//       });
+//     } else {
+//       console.error('Failed to update task status:', response.data.errors);
+//     }
+//   } catch (error) {
+//     console.error('Error updating task status:', error);
+//   }
+// };
+
+export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
+  // Step 1: Optimistically update the UI
+  setAllottee((prevAllottee) => {
     const updatedAllottee = { ...prevAllottee };
     for (const [allotteeName, tasks] of Object.entries(updatedAllottee)) {
       const taskIndex = tasks.findIndex(task => task[0] === taskId);
@@ -16,23 +39,43 @@ export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
     return updatedAllottee;
   });
 
-  // Attempt to send the update to the server
+  // Step 2: Make the API request
   try {
     const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/done_mark', {
       task_id: taskId,
       completed: isChecked,
     });
 
+    // Step 3: Check if the backend responded with success
     if (!response.data.success) {
       console.error('Failed to update task status:', response.data.errors);
-      setAllottee(previousAllottee);  // Roll back to the previous state
+      // Optional: Revert the UI change if backend update failed
+      setAllottee((prevAllottee) => {
+        const revertedAllottee = { ...prevAllottee };
+        for (const [allotteeName, tasks] of Object.entries(revertedAllottee)) {
+          const taskIndex = tasks.findIndex(task => task[0] === taskId);
+          if (taskIndex !== -1) {
+            revertedAllottee[allotteeName][taskIndex][2] = !isChecked ? new Date().toISOString() : null;
+          }
+        }
+        return revertedAllottee;
+      });
     }
   } catch (error) {
     console.error('Error updating task status:', error);
-    setAllottee(previousAllottee);  // Roll back to the previous state
+    // Optional: Revert the UI change if an error occurred
+    setAllottee((prevAllottee) => {
+      const revertedAllottee = { ...prevAllottee };
+      for (const [allotteeName, tasks] of Object.entries(revertedAllottee)) {
+        const taskIndex = tasks.findIndex(task => task[0] === taskId);
+        if (taskIndex !== -1) {
+          revertedAllottee[allotteeName][taskIndex][2] = !isChecked ? new Date().toISOString() : null;
+        }
+      }
+      return revertedAllottee;
+    });
   }
 };
-
 
 
 
