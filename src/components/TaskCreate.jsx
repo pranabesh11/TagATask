@@ -16,7 +16,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { handleCheckboxChange,sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI} from './ApiList';
+import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI} from './ApiList';
 
 
 function TaskCreate() {
@@ -74,6 +74,55 @@ function TaskCreate() {
   // const handleChange = (event) => {
   //   setInputValue(event.target.value);
   // };
+  const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
+    // Initial input validation and logging
+    if (!taskId || typeof isChecked !== "boolean" || typeof setAllottee !== "function") {
+      console.error("Invalid parameters passed to handleCheckboxChange:");
+      console.error("taskId:", taskId, "isChecked:", isChecked, "setAllottee:", setAllottee);
+      return;
+    }
+  
+    console.log("Received taskId:", taskId, "isChecked:", isChecked);
+  
+    // Optimistically update UI state
+    try {
+      setAllottee(prevAllottee => {
+        console.log("Previous Allottee state:", prevAllottee);
+        const updatedAllottee = { ...prevAllottee };
+  
+        Object.entries(updatedAllottee).forEach(([allotteeName, tasks]) => {
+          const taskIndex = tasks.findIndex(task => task[0] === taskId);
+          if (taskIndex !== -1) {
+            console.log(`Updating task status for taskId ${taskId} in ${allotteeName}`);
+            updatedAllottee[allotteeName][taskIndex][2] = isChecked ? new Date().toISOString() : null;
+          }
+        });
+        
+        console.log("Updated Allottee state:", updatedAllottee);
+        return updatedAllottee;
+      });
+    } catch (updateError) {
+      console.error("Error updating Allottee state in setAllottee:", updateError);
+      return;
+    }
+  
+    // Send request to backend
+    try {
+      const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/done_mark', {
+        task_id: taskId,
+        completed: isChecked,
+      });
+  
+      if (!response.data.success) {
+        console.error('Backend failed to update task status:', response.data.errors);
+      } else {
+        console.log("Backend updated task status successfully for taskId:", taskId);
+      }
+    } catch (networkError) {
+      console.error('Network error while updating task status:', networkError);
+    }
+  };
+  
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
