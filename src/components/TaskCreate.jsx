@@ -115,7 +115,12 @@ function TaskCreate() {
   };
   
   
-  
+  const showToastMessage = () => {
+    toast.warn("Please select an Allottee", {
+      position: "top-center",
+      style: { backgroundColor: "#ffcc00", color: "#fff" }
+    });
+  };
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -145,6 +150,10 @@ function TaskCreate() {
 
 
   const createNewTask = (initialChar) => {
+    if (!inputValue) {
+      showToastMessage();
+      return;
+    }
     const newTask = {
       text: initialChar,
       completed: false,
