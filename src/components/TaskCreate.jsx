@@ -275,6 +275,10 @@ function TaskCreate() {
       saveAllData();
       return;
     }
+    if (!inputValue) {
+      showToastMessage();
+      return;
+    }
     if (event.key === 'Backspace' && tasks.length > 0) {
       event.preventDefault();
       const lastTask = tasks[tasks.length - 1];
