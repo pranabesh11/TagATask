@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
-  // Update UI instantly by updating the state first
+  // Save the current state in case we need to roll back
+  const previousAllottee = setAllottee(prev => prev);
+
+  // Optimistically update the state
   setAllottee(prevAllottee => {
     const updatedAllottee = { ...prevAllottee };
     for (const [allotteeName, tasks] of Object.entries(updatedAllottee)) {
@@ -13,7 +16,7 @@ export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
     return updatedAllottee;
   });
 
-  // Send the update request to the backend
+  // Attempt to send the update to the server
   try {
     const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/done_mark', {
       task_id: taskId,
@@ -22,11 +25,16 @@ export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
 
     if (!response.data.success) {
       console.error('Failed to update task status:', response.data.errors);
+      setAllottee(previousAllottee);  // Roll back to the previous state
     }
   } catch (error) {
     console.error('Error updating task status:', error);
+    setAllottee(previousAllottee);  // Roll back to the previous state
   }
 };
+
+
+
 
 // Function to send user ID to backend
 export const sendUserId = async (setData, setError) => {
