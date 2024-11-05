@@ -27,7 +27,13 @@ import axios from 'axios';
 // };
 
 export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
-  // Step 1: Optimistically update the UI
+  // Check if setAllottee is a valid function
+  if (typeof setAllottee !== "function") {
+    console.error("setAllottee is not a function or is undefined:", setAllottee);
+    return;
+  }
+
+  // Optimistically update the UI
   setAllottee((prevAllottee) => {
     const updatedAllottee = { ...prevAllottee };
     for (const [allotteeName, tasks] of Object.entries(updatedAllottee)) {
@@ -39,41 +45,17 @@ export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
     return updatedAllottee;
   });
 
-  // Step 2: Make the API request
   try {
     const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/done_mark', {
       task_id: taskId,
       completed: isChecked,
     });
 
-    // Step 3: Check if the backend responded with success
     if (!response.data.success) {
       console.error('Failed to update task status:', response.data.errors);
-      // Optional: Revert the UI change if backend update failed
-      setAllottee((prevAllottee) => {
-        const revertedAllottee = { ...prevAllottee };
-        for (const [allotteeName, tasks] of Object.entries(revertedAllottee)) {
-          const taskIndex = tasks.findIndex(task => task[0] === taskId);
-          if (taskIndex !== -1) {
-            revertedAllottee[allotteeName][taskIndex][2] = !isChecked ? new Date().toISOString() : null;
-          }
-        }
-        return revertedAllottee;
-      });
     }
   } catch (error) {
     console.error('Error updating task status:', error);
-    // Optional: Revert the UI change if an error occurred
-    setAllottee((prevAllottee) => {
-      const revertedAllottee = { ...prevAllottee };
-      for (const [allotteeName, tasks] of Object.entries(revertedAllottee)) {
-        const taskIndex = tasks.findIndex(task => task[0] === taskId);
-        if (taskIndex !== -1) {
-          revertedAllottee[allotteeName][taskIndex][2] = !isChecked ? new Date().toISOString() : null;
-        }
-      }
-      return revertedAllottee;
-    });
   }
 };
 
