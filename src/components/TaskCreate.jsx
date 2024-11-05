@@ -16,7 +16,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { handleCheckboxChange,sendUserId, fetchData, fetchAllottee } from './ApiList';
+import { handleCheckboxChange,sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI} from './ApiList';
 
 
 function TaskCreate() {
@@ -398,31 +398,23 @@ function TaskCreate() {
     e.preventDefault();
   };
   
-  // Handle task reordering on drop
+ 
 const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
   if (!draggingTask) return;
 
-  // Clone Allottee to safely update
   const updatedAllottee = { ...Allottee };
-
-  // Find source and target task lists
   const sourceTasks = updatedAllottee[draggingTask.allotteeName];
   const targetTasks = updatedAllottee[targetAllotteeName];
-
-  // Locate dragged task index within the source
   const draggedTaskIndex = sourceTasks.findIndex(task => task[0] === draggingTask.taskId);
-
-  // Remove the task from source and insert at target position
   const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
   targetTasks.splice(targetTaskIndex, 0, draggedTask);
-
-  // Update Allottee state with new order
+  const reorderedTasks = targetTasks.map(task => ({
+    taskId: task[0],
+    description: task[1],
+  }));
+  updateTaskOrderAPI(reorderedTasks);
   setAllottee(updatedAllottee);
-
-  // Clear dragging task state after drop
   setDraggingTask(null);
-
-  // Optional: Console logs for debugging
   console.log('Previous Order:', sourceTasks);
   console.log('New Order:', targetTasks);
 };

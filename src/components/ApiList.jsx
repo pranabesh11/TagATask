@@ -92,3 +92,20 @@ export const fetchAllottee = async (setAllottee, setError) => {
     setError('Error fetching data. Please check the console for more details.');
   }
 };
+
+
+
+
+export const updateTaskOrderAPI = async (reorderedTasks) => {
+  try {
+    const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/task_order', reorderedTasks, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    });
+    console.log('Task order updated successfully:', response.data);
+  } catch (error) {
+    console.error('Error updating task order:', error);
+  }
+};
