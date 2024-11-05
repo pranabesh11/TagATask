@@ -390,50 +390,44 @@ function TaskCreate() {
   // };
 
   const handleTaskDragStart = (taskId, taskDescription, allotteeName) => {
-    setDraggingTask({ taskId, taskDescription, allotteeName }); // Setting task information in state
-};
+    setDraggingTask({ taskId, taskDescription, allotteeName });
+  };
 
   
   const handleTaskDragOver = (e) => {
     e.preventDefault();
   };
   
-  const handleTaskReorder = (e, targetAllotteeName, targetTaskIndex) => {
-    e.preventDefault();
-  
-    if (!draggingIndex || !Allottee[draggingIndex.allotteeName]) return;
-  
-    const { allotteeName, taskIndex } = draggingIndex;
-  
-    // Get the previous order
-    const previousOrder = [...Allottee[allotteeName]];
-  
-    if (allotteeName === targetAllotteeName && taskIndex !== targetTaskIndex) {
-      setAllottee((prevAllottee) => {
-        const updatedAllottee = { ...prevAllottee };
-        const taskList = updatedAllottee[allotteeName];
-        if (!taskList) return prevAllottee;
-  
-        // Reorder tasks
-        const [movedTask] = taskList.splice(taskIndex, 1);
-        taskList.splice(targetTaskIndex, 0, movedTask);
-  
-        // Get the new order
-        const newOrder = [...taskList];
-  
-        // Log the previous order, new order, and dragged task
-        console.log("Dragged Task:", draggingTask);
-        console.log("Previous Order:", previousOrder.map(task => task[1])); // Map to task descriptions for clarity
-        console.log("New Order:", newOrder.map(task => task[1])); // Map to task descriptions for clarity
-  
-        return updatedAllottee;
-      });
-    }
-  
-    // Reset dragging states
-    setDraggingIndex(null);
-    setDraggingTask(null);
-  };
+  // Handle task reordering on drop
+const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
+  if (!draggingTask) return;
+
+  // Clone Allottee to safely update
+  const updatedAllottee = { ...Allottee };
+
+  // Find source and target task lists
+  const sourceTasks = updatedAllottee[draggingTask.allotteeName];
+  const targetTasks = updatedAllottee[targetAllotteeName];
+
+  // Locate dragged task index within the source
+  const draggedTaskIndex = sourceTasks.findIndex(task => task[0] === draggingTask.taskId);
+
+  // Remove the task from source and insert at target position
+  const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
+  targetTasks.splice(targetTaskIndex, 0, draggedTask);
+
+  // Update Allottee state with new order
+  setAllottee(updatedAllottee);
+
+  // Clear dragging task state after drop
+  setDraggingTask(null);
+
+  // Optional: Console logs for debugging
+  console.log('Previous Order:', sourceTasks);
+  console.log('New Order:', targetTasks);
+};
+
+
   
   const fetchAllotteeData = async () => {
     try {
@@ -843,10 +837,10 @@ const fetchAllotteeId = async (allotteeName) => {
                 key={taskId} 
                 className="task-item-container"
                 draggable
-                onDragStart={(e) => handleTaskDragStart(e, allotteeName, index)}
+                onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
                 onDragOver={handleTaskDragOver}
-                onDrop={(e) => handleTaskReorder(e, allotteeName, index)}
-                onDragEnd={() => setDraggingIndex(null)}
+                onDrop={() => handleTaskReorder(allotteeName, index)}
+                onDragEnd={() => setDraggingTask(null)}  // Reset dragging state on end
               >
                 <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
                 <input
