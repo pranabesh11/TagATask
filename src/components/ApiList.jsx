@@ -27,24 +27,38 @@ import axios from 'axios';
 // };
 
 export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
-  // Check if setAllottee is a valid function
-  if (typeof setAllottee !== "function") {
-    console.error("setAllottee is not a function or is undefined:", setAllottee);
+  // Initial input validation and logging
+  if (!taskId || typeof isChecked !== "boolean" || typeof setAllottee !== "function") {
+    console.error("Invalid parameters passed to handleCheckboxChange:");
+    console.error("taskId:", taskId, "isChecked:", isChecked, "setAllottee:", setAllottee);
     return;
   }
 
-  // Optimistically update the UI
-  setAllottee((prevAllottee) => {
-    const updatedAllottee = { ...prevAllottee };
-    for (const [allotteeName, tasks] of Object.entries(updatedAllottee)) {
-      const taskIndex = tasks.findIndex(task => task[0] === taskId);
-      if (taskIndex !== -1) {
-        updatedAllottee[allotteeName][taskIndex][2] = isChecked ? new Date().toISOString() : null;
-      }
-    }
-    return updatedAllottee;
-  });
+  console.log("Received taskId:", taskId, "isChecked:", isChecked);
 
+  // Optimistically update UI state
+  try {
+    setAllottee(prevAllottee => {
+      console.log("Previous Allottee state:", prevAllottee);
+      const updatedAllottee = { ...prevAllottee };
+
+      Object.entries(updatedAllottee).forEach(([allotteeName, tasks]) => {
+        const taskIndex = tasks.findIndex(task => task[0] === taskId);
+        if (taskIndex !== -1) {
+          console.log(`Updating task status for taskId ${taskId} in ${allotteeName}`);
+          updatedAllottee[allotteeName][taskIndex][2] = isChecked ? new Date().toISOString() : null;
+        }
+      });
+      
+      console.log("Updated Allottee state:", updatedAllottee);
+      return updatedAllottee;
+    });
+  } catch (updateError) {
+    console.error("Error updating Allottee state in setAllottee:", updateError);
+    return;
+  }
+
+  // Send request to backend
   try {
     const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/done_mark', {
       task_id: taskId,
@@ -52,10 +66,12 @@ export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
     });
 
     if (!response.data.success) {
-      console.error('Failed to update task status:', response.data.errors);
+      console.error('Backend failed to update task status:', response.data.errors);
+    } else {
+      console.log("Backend updated task status successfully for taskId:", taskId);
     }
-  } catch (error) {
-    console.error('Error updating task status:', error);
+  } catch (networkError) {
+    console.error('Network error while updating task status:', networkError);
   }
 };
 
