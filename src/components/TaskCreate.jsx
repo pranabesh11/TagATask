@@ -83,6 +83,7 @@ function TaskCreate() {
       return;
     }
   
+    // Access setAllottee directly from the component's state
     setAllottee((prevAllottee) => {
       const updatedAllottee = { ...prevAllottee };
       Object.entries(updatedAllottee).forEach(([allotteeName, tasks]) => {
@@ -112,6 +113,7 @@ function TaskCreate() {
       console.error("Network error while updating task status:", networkError);
     }
   };
+  
   
   
 
