@@ -74,7 +74,8 @@ function TaskCreate() {
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         console.log("Clicked outside the container.");
-        saveAllData();
+        // Defer the saveAllData call to allow state updates from onBlur to complete
+        setTimeout(() => saveAllData(), 0);
       }
     };
   
@@ -523,6 +524,7 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
 
 
   const saveAllData = useCallback(() => {
+    console.log("Saving all data", { inputValue, tasks }); // Debugging line
     const params = new URLSearchParams(window.location.search);
     const notify_success = () => toast.success("Task Created Successfully !");
     const notify_fail = () => toast.error("Task Creation Failed !");
@@ -553,6 +555,7 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
         };
       }).filter((item) => item.text !== '' || item.datetime || item.selectedTags.length > 0),
     };
+    console.log("Data to Save:", dataToSave);
 
     if (dataToSave.title || dataToSave.items.length > 0) {
       setSavedItems((prevItems) => [...prevItems, dataToSave]);
@@ -585,6 +588,8 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
           notify_fail();
         });      
     }
+    console.log("Saving all data", { inputValue, tasks }); // Verify state
+    console.log("Data to Save:", dataToSave); // Verify the payload
     setIsSaving(false);
   }, [tasks, inputValue, userId]);
 
