@@ -70,23 +70,23 @@ function TaskCreate() {
   //   };
   // }, [isSaving, tasks]);
   
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (containerRef.current && !containerRef.current.contains(event.target)) {
-  //       console.log("Clicked outside the container.");
-  //       // Defer the saveAllData call to allow state updates from onBlur to complete
-  //       setTimeout(() => saveAllData(), 0);
-  //     }
-  //   };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        console.log("Clicked outside the container.");
+        // Defer the saveAllData call to allow state updates from onBlur to complete
+        setTimeout(() => saveAllData(), 0);
+      }
+    };
   
-  //   // Bind the event listener
-  //   window.addEventListener('mousedown', handleClickOutside);
+    // Bind the event listener
+    window.addEventListener('mousedown', handleClickOutside);
   
-  //   return () => {
-  //     // Unbind the event listener on cleanup
-  //     window.removeEventListener('mousedown', handleClickOutside);
-  //   };
-  // }, [saveAllData]); // Dependency array includes saveAllData
+    return () => {
+      // Unbind the event listener on cleanup
+      window.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [saveAllData]); // Dependency array includes saveAllData
   
   
   
