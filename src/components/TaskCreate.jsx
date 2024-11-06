@@ -57,38 +57,38 @@ function TaskCreate() {
 
 
 
-  // useEffect(() => {
-  //   const handleGlobalKeyDown = (event) => {
-  //     if (event.key === 'Escape' && !isSaving) {
-  //       setIsSaving(true);
-  //       saveAllData();
-  //     }
-  //   };
+  useEffect(() => {
+    const handleGlobalKeyDown = (event) => {
+      if (event.key === 'Escape' && !isSaving) {
+        setIsSaving(true);
+        saveAllData();
+      }
+    };
   
-  //   const handleClick = (event) => {
-  //     if (!containerRef.current.contains(event.target)) {
-  //       if (editingTask) {
-  //         // If editing, save the edit
-  //         const taskElement = editingTask.taskRef.current;
-  //         if (taskElement) {
-  //           const updatedText = taskElement.innerText;
-  //           saveEditTask(editingTask.taskId, editingTask.allotteeId, updatedText);
-  //           setEditingTask(null);
-  //         }
-  //       } else if (tasks.length > 0) {
-  //         saveAllData();
-  //       }
-  //     }
-  //   };
+    const handleClick = (event) => {
+      if (!containerRef.current.contains(event.target)) {
+        if (editingTask) {
+          // If editing, save the edit
+          const taskElement = editingTask.taskRef.current;
+          if (taskElement) {
+            const updatedText = taskElement.innerText;
+            saveEditTask(editingTask.taskId, editingTask.allotteeId, updatedText);
+            setEditingTask(null);
+          }
+        } else if (tasks.length > 0) {
+          saveAllData();
+        }
+      }
+    };
   
-  //   window.addEventListener('keydown', handleGlobalKeyDown);
-  //   window.addEventListener('mousedown', handleClick);
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    window.addEventListener('mousedown', handleClick);
   
-  //   return () => {
-  //     window.removeEventListener('keydown', handleGlobalKeyDown);
-  //     window.removeEventListener('mousedown', handleClick);
-  //   };
-  // }, [isSaving, tasks, editingTask, saveAllData]);
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+      window.removeEventListener('mousedown', handleClick);
+    };
+  }, [isSaving, tasks, editingTask, saveAllData]);
   
 
 
