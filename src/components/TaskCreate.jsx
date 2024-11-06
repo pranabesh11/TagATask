@@ -51,42 +51,42 @@ function TaskCreate() {
 
 
 
-  // **Changed Part 1: Define saveOnOutsideClick using useCallback**
-  const saveOnOutsideClick = useCallback(() => {
-    if (editingTask) {
-      const { taskId, allotteeId, taskRef } = editingTask;
-      const taskElement = taskRef.current;
-      if (taskElement) {
-        const updatedText = taskElement.innerText;
-        saveEditTask(taskId, allotteeId, updatedText);
-      }
-    } else if (inputValue.trim() !== '' || tasks.length > 0) {
-      // If not in edit mode, save all data
-      saveAllData();
-    } else {
-      // Optionally, show a warning if there's nothing to save
-      toast.warn("No data to save.", {
-        position: "top-center",
-        style: { backgroundColor: "#ffcc00", color: "#fff" }
-      });
-    }
-  }, [editingTask, inputValue, tasks, saveAllData, saveEditTask]);
+  // // **Changed Part 1: Define saveOnOutsideClick using useCallback**
+  // const saveOnOutsideClick = useCallback(() => {
+  //   if (editingTask) {
+  //     const { taskId, allotteeId, taskRef } = editingTask;
+  //     const taskElement = taskRef.current;
+  //     if (taskElement) {
+  //       const updatedText = taskElement.innerText;
+  //       saveEditTask(taskId, allotteeId, updatedText);
+  //     }
+  //   } else if (inputValue.trim() !== '' || tasks.length > 0) {
+  //     // If not in edit mode, save all data
+  //     saveAllData();
+  //   } else {
+  //     // Optionally, show a warning if there's nothing to save
+  //     toast.warn("No data to save.", {
+  //       position: "top-center",
+  //       style: { backgroundColor: "#ffcc00", color: "#fff" }
+  //     });
+  //   }
+  // }, [editingTask, inputValue, tasks, saveAllData, saveEditTask]);
 
-  // **Changed Part 2: Add useEffect for outside clicks**
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        console.log("Clicked outside the container.");
-        saveOnOutsideClick();
-      }
-    };
+  // // **Changed Part 2: Add useEffect for outside clicks**
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (containerRef.current && !containerRef.current.contains(event.target)) {
+  //       console.log("Clicked outside the container.");
+  //       saveOnOutsideClick();
+  //     }
+  //   };
 
-    window.addEventListener('mousedown', handleClickOutside);
+  //   window.addEventListener('mousedown', handleClickOutside);
     
-    return () => {
-      window.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [saveOnOutsideClick]);
+  //   return () => {
+  //     window.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, [saveOnOutsideClick]);
 
 
 
