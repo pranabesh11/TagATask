@@ -69,35 +69,36 @@ function TaskCreate() {
   //     window.removeEventListener('mousedown', handleClick);
   //   };
   // }, [isSaving, tasks]);
-  const saveOnOutsideClick = useCallback(() => {
-    console.log("Executing saveOnOutsideClick", { inputValue, tasks });
-    if (!inputValue.trim() && tasks.length === 0) {
-      console.log("No data to save on outside click.");
-      return;
-    }
-    if (!inputValue.trim()) {
-      toast.warn("No task title provided. Saving existing tasks.", {
-        position: "top-center",
-        style: { backgroundColor: "#ffcc00", color: "#fff" }
-      });
-    }
-    saveAllData();
-  }, [inputValue, tasks, saveAllData]);
-  
-  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         console.log("Clicked outside the container.");
-        setTimeout(() => saveOnOutsideClick(), 0);
+        
+        // Check if there is anything to save
+        if (!inputValue.trim() && tasks.length === 0) {
+          console.log("No data to save on outside click.");
+          return;
+        }
+        
+        // Warn if the task title is missing
+        if (!inputValue.trim()) {
+          toast.warn("No task title provided. Saving existing tasks.", {
+            position: "top-center",
+            style: { backgroundColor: "#ffcc00", color: "#fff" }
+          });
+        }
+        
+        // Call saveAllData directly
+        saveAllData();
       }
     };
+    
     window.addEventListener('mousedown', handleClickOutside);
     return () => {
       window.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [saveOnOutsideClick]);
-  
+}, [inputValue, tasks, saveAllData]);
+
   
   
   
