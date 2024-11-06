@@ -53,7 +53,7 @@ function TaskCreate() {
       if (containerRef.current && containerRef.current.contains(event.target)) {
         console.log("Clicked inside");
       } else {
-        saveAllData();
+        saveAllDataWithInputValue();
         console.log("Clicked outside");
       }
     };
@@ -63,9 +63,73 @@ function TaskCreate() {
     return () => {
       window.removeEventListener('mousedown', handleClick);
     };
-  }, []);
+  }, [saveAllDataWithInputValue]);
   
-
+  const saveAllDataWithInputValue = useCallback(() => {
+    if (!inputValue) {
+      console.log("Input value is required to save data");
+      return; // Exit if inputValue is empty
+    }
+  
+    // Using the existing saveAllData code structure but making sure inputValue is present
+    const params = new URLSearchParams(window.location.search);
+    const notify_success = () => toast.success("Task Created Successfully !");
+    const notify_fail = () => toast.error("Task Creation Failed !");
+  
+    const userId = params.get('id');
+    const dataToSave = {
+      title: inputValue.trim(),
+      user_id: userId,
+      items: tasks.map((task) => {
+        let formattedText = DOMPurify.sanitize(task.text);
+        return {
+          text: formattedText,
+          completed: task.completed,
+          datetime: task.datetime,
+          workType: task.workType,
+          comments: task.comments,
+          selectedTags: task.selectedTags || [],
+          isBold: task.isBold || false,
+          isItalic: task.isItalic || false,
+        };
+      }).filter((item) => item.text !== '' || item.datetime || item.selectedTags.length > 0),
+    };
+  
+    if (dataToSave.title || dataToSave.items.length > 0) {
+      setSavedItems((prevItems) => [...prevItems, dataToSave]);
+      setTasks([]);
+      setInputValue('');
+      if (editableInputRef.current) editableInputRef.current.value = '';
+      document.getElementById('inputField').focus();
+  
+      fetch('http://localhost:3000/api_list/create_task', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(dataToSave),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to save data');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Success:', data);
+          notify_success();
+          fetchAllotteeData();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          notify_fail();
+        });
+    }
+  
+    setIsSaving(false);
+  }, [tasks, inputValue, userId]);
+  
 
   // // **Changed Part 1: Define saveOnOutsideClick using useCallback**
   // const saveOnOutsideClick = useCallback(() => {
