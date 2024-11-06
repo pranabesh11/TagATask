@@ -53,6 +53,7 @@ function TaskCreate() {
       if (containerRef.current && containerRef.current.contains(event.target)) {
         console.log("Clicked inside");
       } else {
+        saveAllData();
         console.log("Clicked outside");
       }
     };
