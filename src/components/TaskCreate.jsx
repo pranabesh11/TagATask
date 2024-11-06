@@ -37,6 +37,8 @@ function TaskCreate() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [Allottee, setAllottee] = useState({});
+  const [editingTask, setEditingTask] = useState(null);
+
 
   
   useEffect(() => {
@@ -55,7 +57,15 @@ function TaskCreate() {
   
     const handleClick = (event) => {
       if (!containerRef.current.contains(event.target)) {
-        if (tasks.length > 0) {
+        if (editingTask) {
+          // If editing, save the edit
+          const taskElement = editingTask.taskRef.current;
+          if (taskElement) {
+            const updatedText = taskElement.innerText;
+            saveEditTask(editingTask.taskId, editingTask.allotteeId, updatedText);
+            setEditingTask(null);
+          }
+        } else if (tasks.length > 0) {
           saveAllData();
         }
       }
@@ -68,8 +78,8 @@ function TaskCreate() {
       window.removeEventListener('keydown', handleGlobalKeyDown);
       window.removeEventListener('mousedown', handleClick);
     };
-  }, [isSaving, tasks]);
-
+  }, [isSaving, tasks, editingTask, saveAllData]);
+  
 
 
 
@@ -668,14 +678,16 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
         console.error('ID not found for the provided name.');
     }
     const taskRef = React.createRef();
+    setEditingTask({ taskId, allotteeId, taskRef });
     setTasks([{ text: taskDescription, ref: taskRef }]);
     setTimeout(() => {
         if (taskRef.current) {
             taskRef.current.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter' || event.key === 'Escape') {
-                    event.preventDefault();
-                    const updatedText = taskRef.current.innerText;
-                    saveEditTask(taskId, allotteeId, updatedText);
+                  event.preventDefault();
+                  const updatedText = taskRef.current.innerText;
+                  saveEditTask(taskId, allotteeId, updatedText);
+                  setEditingTask(null);
                 }
             });
         }
@@ -707,6 +719,7 @@ const saveEditTask = async (taskId, allotteeId, updatedText) => {
           setTimeout(fetchAllotteeData, 200);
           setTasks([]);
           setInputValue('');
+          setEditingTask(null);
         } else {
           console.error('No data returned from edit task API');
         }
