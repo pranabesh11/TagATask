@@ -83,35 +83,35 @@ function TaskCreate() {
 
 
 
-//   useEffect(() => {
-//     const handleClickOutside = (event) => {
-//       if (containerRef.current && !containerRef.current.contains(event.target)) {
-//         console.log("Clicked outside the container.");
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        console.log("Clicked outside the container.");
         
-//         // Check if there is anything to save
-//         if (!inputValue.trim() && tasks.length === 0) {
-//           console.log("No data to save on outside click.");
-//           return;
-//         }
+        // Check if there is anything to save
+        if (!inputValue.trim() && tasks.length === 0) {
+          console.log("No data to save on outside click.");
+          return;
+        }
         
-//         // Warn if the task title is missing
-//         if (!inputValue.trim()) {
-//           toast.warn("No task title provided. Saving existing tasks.", {
-//             position: "top-center",
-//             style: { backgroundColor: "#ffcc00", color: "#fff" }
-//           });
-//         }
+        // Warn if the task title is missing
+        if (!inputValue.trim()) {
+          toast.warn("No task title provided. Saving existing tasks.", {
+            position: "top-center",
+            style: { backgroundColor: "#ffcc00", color: "#fff" }
+          });
+        }
         
-//         // Call saveAllData directly
-//         saveAllData();
-//       }
-//     };
+        // Call saveAllData directly
+        saveAllData();
+      }
+    };
     
-//     window.addEventListener('mousedown', handleClickOutside);
-//     return () => {
-//       window.removeEventListener('mousedown', handleClickOutside);
-//     };
-// }, [inputValue, tasks, saveAllData]);
+    window.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('mousedown', handleClickOutside);
+    };
+}, [inputValue, tasks, saveAllData]);
 
   
   
