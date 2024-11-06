@@ -70,40 +70,22 @@ function TaskCreate() {
   //   };
   // }, [isSaving, tasks]);
   
-
   useEffect(() => {
-    const saveAllData = () => {
-      console.log("saveAllData triggered");
-  
-      // Your fetch logic for API call
-      fetch("http://localhost:3000/api_list/create_task", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ title: inputValue || 'default title', user_id: userId || 1, items: [] })
-      })
-      .then(response => {
-        console.log("Response received from saveAllData:", response);
-        return response.json();
-      })
-      .then(data => console.log("Data saved successfully:", data))
-      .catch(error => console.error("Error in saveAllData:", error));
-    };
-  
-    const handleClick = (event) => {
+    const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         console.log("Clicked outside the container.");
-        saveAllData(); // Call directly to see if this part runs
+        saveAllData();
       }
     };
   
-    window.addEventListener('mousedown', handleClick);
+    // Bind the event listener
+    window.addEventListener('mousedown', handleClickOutside);
   
     return () => {
-      window.removeEventListener('mousedown', handleClick);
+      // Unbind the event listener on cleanup
+      window.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [saveAllData]); // Dependency array includes saveAllData
   
   
   
