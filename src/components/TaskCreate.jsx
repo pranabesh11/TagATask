@@ -48,7 +48,22 @@ function TaskCreate() {
   }, []);
 
 
-
+  useEffect(() => {
+    const handleClick = (event) => {
+      if (containerRef.current && containerRef.current.contains(event.target)) {
+        console.log("Clicked inside");
+      } else {
+        console.log("Clicked outside");
+      }
+    };
+  
+    window.addEventListener('mousedown', handleClick);
+    
+    return () => {
+      window.removeEventListener('mousedown', handleClick);
+    };
+  }, []);
+  
 
 
   // // **Changed Part 1: Define saveOnOutsideClick using useCallback**
