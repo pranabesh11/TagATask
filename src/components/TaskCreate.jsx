@@ -71,22 +71,16 @@ function TaskCreate() {
   // }, [isSaving, tasks]);
   const saveOnOutsideClick = useCallback(() => {
     console.log("Executing saveOnOutsideClick", { inputValue, tasks });
-  
-    // Check if inputValue and tasks are valid before saving
     if (!inputValue.trim() && tasks.length === 0) {
       console.log("No data to save on outside click.");
       return;
     }
-  
-    // Optionally, provide user feedback if inputValue is empty but tasks exist
     if (!inputValue.trim()) {
       toast.warn("No task title provided. Saving existing tasks.", {
         position: "top-center",
         style: { backgroundColor: "#ffcc00", color: "#fff" }
       });
     }
-  
-    // Proceed to save using the existing saveAllData function
     saveAllData();
   }, [inputValue, tasks, saveAllData]);
   
@@ -95,19 +89,14 @@ function TaskCreate() {
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         console.log("Clicked outside the container.");
-        // Defer the saveOnOutsideClick call to allow state updates from onBlur to complete
         setTimeout(() => saveOnOutsideClick(), 0);
       }
     };
-  
-    // Bind the event listener
     window.addEventListener('mousedown', handleClickOutside);
-  
     return () => {
-      // Unbind the event listener on cleanup
       window.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [saveOnOutsideClick]); // Dependency array includes saveOnOutsideClick
+  }, [saveOnOutsideClick]);
   
   
   
