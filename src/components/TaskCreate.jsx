@@ -72,87 +72,38 @@ function TaskCreate() {
   
 
   useEffect(() => {
-    // Define saveAllData inside useEffect to capture the latest state.
     const saveAllData = () => {
-      const inputValue = editableInputRef.current?.value.trim();
-      if (inputValue) {
-        const dataToSave = {
-          title: inputValue,
-          user_id: userId,
-          items: tasks.map((task) => ({
-            text: task.text || inputValue,
-            completed: task.completed || false,
-            datetime: task.datetime || null,
-            workType: task.workType || '',
-            comments: task.comments || [],
-            selectedTags: task.selectedTags || [],
-            isBold: task.isBold || false,
-            isItalic: task.isItalic || false,
-          }))
-        };
+      console.log("saveAllData triggered");
   
-        console.log("Attempting to save data:", dataToSave);
-  
-        // Send data to backend API
-        fetch("http://localhost:3000/api_list/create_task", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          body: JSON.stringify(dataToSave),
-        })
-        .then(response => {
-          console.log("Response received:", response);
-          if (!response.ok) throw new Error('Failed to save data');
-          return response.json();
-        })
-        .then(data => {
-          console.log("Data saved successfully:", data);
-          editableInputRef.current.value = '';
-          setTasks([]); // Clear tasks or set to initial state if needed
-          setIsSaving(false);
-        })
-        .catch(error => {
-          console.error("Error saving data:", error);
-          setIsSaving(false);
-        });
-      } else {
-        console.log("No input to save.");
-        setIsSaving(false);
-      }
-    };
-  
-    const handleGlobalKeyDown = (event) => {
-      if (event.key === 'Escape' && !isSaving) {
-        setIsSaving(true);
-        console.log("Escape key pressed, saving data.");
-        saveAllData();
-      }
+      // Your fetch logic for API call
+      fetch("http://localhost:3000/api_list/create_task", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title: inputValue || 'default title', user_id: userId || 1, items: [] })
+      })
+      .then(response => {
+        console.log("Response received from saveAllData:", response);
+        return response.json();
+      })
+      .then(data => console.log("Data saved successfully:", data))
+      .catch(error => console.error("Error in saveAllData:", error));
     };
   
     const handleClick = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         console.log("Clicked outside the container.");
-        if (tasks.length > 0) {
-          console.log("Tasks are open, saving data.");
-          saveAllData();
-        } else {
-          console.log("No open tasks to save.");
-        }
-      } else {
-        console.log("Click was inside the container.");
+        saveAllData(); // Call directly to see if this part runs
       }
     };
   
-    window.addEventListener('keydown', handleGlobalKeyDown);
     window.addEventListener('mousedown', handleClick);
   
     return () => {
-      window.removeEventListener('keydown', handleGlobalKeyDown);
       window.removeEventListener('mousedown', handleClick);
     };
-  }, [isSaving, tasks, userId]);
+  }, []);
   
   
   
