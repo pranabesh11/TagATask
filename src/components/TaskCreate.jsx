@@ -47,71 +47,71 @@ function TaskCreate() {
     fetchAllottee(setAllottee, setError);
   }, []);
 
-  // useEffect(() => {
-  //   const handleGlobalKeyDown = (event) => {
-  //     if (event.key === 'Escape' && !isSaving) {
-  //       setIsSaving(true);
-  //       saveAllData();
-  //     }
-  //   };
-  
-  //   const handleClick = (event) => {
-  //     if (!containerRef.current.contains(event.target)) {
-  //       if (editingTask) {
-  //         // If editing, save the edit
-  //         const taskElement = editingTask.taskRef.current;
-  //         if (taskElement) {
-  //           const updatedText = taskElement.innerText;
-  //           saveEditTask(editingTask.taskId, editingTask.allotteeId, updatedText);
-  //           setEditingTask(null);
-  //         }
-  //       } else if (tasks.length > 0) {
-  //         saveAllData();
-  //       }
-  //     }
-  //   };
-  
-  //   window.addEventListener('keydown', handleGlobalKeyDown);
-  //   window.addEventListener('mousedown', handleClick);
-  
-  //   return () => {
-  //     window.removeEventListener('keydown', handleGlobalKeyDown);
-  //     window.removeEventListener('mousedown', handleClick);
-  //   };
-  // }, [isSaving, tasks, editingTask, saveAllData]);
-  
-
-
-
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        console.log("Clicked outside the container.");
-        
-        // Check if there is anything to save
-        if (!inputValue.trim() && tasks.length === 0) {
-          console.log("No data to save on outside click.");
-          return;
-        }
-        
-        // Warn if the task title is missing
-        if (!inputValue.trim()) {
-          toast.warn("No task title provided. Saving existing tasks.", {
-            position: "top-center",
-            style: { backgroundColor: "#ffcc00", color: "#fff" }
-          });
-        }
-        
-        // Call saveAllData directly
+    const handleGlobalKeyDown = (event) => {
+      if (event.key === 'Escape' && !isSaving) {
+        setIsSaving(true);
         saveAllData();
       }
     };
-    
-    window.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      window.removeEventListener('mousedown', handleClickOutside);
+  
+    const handleClick = (event) => {
+      if (!containerRef.current.contains(event.target)) {
+        if (editingTask) {
+          // If editing, save the edit
+          const taskElement = editingTask.taskRef.current;
+          if (taskElement) {
+            const updatedText = taskElement.innerText;
+            saveEditTask(editingTask.taskId, editingTask.allotteeId, updatedText);
+            setEditingTask(null);
+          }
+        } else if (tasks.length > 0) {
+          saveAllData();
+        }
+      }
     };
-}, [inputValue, tasks, saveAllData]);
+  
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    window.addEventListener('mousedown', handleClick);
+  
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+      window.removeEventListener('mousedown', handleClick);
+    };
+  }, [isSaving, tasks, editingTask, saveAllData]);
+  
+
+
+
+//   useEffect(() => {
+//     const handleClickOutside = (event) => {
+//       if (containerRef.current && !containerRef.current.contains(event.target)) {
+//         console.log("Clicked outside the container.");
+        
+//         // Check if there is anything to save
+//         if (!inputValue.trim() && tasks.length === 0) {
+//           console.log("No data to save on outside click.");
+//           return;
+//         }
+        
+//         // Warn if the task title is missing
+//         if (!inputValue.trim()) {
+//           toast.warn("No task title provided. Saving existing tasks.", {
+//             position: "top-center",
+//             style: { backgroundColor: "#ffcc00", color: "#fff" }
+//           });
+//         }
+        
+//         // Call saveAllData directly
+//         saveAllData();
+//       }
+//     };
+    
+//     window.addEventListener('mousedown', handleClickOutside);
+//     return () => {
+//       window.removeEventListener('mousedown', handleClickOutside);
+//     };
+// }, [inputValue, tasks, saveAllData]);
 
   
   
