@@ -72,14 +72,54 @@ function TaskCreate() {
   
 
   useEffect(() => {
+    // Define saveAllData inside useEffect to capture the latest state.
     const saveAllData = () => {
       const inputValue = editableInputRef.current?.value.trim();
       if (inputValue) {
-        console.log("Saving data:", inputValue);
-        createNewTask(inputValue); // Create task with the current input
-        editableInputRef.current.value = ''; // Clear the input
+        // Prepare data to send
+        const dataToSave = {
+          title: inputValue,
+          user_id: userId,  // Ensure userId is defined correctly
+          items: tasks.map((task) => ({
+            text: task.text || inputValue, // If task text is empty, use input value
+            completed: task.completed || false,
+            datetime: task.datetime || null,
+            workType: task.workType || '',
+            comments: task.comments || [],
+            selectedTags: task.selectedTags || [],
+            isBold: task.isBold || false,
+            isItalic: task.isItalic || false,
+          }))
+        };
+  
+        console.log("Saving data:", dataToSave);
+  
+        // Send data to backend API
+        fetch("http://localhost:3000/api_list/create_task", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataToSave),
+        })
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to save data');
+          return response.json();
+        })
+        .then(data => {
+          console.log("Data saved successfully:", data);
+          // Clear the input and reset tasks after successful save
+          editableInputRef.current.value = '';
+          setTasks([]); // Clear tasks or set to initial state if needed
+          setIsSaving(false);
+        })
+        .catch(error => {
+          console.error("Error saving data:", error);
+          setIsSaving(false); // Reset isSaving if an error occurs
+        });
       } else {
         console.log("No input to save.");
+        setIsSaving(false); // Reset isSaving if no input
       }
     };
   
@@ -112,7 +152,7 @@ function TaskCreate() {
       window.removeEventListener('keydown', handleGlobalKeyDown);
       window.removeEventListener('mousedown', handleClick);
     };
-  }, [isSaving, tasks]);
+  }, [isSaving, tasks, userId]); // Include userId in dependency array if needed
   
   
   
