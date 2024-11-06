@@ -38,33 +38,6 @@ function TaskCreate() {
   const [error, setError] = useState(null);
   const [Allottee, setAllottee] = useState({});
   const [editingTask, setEditingTask] = useState(null);
-
-
-  
-  useEffect(() => {
-    sendUserId(setData, setError);
-    fetchData(setData, setError);
-    fetchAllottee(setAllottee, setError);
-  }, []);
-
-
-  useEffect(() => {
-    const handleClick = (event) => {
-      if (containerRef.current && containerRef.current.contains(event.target)) {
-        console.log("Clicked inside");
-      } else {
-        saveAllDataWithInputValue();
-        console.log("Clicked outside");
-      }
-    };
-  
-    window.addEventListener('mousedown', handleClick);
-    
-    return () => {
-      window.removeEventListener('mousedown', handleClick);
-    };
-  }, [saveAllDataWithInputValue]);
-  
   const saveAllDataWithInputValue = useCallback(() => {
     if (!inputValue) {
       console.log("Input value is required to save data");
@@ -129,6 +102,33 @@ function TaskCreate() {
   
     setIsSaving(false);
   }, [tasks, inputValue, userId]);
+  
+
+  
+  useEffect(() => {
+    sendUserId(setData, setError);
+    fetchData(setData, setError);
+    fetchAllottee(setAllottee, setError);
+  }, []);
+
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      if (containerRef.current && containerRef.current.contains(event.target)) {
+        console.log("Clicked inside");
+      } else {
+        saveAllDataWithInputValue();
+        console.log("Clicked outside");
+      }
+    };
+  
+    window.addEventListener('mousedown', handleClick);
+    
+    return () => {
+      window.removeEventListener('mousedown', handleClick);
+    };
+  }, [saveAllDataWithInputValue]);
+  
   
 
   // // **Changed Part 1: Define saveOnOutsideClick using useCallback**
