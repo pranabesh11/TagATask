@@ -72,6 +72,17 @@ function TaskCreate() {
   
 
   useEffect(() => {
+    const saveAllData = () => {
+      const inputValue = editableInputRef.current?.value.trim();
+      if (inputValue) {
+        console.log("Saving data:", inputValue);
+        createNewTask(inputValue); // Create task with the current input
+        editableInputRef.current.value = ''; // Clear the input
+      } else {
+        console.log("No input to save.");
+      }
+    };
+  
     const handleGlobalKeyDown = (event) => {
       if (event.key === 'Escape' && !isSaving) {
         setIsSaving(true);
@@ -83,8 +94,7 @@ function TaskCreate() {
     const handleClick = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         console.log("Clicked outside the container.");
-        
-        if (tasks.length > 0) { // Check if there are tasks to save
+        if (tasks.length > 0) {
           console.log("Tasks are open, saving data.");
           saveAllData();
         } else {
@@ -102,7 +112,8 @@ function TaskCreate() {
       window.removeEventListener('keydown', handleGlobalKeyDown);
       window.removeEventListener('mousedown', handleClick);
     };
-  }, [isSaving, tasks, saveAllData]);
+  }, [isSaving, tasks]);
+  
   
   
 
