@@ -51,7 +51,8 @@ function TaskCreate() {
 
 
 
-  const saveOnOutsideClick = () => {
+  // **Changed Part 1: Define saveOnOutsideClick using useCallback**
+  const saveOnOutsideClick = useCallback(() => {
     if (editingTask) {
       const { taskId, allotteeId, taskRef } = editingTask;
       const taskElement = taskRef.current;
@@ -69,9 +70,9 @@ function TaskCreate() {
         style: { backgroundColor: "#ffcc00", color: "#fff" }
       });
     }
-  };
+  }, [editingTask, inputValue, tasks, saveAllData, saveEditTask]);
 
-  
+  // **Changed Part 2: Add useEffect for outside clicks**
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
@@ -79,14 +80,14 @@ function TaskCreate() {
         saveOnOutsideClick();
       }
     };
-  
+
     window.addEventListener('mousedown', handleClickOutside);
     
     return () => {
       window.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [saveOnOutsideClick, editingTask, inputValue, tasks, saveAllData]);
-  
+  }, [saveOnOutsideClick]);
+
 
 
 
