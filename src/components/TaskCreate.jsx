@@ -45,19 +45,53 @@ function TaskCreate() {
     fetchAllottee(setAllottee, setError);
   }, []);
 
+  // useEffect(() => {
+  //   const handleGlobalKeyDown = (event) => {
+  //     if (event.key === 'Escape' && !isSaving) {
+  //       setIsSaving(true);
+  //       saveAllData();
+  //     }
+  //   };
+  
+  //   const handleClick = (event) => {
+  //     if (!containerRef.current.contains(event.target)) {
+  //       if (tasks.length > 0) {
+  //         saveAllData();
+  //       }
+  //     }
+  //   };
+  
+  //   window.addEventListener('keydown', handleGlobalKeyDown);
+  //   window.addEventListener('mousedown', handleClick);
+  
+  //   return () => {
+  //     window.removeEventListener('keydown', handleGlobalKeyDown);
+  //     window.removeEventListener('mousedown', handleClick);
+  //   };
+  // }, [isSaving, tasks]);
+  
+
   useEffect(() => {
     const handleGlobalKeyDown = (event) => {
       if (event.key === 'Escape' && !isSaving) {
         setIsSaving(true);
+        console.log("Escape key pressed, saving data.");
         saveAllData();
       }
     };
   
     const handleClick = (event) => {
-      if (!containerRef.current.contains(event.target)) {
-        if (tasks.length > 0) {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        console.log("Clicked outside the container.");
+        
+        if (tasks.length > 0) { // Check if there are tasks to save
+          console.log("Tasks are open, saving data.");
           saveAllData();
+        } else {
+          console.log("No open tasks to save.");
         }
+      } else {
+        console.log("Click was inside the container.");
       }
     };
   
@@ -68,7 +102,8 @@ function TaskCreate() {
       window.removeEventListener('keydown', handleGlobalKeyDown);
       window.removeEventListener('mousedown', handleClick);
     };
-  }, [isSaving, tasks]);
+  }, [isSaving, tasks, saveAllData]);
+  
   
 
 
