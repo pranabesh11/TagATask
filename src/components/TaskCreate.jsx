@@ -52,23 +52,24 @@ function TaskCreate() {
         saveAllData();
       }
     };
-
-
+  
     const handleClick = (event) => {
       if (!containerRef.current.contains(event.target)) {
-        saveAllData();
+        if (tasks.length > 0) { // Check if there are any open tasks to save
+          saveAllData();
+        }
       }
     };
-
+  
     window.addEventListener('keydown', handleGlobalKeyDown);
     window.addEventListener('mousedown', handleClick);
-
+  
     return () => {
       window.removeEventListener('keydown', handleGlobalKeyDown);
       window.removeEventListener('mousedown', handleClick);
     };
-  }, [isSaving]);
-
+  }, [isSaving, tasks]);
+  
 
 
   // const handleChange = (event) => {
