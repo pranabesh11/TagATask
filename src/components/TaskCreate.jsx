@@ -85,18 +85,18 @@ function TaskCreate() {
   }, [inputValue, tasks, saveAllData]);
   
   
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        console.log("Clicked outside the container.");
-        setTimeout(() => saveOnOutsideClick(), 0);
-      }
-    };
-    window.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      window.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [saveOnOutsideClick]);
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (containerRef.current && !containerRef.current.contains(event.target)) {
+  //       console.log("Clicked outside the container.");
+  //       setTimeout(() => saveOnOutsideClick(), 0);
+  //     }
+  //   };
+  //   window.addEventListener('mousedown', handleClickOutside);
+  //   return () => {
+  //     window.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, [saveOnOutsideClick]);
   
   
   
