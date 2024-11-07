@@ -75,11 +75,11 @@ function TaskCreate() {
     }
   
     // Using the existing saveAllData code structure but making sure inputValue is present
-    const params = new URLSearchParams(window.location.search);
-    const notify_success = () => toast.success("Task Created Successfully !");
-    const notify_fail = () => toast.error("Task Creation Failed !");
+    // const params = new URLSearchParams(window.location.search);
+    // const notify_success = () => toast.success("Task Created Successfully !");
+    // const notify_fail = () => toast.error("Task Creation Failed !");
   
-    const userId = params.get('id');
+    // const userId = params.get('id');
     // const dataToSave = {
     //   title: inputValue.trim(),
     //   user_id: userId,
@@ -130,7 +130,7 @@ function TaskCreate() {
     //     });
     // }
   
-    setIsSaving(false);
+    // setIsSaving(false);
   }, [tasks, inputValue, userId]);
   
 
