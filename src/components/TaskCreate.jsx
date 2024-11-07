@@ -49,24 +49,24 @@ function TaskCreate() {
 
 
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        // If the user clicks outside the task container, save the current task
-        if (editingTask) {
-          saveAllData();  // Trigger save for the edited task
-          setEditingTask(null);  // Exit edit mode
-          console.log("Clicked outside - saving task");
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (containerRef.current && !containerRef.current.contains(event.target)) {
+  //       // If the user clicks outside the task container, save the current task
+  //       if (editingTask) {
+  //         saveAllData();  // Trigger save for the edited task
+  //         setEditingTask(null);  // Exit edit mode
+  //         console.log("Clicked outside - saving task");
+  //       }
+  //     }
+  //   };
   
-    window.addEventListener('mousedown', handleClickOutside);
+  //   window.addEventListener('mousedown', handleClickOutside);
   
-    return () => {
-      window.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [editingTask, saveAllData]);
+  //   return () => {
+  //     window.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, [editingTask, saveAllData]);
   
 
 
