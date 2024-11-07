@@ -63,7 +63,7 @@ function TaskCreate() {
     return () => {
       window.removeEventListener('mousedown', handleClick);
     };
-  }, [saveAllDataWithInputValue]);
+  }, []);
   
   const saveAllDataWithInputValue = useCallback(() => {
     if (!inputValue) {
