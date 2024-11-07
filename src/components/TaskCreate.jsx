@@ -118,7 +118,8 @@ function TaskCreate() {
       if (containerRef.current && containerRef.current.contains(event.target)) {
         console.log("Clicked inside");
       } else {
-        saveAllDataWithInputValue();
+        // saveAllDataWithInputValue();
+        saveAllData();
         console.log("Clicked outside");
       }
     };
@@ -128,7 +129,7 @@ function TaskCreate() {
     return () => {
       window.removeEventListener('mousedown', handleClick);
     };
-  }, [inputValue, tasks, userId]); // Only necessary dependencies
+  }, [inputValue, tasks, userId , saveAllData]); // Only necessary dependencies
   
   
   
