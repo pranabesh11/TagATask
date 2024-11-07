@@ -69,10 +69,10 @@ function TaskCreate() {
 
 
   const saveAllDataWithInputValue = useCallback(() => {
-    if (!inputValue) {
-      console.log("Input value is required to save data");
-      return;
-    }
+    // if (!inputValue) {
+    //   console.log("Input value is required to save data");
+    //   return;
+    // }
   
     // Using the existing saveAllData code structure but making sure inputValue is present
     // const params = new URLSearchParams(window.location.search);
