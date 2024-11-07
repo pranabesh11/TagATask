@@ -16,7 +16,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI , saveAllDataWithInputValue} from './ApiList';
+import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI } from './ApiList';
 
 
 function TaskCreate() {
