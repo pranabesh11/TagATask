@@ -378,8 +378,10 @@
     margin: 3%;
     height: auto;
     width: 25%;
-    min-height: 100px;
+    min-height: 300px;
     min-width: 150px;
+    max-height: 300px;
+    overflow: scroll;
     display: flex;
     justify-content: flex-start;
     align-items: center;
