@@ -1005,7 +1005,7 @@ const fetchAllotteeId = async (allotteeName) => {
                 onDrop={() => handleTaskReorder(allotteeName, index)}
                 onDragEnd={() => setDraggingTask(null)}  // Reset dragging state on end
               >
-                <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
+                <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
                 <input
                   type="checkbox"
                   checked={!!datetime}
@@ -1030,8 +1030,6 @@ const fetchAllotteeId = async (allotteeName) => {
         }
       </div>
     </div>
-
-
     </div>
   );
 }
