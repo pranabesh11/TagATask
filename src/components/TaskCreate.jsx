@@ -49,6 +49,48 @@ function TaskCreate() {
 
 
 
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (editingTask && containerRef.current && !containerRef.current.contains(event.target)) {
+        const { taskId, allotteeId, taskRef } = editingTask;
+        const updatedText = taskRef.current.innerText.trim();
+  
+        if (updatedText) {
+          saveEditTask(taskId, allotteeId, updatedText);
+          console.log("Clicked outside - edited task saved");
+        } else {
+          console.log("Clicked outside - no text to save for edited task");
+        }
+  
+        setEditingTask(null); // Exit edit mode
+      }
+    };
+  
+    window.addEventListener('mousedown', handleClickOutside);
+  
+    return () => {
+      window.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [editingTask, saveEditTask]);
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   
 
 
