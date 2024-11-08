@@ -389,6 +389,7 @@
     flex-direction: column;
     border-radius: 5px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    overflow-x: hidden;
 }
 
 .name_text{
@@ -419,6 +420,17 @@
     justify-content: center;
 }
 
-/* .allottee_container::-webkit-scrollbar {
-    width: 22px;
-} */
+.allottee_container::-webkit-scrollbar {
+    width: 7px;
+}
+
+.allottee_container::-webkit-scrollbar-thumb {
+    background-color: rgb(150, 149, 149);
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+.allottee_container::-webkit-scrollbar-track {
+    background-color: inherit;
+    border-radius: 5px;
+}
