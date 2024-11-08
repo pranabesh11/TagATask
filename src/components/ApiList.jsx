@@ -172,12 +172,17 @@ export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTa
       targetTaskId,
     };
 
+    // Log payload to Chrome console
+    console.log("Payload sent to backend:", payload);
+
     const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/task_order', payload, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
     });
+
+    // Log successful update response from backend
     console.log('Task order updated successfully:', response.data);
   } catch (error) {
     console.error('Error updating task order:', error);
