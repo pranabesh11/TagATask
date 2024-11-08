@@ -522,6 +522,27 @@ function TaskCreate() {
   };
   
  
+// const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
+//   if (!draggingTask) return;
+
+//   const updatedAllottee = { ...Allottee };
+//   const sourceTasks = updatedAllottee[draggingTask.allotteeName];
+//   const targetTasks = updatedAllottee[targetAllotteeName];
+//   const draggedTaskIndex = sourceTasks.findIndex(task => task[0] === draggingTask.taskId);
+//   const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
+//   targetTasks.splice(targetTaskIndex, 0, draggedTask);
+//   const reorderedTasks = targetTasks.map(task => ({
+//     taskId: task[0],
+//     description: task[1],
+//   }));
+//   updateTaskOrderAPI(reorderedTasks);
+//   setAllottee(updatedAllottee);
+//   setDraggingTask(null);
+//   console.log('Previous Order:', sourceTasks);
+//   console.log('New Order:', targetTasks);
+// };
+
+
 const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
   if (!draggingTask) return;
 
@@ -530,12 +551,32 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
   const targetTasks = updatedAllottee[targetAllotteeName];
   const draggedTaskIndex = sourceTasks.findIndex(task => task[0] === draggingTask.taskId);
   const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
+
+  // Edge case handling for top and bottom positions
+  let targetTaskId = null;
+  if (targetTaskIndex === 0) {
+    targetTaskId = "top";
+  } else if (targetTaskIndex === targetTasks.length) {
+    targetTaskId = targetTasks[targetTasks.length - 1][0]; // ID of the last task
+  } else {
+    targetTaskId = targetTasks[targetTaskIndex - 1][0]; // ID of the item above the drop position
+  }
+
+  // Insert the dragged task at the new position
   targetTasks.splice(targetTaskIndex, 0, draggedTask);
+
+  // Prepare the reordered task list for backend
   const reorderedTasks = targetTasks.map(task => ({
     taskId: task[0],
     description: task[1],
   }));
-  updateTaskOrderAPI(reorderedTasks);
+
+  // Send updated order along with dragged item ID and target item ID to backend
+  updateTaskOrderAPI(reorderedTasks, {
+    draggedTaskId: draggingTask.taskId,
+    targetTaskId: targetTaskId,
+  });
+
   setAllottee(updatedAllottee);
   setDraggingTask(null);
   console.log('Previous Order:', sourceTasks);
