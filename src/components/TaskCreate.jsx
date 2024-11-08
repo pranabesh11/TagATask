@@ -108,7 +108,7 @@ function TaskCreate() {
     return () => {
       window.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [editingTask, fetchAllotteeData]);
+  }, [editingTask]);
   
 
 
