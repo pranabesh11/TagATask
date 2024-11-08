@@ -419,6 +419,6 @@
     justify-content: center;
 }
 
-.allottee_container::-webkit-scrollbar {
+/* .allottee_container::-webkit-scrollbar {
     width: 22px;
-}
+} */
