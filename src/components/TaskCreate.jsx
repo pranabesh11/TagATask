@@ -52,13 +52,48 @@ function TaskCreate() {
 
 
   useEffect(() => {
+    // Rename the internal function to handleSaveEditTask
+    const handleSaveEditTask = async (taskId, allotteeId, updatedText) => {
+      try {
+        const dataToEdit = {
+          task_id: taskId,
+          allottee_id: allotteeId,
+          text: updatedText,
+        };
+        const response = await fetch('https://2a5f-49-37-9-67.ngrok-free.app/edit_task', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'any',
+          },
+          body: JSON.stringify(dataToEdit),
+        });
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+        const responseText = await response.text();
+        const data = responseText ? JSON.parse(responseText) : null;
+        
+        if (data) {
+          console.log('Edit Success:', data);
+          setTimeout(fetchAllotteeData, 200);
+          setTasks([]);
+          setInputValue('');
+          setEditingTask(null);
+        } else {
+          console.error('No data returned from edit task API');
+        }
+      } catch (error) {
+        console.error('Error saving edited task:', error);
+      }
+    };
+  
     const handleClickOutside = (event) => {
       if (editingTask && containerRef.current && !containerRef.current.contains(event.target)) {
         const { taskId, allotteeId, taskRef } = editingTask;
         const updatedText = taskRef.current.innerText.trim();
   
         if (updatedText) {
-          saveEditTask(taskId, allotteeId, updatedText);
+          handleSaveEditTask(taskId, allotteeId, updatedText);
           console.log("Clicked outside - edited task saved");
         } else {
           console.log("Clicked outside - no text to save for edited task");
@@ -73,11 +108,8 @@ function TaskCreate() {
     return () => {
       window.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [editingTask, saveEditTask]);
+  }, [editingTask, fetchAllotteeData]);
   
-
-
-
 
 
 
@@ -797,7 +829,7 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
     }, 0);
 };
 
-const saveEditTask = async (taskId, allotteeId, updatedText) => {
+const saveEditTask =  async (taskId, allotteeId, updatedText) => {
     try {
         const dataToEdit = {
           task_id: taskId,
