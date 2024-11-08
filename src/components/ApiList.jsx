@@ -147,9 +147,32 @@ export const fetchAllottee = async (setAllottee, setError) => {
 
 
 
-export const updateTaskOrderAPI = async (reorderedTasks) => {
+// export const updateTaskOrderAPI = async (reorderedTasks) => {
+//   try {
+//     const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/task_order', reorderedTasks, {
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Accept': 'application/json',
+//       },
+//     });
+//     console.log('Task order updated successfully:', response.data);
+//   } catch (error) {
+//     console.error('Error updating task order:', error);
+//   }
+// };
+
+
+
+
+export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTaskId) => {
   try {
-    const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/task_order', reorderedTasks, {
+    const payload = {
+      reorderedTasks,
+      draggedTaskId,
+      targetTaskId,
+    };
+
+    const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/task_order', payload, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -160,5 +183,3 @@ export const updateTaskOrderAPI = async (reorderedTasks) => {
     console.error('Error updating task order:', error);
   }
 };
-
-

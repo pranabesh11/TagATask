@@ -571,16 +571,16 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
     description: task[1],
   }));
 
+  // Log the reorder details
+  console.log("Reordered Tasks:", reorderedTasks);
+  console.log("Dragged Task ID:", draggingTask.taskId);
+  console.log("Target Task ID:", targetTaskId);
+
   // Send updated order along with dragged item ID and target item ID to backend
-  updateTaskOrderAPI(reorderedTasks, {
-    draggedTaskId: draggingTask.taskId,
-    targetTaskId: targetTaskId,
-  });
+  updateTaskOrderAPI(reorderedTasks, draggingTask.taskId, targetTaskId);
 
   setAllottee(updatedAllottee);
   setDraggingTask(null);
-  console.log('Previous Order:', sourceTasks);
-  console.log('New Order:', targetTasks);
 };
 
 
