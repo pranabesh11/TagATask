@@ -62,7 +62,7 @@ export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
 
   // Send request to backend
   try {
-    const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/done_mark', {
+    const response = await axios.post('https://fd25-49-37-9-67.ngrok-free.app/done_mark', {
       task_id: taskId,
       completed: isChecked,
     });
@@ -86,7 +86,7 @@ export const sendUserId = async (setData, setError) => {
 
   if (userId) {
     try {
-      const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/allot', {
+      const response = await axios.post('https://fd25-49-37-9-67.ngrok-free.app/allot', {
         user_id: userId,
       }, {
         headers: {
@@ -109,7 +109,7 @@ export const sendUserId = async (setData, setError) => {
 // Function to fetch options from Rails API
 export const fetchData = async (setData, setError) => {
   try {
-    const response = await axios.get('https://2a5f-49-37-9-67.ngrok-free.app/allot', {
+    const response = await axios.get('https://fd25-49-37-9-67.ngrok-free.app/allot', {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any"
@@ -130,7 +130,7 @@ export const fetchData = async (setData, setError) => {
 // Function to fetch allottee data
 export const fetchAllottee = async (setAllottee, setError) => {
   try {
-    const response = await axios.get('https://2a5f-49-37-9-67.ngrok-free.app/task_data', {
+    const response = await axios.get('https://fd25-49-37-9-67.ngrok-free.app/task_data', {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any"
@@ -175,7 +175,7 @@ export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTa
     // Log payload to Chrome console
     console.log("Payload sent to backend:", payload);
 
-    const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/task_order', payload, {
+    const response = await axios.post('https://fd25-49-37-9-67.ngrok-free.app/task_order', payload, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
