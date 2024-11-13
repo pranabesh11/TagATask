@@ -60,7 +60,7 @@ function TaskCreate() {
           allottee_id: allotteeId,
           text: updatedText,
         };
-        const response = await fetch('https://fd25-49-37-9-67.ngrok-free.app/edit_task', {
+        const response = await fetch('https://e487-49-37-9-67.ngrok-free.app/edit_task', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -241,7 +241,7 @@ function TaskCreate() {
   
     try {
       const response = await axios.post(
-        "https://fd25-49-37-9-67.ngrok-free.app/done_mark",
+        "https://e487-49-37-9-67.ngrok-free.app/done_mark",
         {
           task_id: taskId,
           completed: isChecked,
@@ -660,7 +660,7 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
   
   const fetchAllotteeData = async () => {
     try {
-      const response = await axios.get('https://fd25-49-37-9-67.ngrok-free.app/task_data', {
+      const response = await axios.get('https://e487-49-37-9-67.ngrok-free.app/task_data', {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -836,7 +836,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
           allottee_id: allotteeId,
           text: updatedText,
         };
-        const response = await fetch('https://fd25-49-37-9-67.ngrok-free.app/edit_task', {
+        const response = await fetch('https://e487-49-37-9-67.ngrok-free.app/edit_task', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -866,7 +866,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
 const fetchAllotteeId = async (allotteeName) => {
     try {
         const response = await axios.post(
-            'https://fd25-49-37-9-67.ngrok-free.app/id_name_converter',
+            'https://e487-49-37-9-67.ngrok-free.app/id_name_converter',
             { name: allotteeName },
             { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
         );
