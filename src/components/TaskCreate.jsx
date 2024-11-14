@@ -561,6 +561,36 @@ function TaskCreate() {
     }
   };
 
+  const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
+    if (!draggingTask) return;
+  
+    console.log("Dragged Task ID:", draggingTask.taskId);
+    console.log("Dropped on Allottee:", targetAllotteeName);
+    const dataToSend = {
+      taskId: draggingTask.taskId,
+      newAllottee: targetAllotteeName,
+    };
+  
+    try {
+      const response = await axios.post(
+        "https://e487-49-37-9-67.ngrok-free.app/task_transfer",
+        dataToSend,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "ngrok-skip-browser-warning": "any"
+          }
+        }
+      );
+  
+      console.log("API response:", response.data);
+    } catch (error) {
+      console.error("Error sending task transfer data:", error);
+    }
+  };
+  
+
   // const handleTaskReorder = (e, cardIndex, targetTaskIndex) => {
   //   e.preventDefault();
 
@@ -1066,7 +1096,12 @@ const fetchAllotteeId = async (allotteeName) => {
       <div className='tasks'>
         {
           Object.entries(Allottee).map(([allotteeName, tasks]) => (
-            <div className='allottee_container' key={allotteeName}>
+            <div 
+              className='allottee_container' 
+              key={allotteeName}
+              onDragOver={handleTaskDragOver}
+              onDrop={() => handleDropOnAllotteeContainer(allotteeName)}
+            >
               <p className='name_text'>{allotteeName}</p>
               <div>
               {tasks.map(([taskId, taskDescription, datetime], index) => (
