@@ -260,7 +260,7 @@ function TaskCreate() {
   const showToastMessage = () => {
     toast.warn("Please select an Allottee", {
       position: "top-center",
-      style: { backgroundColor: "white", color: "#fff" }
+      style: { backgroundColor: "white", color: "black" }
     });
   };
 
