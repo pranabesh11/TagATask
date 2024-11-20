@@ -32,6 +32,7 @@ function TaskCreate() {
   const [comments, setComments] = useState([]);
   const { userId } = useParams();
   const [draggingTask, setDraggingTask] = useState(null);
+  const [draggingAllottee, setDraggingAllottee] = useState(null);
 
 
   const [data, setData] = useState([]);
@@ -537,6 +538,8 @@ function TaskCreate() {
   // const handleTaskDragOver = (e) => {
   //   e.preventDefault();
   // };
+  
+  
 
   const handleTaskDrop = (e, cardIndex, targetTaskIndex) => {
     e.preventDefault();
@@ -560,6 +563,37 @@ function TaskCreate() {
       setDraggingIndex(null);
     }
   };
+  const handleAllotteeReorder = (targetAllotteeName) => {
+    if (!draggingAllottee || draggingAllottee === targetAllotteeName) {
+      console.log("No draggingAllottee or dropped on the same allottee.");
+      return;
+    }
+  
+    // Log the dragged and dropped allottee_container
+    console.log("Dragged Allottee:", draggingAllottee);
+    console.log("Dropped Over Allottee:", targetAllotteeName);
+  
+    const updatedAllotteeOrder = Object.entries(Allottee).reduce((result, [name, tasks]) => {
+      if (name === targetAllotteeName) {
+        result.push([draggingAllottee, Allottee[draggingAllottee]]);
+      }
+      if (name !== draggingAllottee) {
+        result.push([name, tasks]);
+      }
+      return result;
+    }, []);
+  
+    const newAllotteeState = Object.fromEntries(updatedAllotteeOrder);
+    setAllottee(newAllotteeState);
+  
+    // Log the new full order of Allottee
+    console.log("Full Allottee Order After Reorder:", Object.keys(newAllotteeState));
+  
+    setDraggingAllottee(null);
+  };
+  
+  
+  
 
   const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
     if (!draggingTask) return;
@@ -910,6 +944,15 @@ const fetchAllotteeId = async (allotteeName) => {
 };
 
 
+const handleDrop = (allotteeName) => {
+  if (draggingTask) {
+    handleDropOnAllotteeContainer(allotteeName);
+  } else if (draggingAllottee) {
+    handleAllotteeReorder(allotteeName);
+  }
+};
+
+
   
 
 
@@ -1100,7 +1143,8 @@ const fetchAllotteeId = async (allotteeName) => {
               className='allottee_container' 
               key={allotteeName}
               onDragOver={handleTaskDragOver}
-              onDrop={() => handleDropOnAllotteeContainer(allotteeName)}
+              onDragStart={() => setDraggingAllottee(allotteeName)}
+              onDrop={() => handleDrop(allotteeName)}
             >
               <p className='name_text'>{allotteeName}</p>
               <div>
