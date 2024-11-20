@@ -16,7 +16,6 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useSearchParams } from "react-router-dom";
 import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI } from './ApiList';
 
 
@@ -943,8 +942,7 @@ const handleAllotteeReorder = (targetAllotteeName) => {
 
   // Log the new full order of Allottee
   console.log("Full Allottee Order After Reorder:", Object.keys(newAllotteeState));
-  const [searchParams] = useSearchParams();
-  const userId = searchParams.get("id");
+  const userId = new URLSearchParams(window.location.search).get('id');
   const dataToSend = {
     current_user : userId,
     draggedAllottee: draggingAllottee,
