@@ -563,66 +563,11 @@ function TaskCreate() {
       setDraggingIndex(null);
     }
   };
-  const handleAllotteeReorder = (targetAllotteeName) => {
-    if (!draggingAllottee || draggingAllottee === targetAllotteeName) {
-      console.log("No draggingAllottee or dropped on the same allottee.");
-      return;
-    }
   
-    // Log the dragged and dropped allottee_container
-    console.log("Dragged Allottee:", draggingAllottee);
-    console.log("Dropped Over Allottee:", targetAllotteeName);
-  
-    const updatedAllotteeOrder = Object.entries(Allottee).reduce((result, [name, tasks]) => {
-      if (name === targetAllotteeName) {
-        result.push([draggingAllottee, Allottee[draggingAllottee]]);
-      }
-      if (name !== draggingAllottee) {
-        result.push([name, tasks]);
-      }
-      return result;
-    }, []);
-  
-    const newAllotteeState = Object.fromEntries(updatedAllotteeOrder);
-    setAllottee(newAllotteeState);
-  
-    // Log the new full order of Allottee
-    console.log("Full Allottee Order After Reorder:", Object.keys(newAllotteeState));
-  
-    setDraggingAllottee(null);
-  };
   
   
   
 
-  const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
-    if (!draggingTask) return;
-  
-    console.log("Dragged Task ID:", draggingTask.taskId);
-    console.log("Dropped on Allottee:", targetAllotteeName);
-    const dataToSend = {
-      taskId: draggingTask.taskId,
-      newAllottee: targetAllotteeName,
-    };
-  
-    try {
-      const response = await axios.post(
-        "https://e487-49-37-9-67.ngrok-free.app/task_transfer",
-        dataToSend,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "ngrok-skip-browser-warning": "any"
-          }
-        }
-      );
-      setTimeout(fetchAllotteeData, 0);
-      console.log("API response:", response.data);
-    } catch (error) {
-      console.error("Error sending task transfer data:", error);
-    }
-  };
   
 
   // const handleTaskReorder = (e, cardIndex, targetTaskIndex) => {
@@ -941,6 +886,64 @@ const fetchAllotteeId = async (allotteeName) => {
         console.error('Error fetching ID for allottee name:', error);
         return null;
     }
+};
+
+const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
+  if (!draggingTask) return;
+
+  console.log("Dragged Task ID:", draggingTask.taskId);
+  console.log("Dropped on Allottee:", targetAllotteeName);
+  const dataToSend = {
+    taskId: draggingTask.taskId,
+    newAllottee: targetAllotteeName,
+  };
+
+  try {
+    const response = await axios.post(
+      "https://e487-49-37-9-67.ngrok-free.app/task_transfer",
+      dataToSend,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "ngrok-skip-browser-warning": "any"
+        }
+      }
+    );
+    setTimeout(fetchAllotteeData, 0);
+    console.log("API response:", response.data);
+  } catch (error) {
+    console.error("Error sending task transfer data:", error);
+  }
+};
+
+const handleAllotteeReorder = (targetAllotteeName) => {
+  if (!draggingAllottee || draggingAllottee === targetAllotteeName) {
+    console.log("No draggingAllottee or dropped on the same allottee.");
+    return;
+  }
+
+  // Log the dragged and dropped allottee_container
+  console.log("Dragged Allottee:", draggingAllottee);
+  console.log("Dropped Over Allottee:", targetAllotteeName);
+
+  const updatedAllotteeOrder = Object.entries(Allottee).reduce((result, [name, tasks]) => {
+    if (name === targetAllotteeName) {
+      result.push([draggingAllottee, Allottee[draggingAllottee]]);
+    }
+    if (name !== draggingAllottee) {
+      result.push([name, tasks]);
+    }
+    return result;
+  }, []);
+
+  const newAllotteeState = Object.fromEntries(updatedAllotteeOrder);
+  setAllottee(newAllotteeState);
+
+  // Log the new full order of Allottee
+  console.log("Full Allottee Order After Reorder:", Object.keys(newAllotteeState));
+
+  setDraggingAllottee(null);
 };
 
 
