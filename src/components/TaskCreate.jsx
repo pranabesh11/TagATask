@@ -943,6 +943,7 @@ const handleAllotteeReorder = (targetAllotteeName) => {
   // Log the new full order of Allottee
   console.log("Full Allottee Order After Reorder:", Object.keys(newAllotteeState));
   const dataToSend = {
+    current_user : userId,
     draggedAllottee: draggingAllottee,
     droppedAllottee: targetAllotteeName,
     fullOrder: Object.keys(newAllotteeState),
