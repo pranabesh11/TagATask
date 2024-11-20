@@ -942,6 +942,24 @@ const handleAllotteeReorder = (targetAllotteeName) => {
 
   // Log the new full order of Allottee
   console.log("Full Allottee Order After Reorder:", Object.keys(newAllotteeState));
+  const dataToSend = {
+    draggedAllottee: draggingAllottee,
+    droppedAllottee: targetAllotteeName,
+    fullOrder: Object.keys(newAllotteeState),
+  };
+  axios
+    .post("https://e487-49-37-9-67.ngrok-free.app/allottee_card_reorder", dataToSend, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+    .then((response) => {
+      console.log("Backend response:", response.data);
+    })
+    .catch((error) => {
+      console.error("Error sending allottee reorder data:", error);
+    });
 
   setDraggingAllottee(null);
 };
@@ -1147,7 +1165,7 @@ const handleDrop = (allotteeName) => {
               key={allotteeName}
               draggable
               onDragOver={handleTaskDragOver}
-              onDragStart={(e) => {
+              onDragStart={(e) => { 
                 setDraggingAllottee(allotteeName);
                 console.log("Dragging allottee:", allotteeName);
               }}
