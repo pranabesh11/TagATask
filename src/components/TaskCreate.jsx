@@ -1142,6 +1142,7 @@ const handleDrop = (allotteeName) => {
             <div 
               className='allottee_container' 
               key={allotteeName}
+              draggable
               onDragOver={handleTaskDragOver}
               onDragStart={() => setDraggingAllottee(allotteeName)}
               onDrop={() => handleDrop(allotteeName)}
