@@ -960,6 +960,10 @@ const handleAllotteeReorder = (targetAllotteeName) => {
     .then((response) => {
       console.log("Backend response:", response.data);
       fetchAllotteeData();
+      toast.success("Reorder successful!", {
+        position: toast.POSITION.TOP_CENTER,
+        style: { backgroundColor: "white", color: "black" },
+      });
     })
     .catch((error) => {
       console.error("Error sending allottee reorder data:", error);
