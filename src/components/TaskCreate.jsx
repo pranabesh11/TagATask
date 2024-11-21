@@ -961,7 +961,7 @@ const handleAllotteeReorder = (targetAllotteeName) => {
       console.log("Backend response:", response.data);
       fetchAllotteeData();
       toast.success("Reorder successful!", {
-        position: toast.POSITION.TOP_CENTER,
+        position: "top-center", 
         style: { backgroundColor: "white", color: "black" },
       });
     })
