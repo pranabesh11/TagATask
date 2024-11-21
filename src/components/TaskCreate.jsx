@@ -667,22 +667,23 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
 
 
   
-  const fetchAllotteeData = async () => {
-    try {
-      const response = await axios.get('https://e487-49-37-9-67.ngrok-free.app/task_data', {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': "any"
-        },
-      });
-      console.log('Fetched tasks:', response.data);
-      setAllottee(response.data.personnels);
-    } catch (error) {
-      console.error('Error fetching task data:', error);
-    }
-  };
-  
+const fetchAllotteeData = async () => {
+  try {
+    const userId = new URLSearchParams(window.location.search).get('id');
+    const response = await axios.get(`https://e487-49-37-9-67.ngrok-free.app/task_data?user_id=${userId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': "any",
+      },
+    });
+    console.log('Fetched tasks:', response.data);
+    setAllottee(response.data.personnels);
+  } catch (error) {
+    console.error('Error fetching task data:', error);
+  }
+};
+
 
 
 

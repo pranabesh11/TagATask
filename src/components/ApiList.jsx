@@ -128,12 +128,29 @@ export const fetchData = async (setData, setError) => {
 };
 
 // Function to fetch allottee data
+// export const fetchAllottee = async (setAllottee, setError) => {
+//   try {
+//     const response = await axios.get('https://e487-49-37-9-67.ngrok-free.app/task_data', {
+//       headers: {
+//         'Accept': 'application/json',
+//         'ngrok-skip-browser-warning': "any"
+//       },
+//     });
+//     console.log(response.data.personnels);
+//     setAllottee(response.data.personnels);
+//   } catch (error) {
+//     console.error('Error fetching data:', error);
+//     setError('Error fetching data. Please check the console for more details.');
+//   }
+// };
+
 export const fetchAllottee = async (setAllottee, setError) => {
   try {
-    const response = await axios.get('https://e487-49-37-9-67.ngrok-free.app/task_data', {
+    const userId = new URLSearchParams(window.location.search).get('id'); // Get user ID from URL
+    const response = await axios.get(`https://e487-49-37-9-67.ngrok-free.app/task_data?user_id=${userId}`, {
       headers: {
         'Accept': 'application/json',
-        'ngrok-skip-browser-warning': "any"
+        'ngrok-skip-browser-warning': "any",
       },
     });
     console.log(response.data.personnels);
@@ -143,7 +160,6 @@ export const fetchAllottee = async (setAllottee, setError) => {
     setError('Error fetching data. Please check the console for more details.');
   }
 };
-
 
 
 
