@@ -959,6 +959,7 @@ const handleAllotteeReorder = (targetAllotteeName) => {
     })
     .then((response) => {
       console.log("Backend response:", response.data);
+      fetchAllotteeData();
     })
     .catch((error) => {
       console.error("Error sending allottee reorder data:", error);
