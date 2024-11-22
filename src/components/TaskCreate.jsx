@@ -49,8 +49,10 @@ function TaskCreate() {
     fetchAllottee(setAllottee, setError);
   }, []);
 
-
-
+  
+  useEffect(() => {
+    alert(`The toggle is now ${isToggleOn ? 'ON' : 'OFF'}`);
+  }, [isToggleOn]);
 
 
   useEffect(() => {
