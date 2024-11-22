@@ -50,9 +50,7 @@ function TaskCreate() {
   }, []);
 
   
-  useEffect(() => {
-    alert(`The toggle is now ${isToggleOn ? 'ON' : 'OFF'}`);
-  }, [isToggleOn]);
+  
 
 
   useEffect(() => {
