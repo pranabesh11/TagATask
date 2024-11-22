@@ -9,7 +9,7 @@ const Switch = ({ onToggleChange }) => {
     <StyledWrapper>
       <label className="label">
         <div className="toggle">
-          <input className="toggle-state" type="checkbox" name="check" defaultValue="check" />
+          <input className="toggle-state" type="checkbox" name="check" defaultValue="check" onChange={handleChange}/>
           <div className="indicator" />
         </div>
       </label>
