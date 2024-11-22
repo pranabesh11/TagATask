@@ -1202,7 +1202,7 @@ const handleToggleChange = (newState) => {
         <ToggleButton onToggleChange={handleToggleChange}/>
         <p>Tag Wise</p>
       </div>
-      {isToggleOn ?
+      {!isToggleOn ?
       <div className='task_container'>
         <h1>Allottee Wise Tasks</h1>
         <div className='tasks'>
