@@ -265,6 +265,33 @@ function TaskCreate() {
     });
   };
 
+  const showToast = (type , position , message )=>{
+    const validPosition = position || "top-center";
+    const toastStyles = { backgroundColor: "white", color: "black" };
+    if(type == 'success'){
+      toast.success(
+        message,{
+          position:validPosition,
+          style: toastStyles
+        }
+      );
+    }
+    else if(type=="warning"){
+      toast.warn(message,{
+        position:validPosition,
+        style: toastStyles
+      });
+    }
+    else if(type == "error"){
+      toast.error(message,{
+        position:validPosition,
+        style: toastStyles
+      })
+    }else {
+      console.error(`Unknown toast type: ${type}`);
+    }
+  }
+
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -912,6 +939,10 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
       }
     );
     setTimeout(fetchAllotteeData, 0);
+    toast.success("Task transferred Successfully !", {
+      position: "top-center", 
+      style: { backgroundColor: "white", color: "black" },
+    });
     console.log("API response:", response.data);
   } catch (error) {
     console.error("Error sending task transfer data:", error);
