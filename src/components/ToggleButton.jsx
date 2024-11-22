@@ -7,58 +7,66 @@ const Switch = ({ onToggleChange }) => {
     };
   return (
     <StyledWrapper>
-      <label className="label">
-        <div className="toggle">
+      <label className="switch">
           <input className="toggle-state" type="checkbox" name="check" defaultValue="check" onChange={handleChange}/>
-          <div className="indicator" />
-        </div>
+          <span className="slider" />
       </label>
     </StyledWrapper>
   );
 }
 
 const StyledWrapper = styled.div`
-  .label {
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    color: #394a56;
-  }
-
-  .label-text {
-    margin-left: 16px;
-  }
-
-  .toggle {
-    isolation: isolate;
+  /* The switch - the box around the slider */
+  .switch {
+    font-size: 17px;
     position: relative;
-    height: 30px;
-    width: 60px;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: -8px -4px 8px 0px #ffffff,
-      8px 4px 12px 0px #d1d9e6,
-      4px 4px 4px 0px #d1d9e6 inset,
-      -4px -4px 4px 0px #ffffff inset;
+    display: inline-block;
+    width: 3.5em;
+    height: 2em;
   }
 
-  .toggle-state {
-    display: none;
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
   }
 
-  .indicator {
-    height: 100%;
-    width: 200%;
-    background: #ecf0f3;
-    border-radius: 15px;
-    transform: translate3d(-75%, 0, 0);
-    transition: transform 0.4s cubic-bezier(0.85, 0.05, 0.18, 1.35);
-    box-shadow: -8px -4px 8px 0px #ffffff,
-      8px 4px 12px 0px #d1d9e6;
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #9fccfa;
+    border-radius: 50px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
-  .toggle-state:checked ~ .indicator {
-    transform: translate3d(25%, 0, 0);
+  .slider:before {
+    position: absolute;
+    content: "";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2em;
+    width: 2em;
+    inset: 0;
+    background-color: white;
+    border-radius: 50px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .switch input:checked + .slider {
+    background: #0974f1;
+  }
+
+  .switch input:focus + .slider {
+    box-shadow: 0 0 1px #0974f1;
+  }
+
+  .switch input:checked + .slider:before {
+    transform: translateX(1.6em);
   }`;
 
 export default Switch;
