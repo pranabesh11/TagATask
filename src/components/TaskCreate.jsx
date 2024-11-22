@@ -34,7 +34,7 @@ function TaskCreate() {
   const { userId } = useParams();
   const [draggingTask, setDraggingTask] = useState(null);
   const [draggingAllottee, setDraggingAllottee] = useState(null);
-
+  const [isToggleOn, setIsToggleOn] = useState(false);
 
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
@@ -1013,6 +1013,10 @@ const handleDrop = (allotteeName) => {
   }
 };
 
+const handleToggleChange = (newState) => {
+  console.log('Toggle button state:', newState);
+  setIsToggleOn(newState); // Update state in TaskCreate
+};
 
   
 
@@ -1195,7 +1199,7 @@ const handleDrop = (allotteeName) => {
       </div>
       <div className='toggle_button'>
         <p>Allottee Wise</p>
-        <ToggleButton/>
+        <ToggleButton onToggleChange={handleToggleChange}/>
         <p>Tag Wise</p>
       </div>
 
