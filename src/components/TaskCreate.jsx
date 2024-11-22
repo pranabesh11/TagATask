@@ -1200,7 +1200,7 @@ const handleDrop = (allotteeName) => {
       </div>
 
     <div className='task_container'>
-      <h1>Tasks</h1>
+      <h1>Allottee Wise Tasks</h1>
       <div className='tasks'>
         {
           Object.entries(Allottee).map(([allotteeName, tasks]) => (
