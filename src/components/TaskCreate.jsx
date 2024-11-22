@@ -17,6 +17,7 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI } from './ApiList';
+import  ToggleButton  from './ToggleButton';
 
 
 function TaskCreate() {
@@ -1192,7 +1193,11 @@ const handleDrop = (allotteeName) => {
           ))}
         </ul>
       </div>
-
+      <div className='toggle_button'>
+        <p>Allottee Wise</p>
+        <ToggleButton/>
+        <p>Tag Wise</p>
+      </div>
 
     <div className='task_container'>
       <h1>Tasks</h1>

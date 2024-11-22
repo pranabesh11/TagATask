@@ -434,3 +434,15 @@
     background-color: inherit;
     border-radius: 5px;
 }
+
+.toggle_button{
+    width: 90vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.toggle_button p{
+    margin: 15px;
+    font-weight: bolder;
+    
+}
