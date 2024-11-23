@@ -394,7 +394,13 @@
 
 .name_text{
     font-weight: bolder;
-    font-size: larger;
+    font-size: x-large;
+    position: sticky;
+    top: 0;
+    background-color: rgb(224, 223, 223);
+    border-radius: 5px;
+    padding: 4px; 
+    color: black
 }
 
 .task_container{
