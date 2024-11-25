@@ -1245,7 +1245,7 @@ const handleToggleChange = (newState) => {
                     onInput={(e) => handleTaskInput(0, e)}
                     onBlur={(e) => handleTaskInput(0, e)}
                     className='each_task'
-                    style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap' }}
+                    style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap',textDecoration: datetime ? 'line-through' : 'none', }}
                     dangerouslySetInnerHTML={{ __html: taskDescription }}
                   />
                 </div>
