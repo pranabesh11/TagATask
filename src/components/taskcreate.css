@@ -374,7 +374,6 @@
   .allottee_container {
     background-color: #f1f4f5;
     border: 1px solid rgb(235, 232, 232);
-    padding: 10px;
     margin: 3%;
     height: auto;
     width: 25%;
@@ -397,7 +396,7 @@
     font-size: x-large;
     position: sticky;
     top: 0;
-    background-color: rgb(224, 223, 223);
+    background-color: #9ac5f2;
     border-radius: 5px;
     padding: 4px; 
     color: black;
