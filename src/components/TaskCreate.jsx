@@ -166,7 +166,7 @@ function TaskCreate() {
         if (editableInputRef.current) editableInputRef.current.value = '';
         document.getElementById('inputField').focus();
   
-        fetch('http://localhost:3000/api_list/create_task', {
+        fetch('https://e487-49-37-9-67.ngrok-free.app/create_task', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
