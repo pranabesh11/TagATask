@@ -1204,56 +1204,138 @@ const handleToggleChange = (newState) => {
       </div>
       {!isToggleOn ?
       <div className='task_container'>
-        <h1>Allottee Wise Tasks</h1>
+        <h1 className='allottee_wise_task'>Allottee Wise Tasks</h1>
         <div className='tasks'>
-          {
-            Object.entries(Allottee).map(([allotteeName, tasks]) => (
-              <div 
-                className='allottee_container' 
+        {
+          Object.entries(Allottee).map(([allotteeName, tasks]) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentPersonnelId = parseInt(urlParams.get('id'));
+
+            const part1Tasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+              return !completionDate && allotteeId === currentPersonnelId;
+            });
+            const part2Tasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+              return !verificationDate && allotterId === currentPersonnelId;
+            });
+            let to_do_tasks = [...part1Tasks, ...part2Tasks];
+            
+            const part1FollowUpTasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+              return !verificationDate && allotteeId === currentPersonnelId;
+            });
+            
+            const part2FollowUpTasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+              return completionDate;
+            });
+            
+            let follow_up_tasks = part1FollowUpTasks.filter(task => part2FollowUpTasks.includes(task));
+            
+            const reallocatedTasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+              return !verificationDate && !completionDate && allotterId === currentPersonnelId;
+            });
+            
+            to_do_tasks = to_do_tasks.filter(task => !reallocatedTasks.includes(task));
+            follow_up_tasks = [...follow_up_tasks, ...reallocatedTasks];
+            
+            follow_up_tasks = follow_up_tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+              return !(allotterId === currentPersonnelId && allotteeId === currentPersonnelId);
+            });
+            
+
+            return (
+              <div
+                className="allottee_container"
                 key={allotteeName}
                 draggable
                 onDragOver={handleTaskDragOver}
-                onDragStart={(e) => { 
+                onDragStart={(e) => {
                   setDraggingAllottee(allotteeName);
                   console.log("Dragging allottee:", allotteeName);
                 }}
                 onDrop={() => handleDrop(allotteeName)}
               >
-                <p className='name_text'>{allotteeName}</p>
-                <div>
-                {tasks.map(([taskId, taskDescription, datetime], index) => (
-                <div 
-                  key={taskId} 
-                  className="task-item-container"
-                  draggable
-                  onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
-                  onDragOver={handleTaskDragOver}
-                  onDrop={() => handleTaskReorder(allotteeName, index)}
-                  onDragEnd={() => setDraggingTask(null)}  // Reset dragging state on end
-                >
-                  <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
-                  <input
-                    type="checkbox"
-                    checked={!!datetime}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
-                    style={{ marginRight: '10px' }}
-                  />
-                  <div
-                    onClick={() => editTask(taskId, taskDescription,allotteeName)}
-                    suppressContentEditableWarning={true}
-                    onInput={(e) => handleTaskInput(0, e)}
-                    onBlur={(e) => handleTaskInput(0, e)}
-                    className='each_task'
-                    style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap',textDecoration: datetime ? 'line-through' : 'none', }}
-                    dangerouslySetInnerHTML={{ __html: taskDescription }}
-                  />
+                <p className="name_text">{allotteeName}</p>
+
+                {/* To-Do Tasks */}
+                <div id="to_do_tasks">
+                  <h3 className='section'>ToDo</h3>
+                  {to_do_tasks.map(([taskId, taskDescription, completionDate], index) => (
+                    <div
+                      key={taskId}
+                      className="task-item-container"
+                      draggable
+                      onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
+                      onDragOver={handleTaskDragOver}
+                      onDrop={() => handleTaskReorder(allotteeName, index)}
+                      onDragEnd={() => setDraggingTask(null)}
+                    >
+                      <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
+                      <input
+                        type="checkbox"
+                        checked={!!completionDate}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
+                        style={{ marginRight: "10px" }}
+                      />
+                      <div
+                        onClick={() => editTask(taskId, taskDescription, allotteeName)}
+                        suppressContentEditableWarning={true}
+                        className="each_task"
+                        style={{
+                          border: "1px solid #ccc",
+                          padding: "5px",
+                          minHeight: "20px",
+                          whiteSpace: "pre-wrap",
+                          fontSize: "20px",
+                        }}
+                        dangerouslySetInnerHTML={{ __html: taskDescription }}
+                      />
+                    </div>
+                  ))}
                 </div>
-                ))}
+
+                {/* Follow-Up Tasks */}
+                <div id="follow_up_tasks">
+                <h3 className='section'>Follow Up</h3> 
+                  {follow_up_tasks.map(([taskId, taskDescription, completionDate], index) => (
+                    <div
+                      key={taskId}
+                      className="task-item-container"
+                      draggable
+                      onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
+                      onDragOver={handleTaskDragOver}
+                      onDrop={() => handleTaskReorder(allotteeName, index)}
+                      onDragEnd={() => setDraggingTask(null)}
+                    >
+                      <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
+                      <input
+                        type="checkbox"
+                        checked={!!completionDate}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
+                        style={{ marginRight: "10px" }}
+                      />
+                      <div
+                        onClick={() => editTask(taskId, taskDescription, allotteeName)}
+                        suppressContentEditableWarning={true}
+                        className="each_task"
+                        style={{
+                          border: "1px solid #ccc",
+                          padding: "5px",
+                          minHeight: "20px",
+                          whiteSpace: "pre-wrap",
+                          fontSize: "20px",
+                          
+                        }}
+                        dangerouslySetInnerHTML={{ __html: taskDescription }}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))
-          }
+            );
+          })
+        }
+
         </div>
       </div>
       :
