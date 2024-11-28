@@ -1275,6 +1275,7 @@ const handleToggleChange = (newState) => {
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
                         style={{ marginRight: "10px" }}
+                        className='checkbox'
                       />
                       <div
                         onClick={() => editTask(taskId, taskDescription, allotteeName)}
@@ -1288,6 +1289,14 @@ const handleToggleChange = (newState) => {
                           fontSize: "20px",
                         }}
                         dangerouslySetInnerHTML={{ __html: taskDescription }}
+                      />
+                      <input
+                        type="checkbox"
+                        checked={false}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
+                        style={{ marginRight: "10px" }}
+                        className='checkbox'
                       />
                     </div>
                   ))}
@@ -1313,6 +1322,7 @@ const handleToggleChange = (newState) => {
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
                         style={{ marginRight: "10px" }}
+                        className='checkbox'
                       />
                       <div
                         onClick={() => editTask(taskId, taskDescription, allotteeName)}

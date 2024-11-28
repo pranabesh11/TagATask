@@ -384,7 +384,7 @@
     justify-content: center;
     align-items: center; */
     margin: 0px auto;
-    columns: 5;
+    columns: 4;
     column-gap: 15px;
   }
 
@@ -493,3 +493,10 @@
     text-align: center;
 }
 
+.checkbox{
+    border: none;
+    font-size: large;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
