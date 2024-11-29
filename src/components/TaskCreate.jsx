@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI } from './ApiList';
 import  ToggleButton  from './ToggleButton';
-
+import revert_icon from '../assets/revert.png'
 
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
@@ -35,23 +35,15 @@ function TaskCreate() {
   const [draggingTask, setDraggingTask] = useState(null);
   const [draggingAllottee, setDraggingAllottee] = useState(null);
   const [isToggleOn, setIsToggleOn] = useState(false);
-
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [Allottee, setAllottee] = useState({});
   const [editingTask, setEditingTask] = useState(null);
-
-
-  
   useEffect(() => {
     sendUserId(setData, setError);
     fetchData(setData, setError);
     fetchAllottee(setAllottee, setError);
   }, []);
-
-  
-  
-
 
   useEffect(() => {
     // Rename the internal function to handleSaveEditTask
@@ -62,7 +54,7 @@ function TaskCreate() {
           allottee_id: allotteeId,
           text: updatedText,
         };
-        const response = await fetch('https://e487-49-37-9-67.ngrok-free.app/edit_task', {
+        const response = await fetch('https://4688-49-37-8-126.ngrok-free.app/edit_task', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -166,11 +158,12 @@ function TaskCreate() {
         if (editableInputRef.current) editableInputRef.current.value = '';
         document.getElementById('inputField').focus();
   
-        fetch('https://e487-49-37-9-67.ngrok-free.app/create_task', {
+        fetch('https://4688-49-37-8-126.ngrok-free.app/create_task', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'any',
           },
           body: JSON.stringify(dataToSave),
         })
@@ -242,13 +235,26 @@ function TaskCreate() {
     });
   
     try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentPersonnelId = parseInt(urlParams.get('id'));
       const response = await axios.post(
-        "https://e487-49-37-9-67.ngrok-free.app/done_mark",
+        "https://4688-49-37-8-126.ngrok-free.app/done_mark",
         {
           task_id: taskId,
           completed: isChecked,
+          current_personnel: currentPersonnelId
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'any', // Custom header
+          }
         }
       );
+      if(response.data.success){
+        fetchAllottee(setAllottee,setError);
+      }
   
       if (!response.data.success) {
         console.error("Backend failed to update task status:", response.data.errors);
@@ -698,7 +704,7 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
 const fetchAllotteeData = async () => {
   try {
     const userId = new URLSearchParams(window.location.search).get('id');
-    const response = await axios.get(`https://e487-49-37-9-67.ngrok-free.app/task_data?user_id=${userId}`, {
+    const response = await axios.get(`https://4688-49-37-8-126.ngrok-free.app/task_data?user_id=${userId}`, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -762,11 +768,12 @@ const fetchAllotteeData = async () => {
       if (editableInputRef.current) editableInputRef.current.value = '';
       document.getElementById('inputField').focus();
 
-      fetch('https://e487-49-37-9-67.ngrok-free.app/create_task', {
+      fetch('https://4688-49-37-8-126.ngrok-free.app/create_task', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'ngrok-skip-browser-warning': "any",
         },
         body: JSON.stringify(dataToSave),
       })
@@ -874,7 +881,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
           allottee_id: allotteeId,
           text: updatedText,
         };
-        const response = await fetch('https://e487-49-37-9-67.ngrok-free.app/edit_task', {
+        const response = await fetch('https://4688-49-37-8-126.ngrok-free.app/edit_task', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -904,9 +911,13 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
 const fetchAllotteeId = async (allotteeName) => {
     try {
         const response = await axios.post(
-            'https://e487-49-37-9-67.ngrok-free.app/id_name_converter',
+            'https://4688-49-37-8-126.ngrok-free.app/id_name_converter',
             { name: allotteeName },
-            { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
+            { headers: { 
+              'Content-Type': 'application/json',
+               'Accept': 'application/json',
+               'ngrok-skip-browser-warning': "any",
+              } }
         );
         const allotteeId = response.data.id_name_converter;
         console.log("Fetched Allottee ID:", allotteeId);
@@ -929,7 +940,7 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
 
   try {
     const response = await axios.post(
-      "https://e487-49-37-9-67.ngrok-free.app/task_transfer",
+      "https://4688-49-37-8-126.ngrok-free.app/task_transfer",
       dataToSend,
       {
         headers: {
@@ -983,10 +994,11 @@ const handleAllotteeReorder = (targetAllotteeName) => {
     fullOrder: Object.keys(newAllotteeState),
   };
   axios
-    .post("https://e487-49-37-9-67.ngrok-free.app/allottee_card_reorder", dataToSend, {
+    .post("https://4688-49-37-8-126.ngrok-free.app/allottee_card_reorder", dataToSend, {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        'ngrok-skip-browser-warning': "any",
       },
     })
     .then((response) => {
@@ -1017,6 +1029,36 @@ const handleToggleChange = (newState) => {
   console.log('Toggle button state:', newState);
   setIsToggleOn(newState); // Update state in TaskCreate
 };
+
+
+
+
+const handleRevertClick = async (taskId) => {
+  try {
+    const response = await axios.post('https://4688-49-37-8-126.ngrok-free.app/revert', {
+      task_id: taskId,
+      status: "task is reverted",
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'any', // Custom header
+      }
+    }
+  );
+
+    if (response.data.success) {
+      console.log("Backend updated task status successfully for taskId:", taskId);
+      fetchAllottee(setAllottee,setError);
+    } else {
+      console.error('Backend failed to update task status:', response.data.errors);
+    }
+  } catch (error) {
+    console.error('An error occurred while updating task status:', error);
+  }
+};
+
 
   
 
@@ -1210,7 +1252,6 @@ const handleToggleChange = (newState) => {
           Object.entries(Allottee).map(([allotteeName, tasks]) => {
             const urlParams = new URLSearchParams(window.location.search);
             const currentPersonnelId = parseInt(urlParams.get('id'));
-
             const part1Tasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
               return !completionDate && allotteeId === currentPersonnelId;
             });
@@ -1218,29 +1259,36 @@ const handleToggleChange = (newState) => {
               return !verificationDate && allotterId === currentPersonnelId;
             });
             let to_do_tasks = [...part1Tasks, ...part2Tasks];
-            
             const part1FollowUpTasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
               return !verificationDate && allotteeId === currentPersonnelId;
             });
-            
             const part2FollowUpTasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
               return completionDate;
             });
-            
             let follow_up_tasks = part1FollowUpTasks.filter(task => part2FollowUpTasks.includes(task));
-            
+            // Reallocate tasks where verification and completion are missing but allotter is currentPersonnelId
             const reallocatedTasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
               return !verificationDate && !completionDate && allotterId === currentPersonnelId;
             });
-            
+            // Remove reallocated tasks from to_do_tasks
             to_do_tasks = to_do_tasks.filter(task => !reallocatedTasks.includes(task));
+            // Add reallocated tasks to follow_up_tasks
             follow_up_tasks = [...follow_up_tasks, ...reallocatedTasks];
-            
+            // Filter out tasks where both allotterId and allotteeId are equal to currentPersonnelId from follow_up_tasks
             follow_up_tasks = follow_up_tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
               return !(allotterId === currentPersonnelId && allotteeId === currentPersonnelId);
             });
-            
-
+            // Now check if any tasks have allotterId == currentPersonnelId, completionDate is not null, but verificationDate is null
+            // Move these tasks to the "to_do_tasks" list and remove from the "follow_up_tasks" list
+            const tasksToMoveToDo = follow_up_tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+              return allotterId === currentPersonnelId && completionDate && !verificationDate;
+            });
+            // Remove these tasks from follow_up_tasks
+            follow_up_tasks = follow_up_tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+              return !(allotterId === currentPersonnelId && completionDate && !verificationDate);
+            });
+            // Add these tasks to to_do_tasks
+            to_do_tasks = [...to_do_tasks, ...tasksToMoveToDo];
             return (
               <div
                 className="allottee_container"
@@ -1254,29 +1302,35 @@ const handleToggleChange = (newState) => {
                 onDrop={() => handleDrop(allotteeName)}
               >
                 <p className="name_text">{allotteeName}</p>
-
                 {/* To-Do Tasks */}
                 <div id="to_do_tasks">
                   <h3 className='section'>ToDo</h3>
-                  {to_do_tasks.map(([taskId, taskDescription, completionDate], index) => (
+                  {to_do_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
                     <div
                       key={taskId}
                       className="task-item-container"
                       draggable
-                      onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
-                      onDragOver={handleTaskDragOver}
-                      onDrop={() => handleTaskReorder(allotteeName, index)}
-                      onDragEnd={() => setDraggingTask(null)}
+                      // onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
+                      // onDragOver={handleTaskDragOver}
+                      // onDrop={() => handleTaskReorder(allotteeName, index)}
+                      // onDragEnd={() => setDraggingTask(null)}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
                       <input
                         type="checkbox"
-                        checked={!!completionDate}
+                        checked={false}
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
                         style={{ marginRight: "10px" }}
                         className='checkbox'
                       />
+                      {
+                        allotterId==currentPersonnelId &&(
+                        <div>
+                          <img src={revert_icon} className='revert_icon' onClick={() => handleRevertClick(taskId)}/>
+                        </div>
+                        )
+                      }   
                       <div
                         onClick={() => editTask(taskId, taskDescription, allotteeName)}
                         suppressContentEditableWarning={true}
@@ -1290,35 +1344,26 @@ const handleToggleChange = (newState) => {
                         }}
                         dangerouslySetInnerHTML={{ __html: taskDescription }}
                       />
-                      <input
-                        type="checkbox"
-                        checked={false}
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
-                        style={{ marginRight: "10px" }}
-                        className='checkbox'
-                      />
                     </div>
                   ))}
                 </div>
-
                 {/* Follow-Up Tasks */}
                 <div id="follow_up_tasks">
                 <h3 className='section'>Follow Up</h3> 
-                  {follow_up_tasks.map(([taskId, taskDescription, completionDate], index) => (
+                  {follow_up_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
                     <div
                       key={taskId}
                       className="task-item-container"
                       draggable
-                      onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
-                      onDragOver={handleTaskDragOver}
-                      onDrop={() => handleTaskReorder(allotteeName, index)}
-                      onDragEnd={() => setDraggingTask(null)}
+                      // onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
+                      // onDragOver={handleTaskDragOver}
+                      // onDrop={() => handleTaskReorder(allotteeName, index)}
+                      // onDragEnd={() => setDraggingTask(null)}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
                       <input
                         type="checkbox"
-                        checked={!!completionDate}
+                        checked={allotteeId==currentPersonnelId && completionDate !=null}
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => handleCheckboxChange(taskId, e.target.checked)}
                         style={{ marginRight: "10px" }}

@@ -5,9 +5,9 @@
     height: auto;
     /* padding: 10px; */
     /* border-radius: 7px; */
-    background-color: #f1f5f5;
-    background-color: #8EC5FC;
-    background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
+    /* background-color: #f1f5f5; */
+    /* background-color: #8EC5FC; */
+    /* background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%); */
 
 }
 
@@ -103,8 +103,7 @@
 .allottee_wise_task{
     font-family: 'Poppins', sans-serif;
     color: #484848;
-    letter-spacing: 7px;
-    text-decoration: underline;
+    
 }
 
 .new-div {
@@ -375,49 +374,57 @@
   .text-toolbar button:hover {
     color: #007bff;
   }
-
-  .tasks{
+  /* .tasks{
     width: 100%;
-    /* display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center; */
     margin: 0px auto;
     columns: 4;
     column-gap: 15px;
+  } */
+
+  .tasks{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
   }
 
-  .allottee_container {
-    background-color: #f1f4f5;
-    margin-bottom: 4%;
-    height: auto;
-    width: 100%;
-    /* min-height: 300px; */
-    /* min-width: 150px; */
-    max-height: 600px;
-    overflow: scroll;
-    display: flex;
-    justify-content: flex-start;
-    align-items: start;
-    text-align: left;
-    flex-direction: column;
-    border-radius: 5px;
-    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
-    overflow-x: hidden;
-}
+    .allottee_container {
+        background-color: white;
+        margin: 1%;
+        height: auto;
+        width: 22%;
+        min-height: 600px;
+        max-height: 600px;
+        overflow: scroll;
+        display: flex;
+        justify-content: flex-start;
+        align-items: start;
+        text-align: left;
+        flex-direction: column;
+        border-radius: 8px;
+        overflow-x: hidden;
+        border: 3px solid #888;
+    }
+    .allottee_container:hover{
+        box-shadow: rgba(0, 0, 0, 0.56) 0px 5px 10px 4px;
+    }
 
 .name_text{
     font-weight: bolder;
     font-size: x-large;
     position: sticky;
     top: 0;
-    background-color: #484848;
-    padding: 15px; 
-    color: white;
+    background-color: white;
+    /* padding: 15px;  */
+    color: black;
     width: 100%;
     font-family: 'Poppins', sans-serif;
     text-align: center;
+    text-decoration: underline;
+    margin-bottom: -8px;
+    
 }
 
 .task_container{
@@ -426,13 +433,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /* background-color: #f1f5f5; */
-    
-    background-color: #8EC5FC;
-    background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
-    
-    width: 98vw;
-
+    width: 96vw;
+    margin: 20px;
 }
 .each_task{
    width: 90%;
@@ -451,13 +453,13 @@
 }
 
 .allottee_container::-webkit-scrollbar {
-    width: 7px;
+    width: 4px;
 }
 
 .allottee_container::-webkit-scrollbar-thumb {
     background-color: rgb(150, 149, 149);
     min-height: 20px;
-    border-radius: 5px;
+    border-radius: 1px;
 }
 
 .allottee_container::-webkit-scrollbar-track {
@@ -479,17 +481,19 @@
 }
 #to_do_tasks{
     text-align: left;
-    width: 100%;
+    width: 90%;
+    margin-left: 8px;
 }
 #follow_up_tasks{
     text-align: left;
-    width: 100%;
+    width: 90%;
+    margin-left: 8px;
 }
 
 .section{
     font-family: 'Poppins', sans-serif;
     color: black;
-    text-align: center;
+    text-align: left;
 }
 
 .checkbox{
@@ -498,4 +502,10 @@
     cursor: pointer;
     width: 20px;
     height: 20px;
+}
+.revert_icon{
+    height: 25px;
+    width: 25px;
+    margin-top: 4px;
+    cursor: pointer;
 }
