@@ -392,9 +392,9 @@
 
     .allottee_container {
         background-color: white;
-        margin: 1%;
+        margin: 0.5%;
         height: auto;
-        width: 22%;
+        width: 23%;
         min-height: 500px;
         max-height: 500px;
         overflow: scroll;
@@ -405,7 +405,7 @@
         flex-direction: column;
         border-radius: 8px;
         overflow-x: hidden;
-        border: 3px solid #888;
+        border: 2px solid #888;
     }
     .allottee_container:hover{
         box-shadow: rgba(0, 0, 0, 0.56) 0px 5px 10px 4px;
@@ -418,7 +418,7 @@
     top: 0;
     background-color: white;
     /* padding: 15px;  */
-    color: black;
+    color: #484848;
     width: 100%;
     font-family: 'Poppins', sans-serif;
     text-align: center;
@@ -433,14 +433,14 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 96vw;
-    margin: 20px;
+    width: 102vw;
+    /* margin: 20px; */
 }
 .each_task{
    width: 90%;
    padding: 10px;
    border: 1px solid gainsboro;
-   margin: 10px;
+   margin: 2px;
    cursor: pointer;
    font-family: 'Poppins', sans-serif;
    text-align: left;
@@ -492,7 +492,7 @@
 
 .section{
     font-family: 'Poppins', sans-serif;
-    color: black;
+    color: #484848;
     text-align: left;
 }
 

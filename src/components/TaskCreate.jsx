@@ -39,6 +39,7 @@ function TaskCreate() {
   const [error, setError] = useState(null);
   const [Allottee, setAllottee] = useState({});
   const [editingTask, setEditingTask] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     sendUserId(setData, setError);
     fetchData(setData, setError);
@@ -206,11 +207,11 @@ function TaskCreate() {
   
   
   
+  const togglePopup = () => {
+    setIsOpen(!isOpen);
+  };
 
 
-  // const handleChange = (event) => {
-  //   setInputValue(event.target.value);
-  // };
   const handleCheckboxChange = async (taskId, isChecked) => {
     if (!taskId || typeof isChecked !== "boolean") {
       console.error("Invalid parameters passed to handleCheckboxChange:", {
