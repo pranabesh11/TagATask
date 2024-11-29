@@ -39,7 +39,8 @@ function TaskCreate() {
   const [error, setError] = useState(null);
   const [Allottee, setAllottee] = useState({});
   const [editingTask, setEditingTask] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
     sendUserId(setData, setError);
     fetchData(setData, setError);
@@ -194,6 +195,7 @@ function TaskCreate() {
       } else {
         saveAllDataWithInputValue();
         console.log("Clicked outside");
+        closeModal();
       }
     };
   
@@ -446,6 +448,9 @@ function TaskCreate() {
 
   let debounceTimer = null;
   let accumulatedChars = '';
+  const handleEditableInputChange = (event) => {
+    setInputValue(event.target.value); // Update the input value state
+  };
 
   const handleEditableKeyDown = (event) => {
     if (event.key === 'Escape' && !isSaving) {
@@ -1059,6 +1064,13 @@ const handleRevertClick = async (taskId) => {
     console.error('An error occurred while updating task status:', error);
   }
 };
+const openModal = () => {
+  setIsModalOpen(true);
+};
+
+const closeModal = () => {
+  setIsModalOpen(false);
+};
 
 
   
@@ -1067,133 +1079,138 @@ const handleRevertClick = async (taskId) => {
   return (
 
     <div className="main_div">
-      <div ref={containerRef} className="container">
-        <button className="close_button" onClick={saveAllData}>
-          <img src={closebutton} className="close_icon" height={15} width={15} />
-        </button>
-        <select
-          className="select_allottee"
-          id="inputField"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyPress}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div ref={containerRef} className="container">
+            <button className="close_button" onClick={closeModal}>
+              <img src={closebutton} className="close_icon" height={15} width={15} />
+            </button>
+            <select
+              className="select_allottee"
+              id="inputField"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyPress}
 
-          autoFocus={true}
-        >
-          <option value="" disabled>
-            Select Allottee
-          </option>
-          {data.map(([id, name]) => (
-            <option key={id} value={id}>
-              {name}
-            </option>
-          ))}
-        </select>
-
-
-        <div className="editable-div-container">
-          {tasks.map((task, index) => (
-            <div
-              key={index}
-              className={`new-div`}
-              draggable
-              onDragStart={(e) => handleTaskDragStart(e, null, index)}
-              onDragOver={handleTaskDragOver}
-              onDrop={(e) => handleTaskDrop(e, null, index)}
+              autoFocus={true}
             >
-              <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
-              <input
-                type="checkbox"
-                className="new-div-checkbox"
-                checked={task.completed || false}
-                onChange={(e) => handleTaskCheck(null, index, e.target.checked)}
-              />
-              <div
-                contentEditable
-                suppressContentEditableWarning={true}
-                onInput={(e) => handleTaskInput(index, e)} // Typing input
-                onBlur={(e) => handleTaskInput(index, e)}  // Save on blur
-                onMouseUp={() => handleTextSelect(index)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === 'Backspace' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Escape') {
-                    handleTaskKeyDown(index, e); // Handle other keys
-                  }
-                }}
-                ref={task.ref}
-                className="new-div-input"
-                style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap' }}
-                dangerouslySetInnerHTML={{ __html: task.text }} // Only rendered when loading the tasks initially
-              />
+              <option value="" disabled>
+                Select Allottee
+              </option>
+              {data.map(([id, name]) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
+            </select>
 
-              {selectedTaskIndex === index &&
-                <SelectText
-                  targetRef={task.ref}
-                // toggleBold={toggleBold}
-                // toggleItalic={toggleItalic}
-                />
-              }
 
-              <TaskList
-                dateTime={task.datetime}
-                onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
-                onKeyDown={(e) => handleTaskKeyDown(index, e)}
-              />
-
-              <div id='icon_div'>
-                <div>
-                  <CustomSelect
-                    selectedTags={task.selectedTags}
-                    onSelectTags={(tags) => handleLabelChange(index, tags)}
+            <div className="editable-div-container">
+              {tasks.map((task, index) => (
+                <div
+                  key={index}
+                  className={`new-div`}
+                  draggable
+                  onDragStart={(e) => handleTaskDragStart(e, null, index)}
+                  onDragOver={handleTaskDragOver}
+                  onDrop={(e) => handleTaskDrop(e, null, index)}
+                >
+                  <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
+                  <input
+                    type="checkbox"
+                    className="new-div-checkbox"
+                    checked={task.completed || false}
+                    onChange={(e) => handleTaskCheck(null, index, e.target.checked)}
                   />
-                </div>
-
-                <div>
-                  <Comment
-                    comments={Array.isArray(task.comments) ? task.comments : []}
-                    setComments={(updatedComments) => handleCommentsChange(index, updatedComments)}
-                  />
-                </div>
-
-                <div>
-                  <FileUpload />
-                </div>
-
-                <div className='timer_inp'>
-                  <WorkType selectedOption={task.workType}
-                    setSelectedOption={(value) => {
-                      const updatedTasks = [...tasks];
-                      updatedTasks[index].workType = value;
-                      setTasks(updatedTasks);
+                  <div
+                    contentEditable
+                    suppressContentEditableWarning={true}
+                    onInput={(e) => handleTaskInput(index, e)} // Typing input
+                    onBlur={(e) => handleTaskInput(index, e)}  // Save on blur
+                    onMouseUp={() => handleTextSelect(index)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === 'Backspace' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Escape') {
+                        handleTaskKeyDown(index, e); // Handle other keys
+                      }
                     }}
+                    ref={task.ref}
+                    className="new-div-input"
+                    style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap' }}
+                    dangerouslySetInnerHTML={{ __html: task.text }} // Only rendered when loading the tasks initially
                   />
+
+                  {selectedTaskIndex === index &&
+                    <SelectText
+                      targetRef={task.ref}
+                    // toggleBold={toggleBold}
+                    // toggleItalic={toggleItalic}
+                    />
+                  }
+
+                  <TaskList
+                    dateTime={task.datetime}
+                    onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
+                    onKeyDown={(e) => handleTaskKeyDown(index, e)}
+                  />
+
+                  <div id='icon_div'>
+                    <div>
+                      <CustomSelect
+                        selectedTags={task.selectedTags}
+                        onSelectTags={(tags) => handleLabelChange(index, tags)}
+                      />
+                    </div>
+
+                    <div>
+                      <Comment
+                        comments={Array.isArray(task.comments) ? task.comments : []}
+                        setComments={(updatedComments) => handleCommentsChange(index, updatedComments)}
+                      />
+                    </div>
+
+                    <div>
+                      <FileUpload />
+                    </div>
+
+                    <div className='timer_inp'>
+                      <WorkType selectedOption={task.workType}
+                        setSelectedOption={(value) => {
+                          const updatedTasks = [...tasks];
+                          updatedTasks[index].workType = value;
+                          setTasks(updatedTasks);
+                        }}
+                      />
+                    </div>
+
+                  </div>
+
+                  <button className="delete-button" onClick={() => handleDeleteTask(index)}>
+                    <DeleteOutlinedIcon className='cross_button' style={{ fontSize: 30 }} />
+                  </button>
                 </div>
-
+              ))}
+              <div className="editable-input-container">
+                <FontAwesomeIcon icon={faPlus} className="plus-icon" />
+                <input
+                  id="editableInput"
+                  ref={editableInputRef}
+                  type="text"
+                  onChange={handleEditableInputChange} // Update input value on typing
+                  onKeyDown={handleEditableKeyDown}   // Handle key press events
+                  placeholder="Add Task"
+                  style={{
+                    padding: '5px',
+                    minHeight: '20px',
+                    width: '100%',
+                    outline: 'none',
+                    border: 'none',
+                  }}
+                />
               </div>
-
-              <button className="delete-button" onClick={() => handleDeleteTask(index)}>
-                <DeleteOutlinedIcon className='cross_button' style={{ fontSize: 30 }} />
-              </button>
             </div>
-          ))}
-          <div className="editable-input-container">
-            <FontAwesomeIcon icon={faPlus} className="plus-icon" />
-            <input
-              id="editableInput"
-              ref={editableInputRef}
-              type="text"
-              onKeyDown={handleEditableKeyDown}
-              placeholder="Add Task"
-              style={{
-                padding: '5px',
-                minHeight: '20px',
-                width: '100%',
-                outline: 'none',
-                border: 'none',
-              }}
-            />
           </div>
         </div>
-      </div>
+      )}
       {/* <div className="saved-items">
         {savedItems.map((item, itemIndex) => (
           <div key={itemIndex}
@@ -1240,6 +1257,28 @@ const handleRevertClick = async (taskId) => {
           ))}
         </ul>
       </div>
+
+      {/* {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Create New Task</h2>
+            <p>This is a centered modal with a blurred background.</p>
+            <button className="close-btn" onClick={closeModal}>
+              Close
+            </button>
+          </div>
+        </div>
+      )} */}
+
+
+
+      <div className='add_task_btn_div'>
+        <button className='add_task_btn' onClick={openModal}><i class="fa fa-plus"></i> New Card</button>
+      </div>
+
+
+
+
       <div className='toggle_button'>
         <p>Allottee Wise</p>
         <ToggleButton onToggleChange={handleToggleChange}/>
