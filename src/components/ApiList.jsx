@@ -125,7 +125,7 @@ export const fetchData = async (setData, setError) => {
 export const fetchAllottee = async (setAllottee, setError) => {
   try {
     const userId = new URLSearchParams(window.location.search).get('id'); // Get user ID from URL
-    const response = await axios.get(`https://4688-49-37-8-126.ngrok-free.app/task_data?user_id=${userId}`, {
+    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com/task_data?user_id=${userId}`, {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any",
