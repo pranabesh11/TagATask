@@ -53,171 +53,216 @@ function TaskCreate() {
     fetchAllottee(setAllottee, setError);
   }, []);
 
-  useEffect(() => {
-    // Rename the internal function to handleSaveEditTask
-    const handleSaveEditTask = async (taskId, allotteeId, updatedText) => {
-      try {
-        const dataToEdit = {
-          task_id: taskId,
-          allottee_id: allotteeId,
-          text: updatedText,
-        };
-        const response = await fetch('https://4688-49-37-8-126.ngrok-free.app/edit_task', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': 'any',
-          },
-          body: JSON.stringify(dataToEdit),
-        });
-        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-        const responseText = await response.text();
-        const data = responseText ? JSON.parse(responseText) : null;
+  // useEffect(() => {
+  //   const handleSaveEditTask = async (taskId, allotteeId, updatedText) => {
+  //     try {
+  //       const dataToEdit = {
+  //         task_id: taskId,
+  //         allottee_id: allotteeId,
+  //         text: updatedText,
+  //       };
+  //       const response = await fetch('https://4688-49-37-8-126.ngrok-free.app/edit_task', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Accept': 'application/json',
+  //           'ngrok-skip-browser-warning': 'any',
+  //         },
+  //         body: JSON.stringify(dataToEdit),
+  //       });
+  //       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+  //       const responseText = await response.text();
+  //       const data = responseText ? JSON.parse(responseText) : null;
+  
+  //       if (data) {
+  //         console.log('Edit Success:', data);
+  //         setTimeout(fetchAllotteeData, 200);
+  //         setTasks([]); // Clear tasks after successful save
+  //         setInputValue('');
+  //         setEditingTask(null); // Exit edit mode
+  //       } else {
+  //         console.error('No data returned from edit task API');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error saving edited task:', error);
+  //     }
+  //   };
+  
+  //   const handleClickOutside = (event) => {
+  //     if (editingTask && containerRef.current && !containerRef.current.contains(event.target)) {
+  //       const { taskId, allotteeId, taskRef } = editingTask;
+  //       const updatedText = taskRef?.current?.innerText?.trim();
+  
+  //       if (updatedText) {
+  //         handleSaveEditTask(taskId, allotteeId, updatedText); // Save data when clicking outside
+  //         console.log("Clicked outside - edited task saved");
+  //       } else {
+  //         console.log("Clicked outside - no text to save for edited task");
+  //       }
+  
+  //       setEditingTask(null); // Exit edit mode regardless of save
+  //     }
+  //   };
+  
+  //   window.addEventListener('mousedown', handleClickOutside);
+  
+  //   return () => {
+  //     window.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, [editingTask]);
+
+
+
+
+
+
+
+// // useEffect(() => {
+// //   const handleClickOutside = (event) => {
+// //     // Ensure click is outside the container and tasks exist
+// //     if (containerRef.current && !containerRef.current.contains(event.target) && tasks.length > 0) {
+// //       if (isEditing) {
+// //         console.log("Clicked outside in editing mode");
         
-        if (data) {
-          console.log('Edit Success:', data);
-          setTimeout(fetchAllotteeData, 200);
-          setTasks([]);
-          setInputValue('');
-          setEditingTask(null);
-        } else {
-          console.error('No data returned from edit task API');
-        }
-      } catch (error) {
-        console.error('Error saving edited task:', error);
+// //         const updatedTasks = tasks.map((task) => ({
+// //           taskId: task.taskId,
+// //           allotteeId: task.allotteeId,
+// //           updatedText: task.ref?.current?.innerText?.trim() || '',
+// //         })).filter((task) => task.updatedText);
+
+// //         // Call saveEditTask for each updated task
+// //         updatedTasks.forEach(({ taskId, allotteeId, updatedText }) => {
+// //           saveEditTask(taskId, allotteeId, updatedText);
+// //         });
+
+// //         setEditingTask(null); // Exit editing mode
+// //         setTasks([]); // Clear tasks
+// //         closeModal(); // Close modal if applicable
+// //       } else {
+// //         console.log("Clicked outside, saving new data");
+// //         saveAllDataWithInputValue(); // Call the save function for new data
+// //       }
+// //     }
+// //   };
+
+//   // Attach event listener
+//   document.addEventListener('mousedown', handleClickOutside);
+
+//   // Cleanup listener
+//   return () => {
+//     document.removeEventListener('mousedown', handleClickOutside);
+//   };
+// }, [containerRef, tasks, isEditing, saveEditTask]);
+
+  
+
+
+useEffect(() => {
+  console.log("useEffect function is calling");
+
+  const saveAllDataWithInputValue = () => {
+    if (!inputValue) {
+      console.log("Input value is required to save data");
+      return;
+    }
+
+    // Synchronize tasks with the DOM
+    const updatedTasks = tasks.map((task) => {
+      if (task.ref?.current) {
+        const latestText = task.ref.current.innerText.trim(); // Get latest text from DOM
+        return { ...task, text: DOMPurify.sanitize(latestText) };
       }
+      return task;
+    });
+    setTasks(updatedTasks); // Update state with synchronized tasks
+
+    const params = new URLSearchParams(window.location.search);
+    const notify_success = () => toast.success("Task Created Successfully !");
+    const notify_fail = () => toast.error("Task Creation Failed !");
+
+    const userId = params.get("id");
+    const dataToSave = {
+      title: inputValue.trim(),
+      user_id: userId,
+      items: updatedTasks
+        .map((task) => ({
+          text: task.text,
+          completed: task.completed,
+          datetime: task.datetime,
+          workType: task.workType,
+          comments: task.comments,
+          selectedTags: task.selectedTags || [],
+          isBold: task.isBold || false,
+          isItalic: task.isItalic || false,
+        }))
+        .filter(
+          (item) => item.text !== "" || item.datetime || item.selectedTags.length > 0
+        ),
     };
-  
-    const handleClickOutside = (event) => {
-      if (editingTask && containerRef.current && !containerRef.current.contains(event.target)) {
-        const { taskId, allotteeId, taskRef } = editingTask;
-        const updatedText = taskRef.current.innerText.trim();
-  
-        if (updatedText) {
-          handleSaveEditTask(taskId, allotteeId, updatedText);
-          console.log("Clicked outside - edited task saved");
-        } else {
-          console.log("Clicked outside - no text to save for edited task");
-        }
-  
-        setEditingTask(null); // Exit edit mode
-      }
-    };
-  
-    window.addEventListener('mousedown', handleClickOutside);
-  
-    return () => {
-      window.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [editingTask]);
-  
 
+    if (dataToSave.title || dataToSave.items.length > 0) {
+      setSavedItems((prevItems) => [...prevItems, dataToSave]);
+      setTasks([]);
+      setInputValue("");
+      if (editableInputRef.current) editableInputRef.current.value = "";
+      document.getElementById("inputField").focus();
 
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-  useEffect(() => {
-    const saveAllDataWithInputValue = () => {
-      if (!inputValue) {
-        console.log("Input value is required to save data");
-        return;
-      }
-  
-      // Using the existing saveAllData code structure but making sure inputValue is present
-      const params = new URLSearchParams(window.location.search);
-      const notify_success = () => toast.success("Task Created Successfully !");
-      const notify_fail = () => toast.error("Task Creation Failed !");
-  
-      const userId = params.get('id');
-      const dataToSave = {
-        title: inputValue.trim(),
-        user_id: userId,
-        items: tasks.map((task) => {
-          let formattedText = DOMPurify.sanitize(task.text);
-          return {
-            text: formattedText,
-            completed: task.completed,
-            datetime: task.datetime,
-            workType: task.workType,
-            comments: task.comments,
-            selectedTags: task.selectedTags || [],
-            isBold: task.isBold || false,
-            isItalic: task.isItalic || false,
-          };
-        }).filter((item) => item.text !== '' || item.datetime || item.selectedTags.length > 0),
-      };
-  
-      if (dataToSave.title || dataToSave.items.length > 0) {
-        setSavedItems((prevItems) => [...prevItems, dataToSave]);
-        setTasks([]);
-        setInputValue('');
-        if (editableInputRef.current) editableInputRef.current.value = '';
-        document.getElementById('inputField').focus();
-  
-        fetch('https://4688-49-37-8-126.ngrok-free.app/create_task', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': 'any',
-          },
-          body: JSON.stringify(dataToSave),
+      fetch("https://4688-49-37-8-126.ngrok-free.app/create_task", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "ngrok-skip-browser-warning": "any",
+        },
+        body: JSON.stringify(dataToSave),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to save data");
+          }
+          return response.json();
         })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Failed to save data');
-            }
-            return response.json();
-          })
-          .then(data => {
-            console.log('Success:', data);
-            notify_success();
-            fetchAllotteeData();
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-            notify_fail();
-          });
-      }
-  
-      setIsSaving(false);
-    };
-  
-    const handleClick = (event) => {
-      if (containerRef.current && containerRef.current.contains(event.target)) {
-        console.log("Clicked inside");
-      } else {
+        .then((data) => {
+          console.log("Success:", data);
+          console.log("this function is getting called from useEffect function.");
+          notify_success();
+          console.log(isModalOpen)
+          fetchAllotteeData();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          notify_fail();
+        }).finally(() => {
+          closeModal();
+          setIsModalOpen(false);
+        });
+    }
+
+    setIsSaving(false);
+  };
+
+  const handleClick = (event) => {
+    if (containerRef.current && containerRef.current.contains(event.target)) {
+      console.log("Clicked inside");
+    } else {
+      setTimeout(() => {
         saveAllDataWithInputValue();
         console.log("Clicked outside");
-        closeModal();
-      }
-    };
-  
-    window.addEventListener('mousedown', handleClick);
-  
-    return () => {
-      window.removeEventListener('mousedown', handleClick);
-    };
-  }, [inputValue, tasks, userId]);
-  
-  
-  
-  
-  const togglePopup = () => {
-    setIsOpen(!isOpen);
+      }, 100);
+    }
   };
+
+  window.addEventListener("mousedown", handleClick);
+
+  return () => {
+    window.removeEventListener("mousedown", handleClick);
+  };
+
+}, [inputValue, tasks, userId]);
+
+  
+  
+  
 
 
   const handleCheckboxChange = async (taskId, isChecked) => {
@@ -879,6 +924,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
   const editTask = async (allotteeName , followUpTasks) => {
     const allotteeId = await fetchAllotteeId(allotteeName);
     setInputValue(allotteeId);
+    setEditingTask(true);
     followUpTasks = followUpTasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
       return allotteeId == allotteeId;
     });
@@ -901,6 +947,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
       };
     });
     setTasks(transformedTasks);
+    tasksRef.current = transformedTasks;
     openModal();
     console.log("followup tasks",followUpTasks);
     console.log("these are all taskrefs",all_taskrefs)
@@ -939,37 +986,37 @@ const handleAllotteeClick = (allotteeName, tasks) => {
 };
 
 const saveEditTask =  async (taskId, allotteeId, updatedText) => {
-    try {
-        const dataToEdit = {
-          task_id: taskId,
-          allottee_id: allotteeId,
-          text: updatedText,
-        };
-        const response = await fetch('https://4688-49-37-8-126.ngrok-free.app/edit_task', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'ngrok-skip-browser-warning': 'any',
-            },
-            body: JSON.stringify(dataToEdit),
-        });
-        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-        const responseText = await response.text();
-        const data = responseText ? JSON.parse(responseText) : null;
-        
-        if (data) {
-          console.log('Edit Success:', data);
-          setTimeout(fetchAllotteeData, 200);
-          setTasks([]);
-          setInputValue('');
-          setEditingTask(null);
-        } else {
-          console.error('No data returned from edit task API');
-        }
-    } catch (error) {
-        console.error('Error saving edited task:', error);
-    }
+  try {
+      const dataToEdit = {
+        task_id: taskId,
+        allottee_id: allotteeId,
+        text: updatedText,
+      };
+      const response = await fetch('https://4688-49-37-8-126.ngrok-free.app/edit_task', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'ngrok-skip-browser-warning': 'any',
+          },
+          body: JSON.stringify(dataToEdit),
+      });
+      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+      const responseText = await response.text();
+      const data = responseText ? JSON.parse(responseText) : null;
+      
+      if (data) {
+        console.log('Edit Success:', data);
+        setTimeout(fetchAllotteeData, 200);
+        setTasks([]);
+        setInputValue('');
+        setEditingTask(null);
+      } else {
+        console.error('No data returned from edit task API');
+      }
+  } catch (error) {
+      console.error('Error saving edited task:', error);
+  }
 };
 
 const fetchAllotteeId = async (allotteeName) => {
@@ -1128,6 +1175,8 @@ const openModal = () => {
 
 const closeModal = () => {
   setIsModalOpen(false);
+  setTasks([]);
+  setInputValue('');
 };
 
 
