@@ -226,6 +226,7 @@ useEffect(() => {
           console.log("Success:", data);
           console.log("this function is getting called from useEffect function.");
           notify_success();
+          setTasks([]);
           console.log(isModalOpen)
           fetchAllotteeData();
         })
