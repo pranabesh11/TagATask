@@ -64,7 +64,7 @@ export const sendUserId = async(setData, setError) => {
 
   if (userId) {
     try {
-      const response = await axios.post('https://4688-49-37-8-126.ngrok-free.app/allot', {
+      const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/allot', {
         user_id: userId,
       }, {
         headers: {
@@ -87,7 +87,7 @@ export const sendUserId = async(setData, setError) => {
 // Function to fetch options from Rails API
 export const fetchData = async (setData, setError) => {
   try {
-    const response = await axios.get('https://4688-49-37-8-126.ngrok-free.app/allot', {
+    const response = await axios.get('https://prioritease2-c953f12d76f1.herokuapp.com/allot', {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any"
