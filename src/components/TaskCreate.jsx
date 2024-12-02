@@ -40,6 +40,12 @@ function TaskCreate() {
   const [Allottee, setAllottee] = useState({});
   const [editingTask, setEditingTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const tasksRef = useRef(tasks);
+
+  useEffect(() => {
+    tasksRef.current = tasks;
+  }, [tasks]);
+
 
   useEffect(() => {
     sendUserId(setData, setError);
@@ -309,6 +315,7 @@ function TaskCreate() {
     } else if (event.key === 'Escape') {
       event.preventDefault();
       saveAllData();
+      closeModal();
     }
   };
 
@@ -390,6 +397,7 @@ function TaskCreate() {
       setIsSaving(true);
       saveAllData();
       setTasks([]);
+      closeModal();
       return;
     }
 
@@ -456,6 +464,7 @@ function TaskCreate() {
     if (event.key === 'Escape' && !isSaving) {
       setIsSaving(true);
       saveAllData();
+      closeModal();
       return;
     }
     if (!inputValue) {
@@ -724,6 +733,19 @@ const fetchAllotteeData = async () => {
   }
 };
 
+const handleAllotteeClick = (allotteeName, tasks) => {
+  setSelectedAllottee(allotteeName);  // Set the selected allottee
+  
+  // Collect all follow-up tasks for the selected allottee
+  const followUpTasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+    return allotteeId === currentPersonnelId && !completionDate && !verificationDate;
+  });
+
+  setEditableTasks(followUpTasks);  // Populate editable tasks with follow-up tasks
+  setEditMode(true);  // Enable edit mode
+};
+
+
 
 
 
@@ -808,7 +830,6 @@ const fetchAllotteeData = async () => {
 
 
 
-
   const handleEditTask = (itemIndex) => {
     if (tasks.length > 0 || inputValue.trim()) {
       saveAllData();
@@ -853,30 +874,67 @@ const fetchAllotteeData = async () => {
     setTasks(updatedTasks);
   };
 
+  
 
-  const editTask = async (taskId, taskDescription, allotteeName) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const editTask = async (allotteeName , followUpTasks) => {
     const allotteeId = await fetchAllotteeId(allotteeName);
-    if (allotteeId) {
-        setInputValue(allotteeId);
-        console.log(`Allottee ID set to ${allotteeId} for name: ${allotteeName}`);
-    } else {
-        console.error('ID not found for the provided name.');
-    }
-    const taskRef = React.createRef();
-    setEditingTask({ taskId, allotteeId, taskRef });
-    setTasks([{ text: taskDescription, ref: taskRef }]);
+    setInputValue(allotteeId);
+    followUpTasks = followUpTasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+      return allotteeId == allotteeId;
+    });
+    let all_taskrefs = []
+    const transformedTasks = followUpTasks.map(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+      const taskRef = React.createRef();
+      all_taskrefs.push(taskRef);
+      return {
+        taskId,
+        allotteeId,
+        text: taskDescription,
+        ref: taskRef,
+        completed: completionDate ? true : false,
+        datetime: completionDate || verificationDate || null,
+        label: '',
+        workType: '',
+        comments: [],
+        isBold: false,
+        isItalic: false,
+      };
+    });
+    setTasks(transformedTasks);
+    openModal();
+    console.log("followup tasks",followUpTasks);
+    console.log("these are all taskrefs",all_taskrefs)
     setTimeout(() => {
-        if (taskRef.current) {
-            taskRef.current.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === 'Escape') {
-                  event.preventDefault();
-                  const updatedText = taskRef.current.innerText;
-                  saveEditTask(taskId, allotteeId, updatedText);
-                  setEditingTask(null);
-                }
-            });
+      const handleSaveAllTasks = (event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          event.target.blur();
+          console.log("handleSaveAllTasks this part is running")
+          const updatedTasks = tasksRef.current.map(task => ({
+            taskId: task.taskId,
+            allotteeId: task.allotteeId,
+            updatedText: task.text,
+          }));
+          console.log("these are updatedtask", updatedTasks);
+          saveEditTask(updatedTasks);
+          console.log("these are all updated tasks", updatedTasks);
+          setEditingTask(null);
+          closeModal();
+          setTasks([]);
         }
+      };
+      transformedTasks.forEach((task) => {
+        if (task.ref.current) {
+          task.ref.current.addEventListener('keydown', handleSaveAllTasks);
+        }
+      });
+      return () => {
+        transformedTasks.forEach((task) => {
+          if (task.ref.current) {
+            task.ref.current.removeEventListener('keydown', handleSaveAllTasks);
+          }
+        });
+      };
     }, 0);
 };
 
@@ -1135,7 +1193,7 @@ const closeModal = () => {
                     }}
                     ref={task.ref}
                     className="new-div-input"
-                    style={{ border: '1px solid #ccc', padding: '5px', minHeight: '20px', whiteSpace: 'pre-wrap' }}
+                    style={{ border: '1px solid #ccc', padding: '5px', minHeight: '37px', whiteSpace: 'pre-wrap' }}
                     dangerouslySetInnerHTML={{ __html: task.text }} // Only rendered when loading the tasks initially
                   />
 
@@ -1211,45 +1269,7 @@ const closeModal = () => {
           </div>
         </div>
       )}
-      {/* <div className="saved-items">
-        {savedItems.map((item, itemIndex) => (
-          <div key={itemIndex}
-            className="card"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                handleEditTask(itemIndex);
-              }
-            }}
-          >
-            <h1>{item.title}</h1>
-
-            {item.items.map((task, index) => (
-              <div
-                key={index}
-                className={`card-item ${draggingIndex && draggingIndex.cardIndex === itemIndex && draggingIndex.taskIndex === index ? 'dragging' : ''}`}
-                draggable
-                onDragStart={(e) => handleTaskDragStart(e, itemIndex, index)} // Start dragging
-                onDragOver={handleTaskDragOverSmooth} // Allow drag over
-                onDrop={(e) => handleTaskReorder(e, itemIndex, index)} // Handle the drop and reordering
-                onDragEnd={() => setDraggingIndex(null)}
-              >
-                <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
-                <input
-                  type="checkbox"
-                  checked={task.completed || false}
-                  onChange={(e) => handleTaskCheck(itemIndex, index, e.target.checked)}
-                />
-                <div
-                  className="task-content"
-                  dangerouslySetInnerHTML={{ __html: task.text }}
-                  style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
-                />
-              </div>
-            ))}
-          </div>
-        ))}
-      </div> */}
-
+      
       <div>
         <ul>
           {options.map((option, index) => (
@@ -1258,22 +1278,10 @@ const closeModal = () => {
         </ul>
       </div>
 
-      {/* {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Create New Task</h2>
-            <p>This is a centered modal with a blurred background.</p>
-            <button className="close-btn" onClick={closeModal}>
-              Close
-            </button>
-          </div>
-        </div>
-      )} */}
-
-
+      
 
       <div className='add_task_btn_div'>
-        <button className='add_task_btn' onClick={openModal}><i class="fa fa-plus"></i> New Card</button>
+        <button className='add_task_btn' onClick={openModal}><i className="fa fa-plus"></i> New Card</button>
       </div>
 
 
@@ -1340,6 +1348,7 @@ const closeModal = () => {
                   console.log("Dragging allottee:", allotteeName);
                 }}
                 onDrop={() => handleDrop(allotteeName)}
+                onClick={() => editTask(allotteeName , follow_up_tasks)}
               >
                 <p className="name_text">{allotteeName}</p>
                 {/* To-Do Tasks */}
@@ -1410,7 +1419,7 @@ const closeModal = () => {
                         className='checkbox'
                       />
                       <div
-                        onClick={() => editTask(taskId, taskDescription, allotteeName)}
+                        
                         suppressContentEditableWarning={true}
                         className="each_task"
                         style={{

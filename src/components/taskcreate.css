@@ -101,6 +101,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    /* border: 1px solid red; */
 }
 
 #editableInput:focus {
@@ -140,15 +141,15 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
+    /* border: 1px solid red; */
 }
 
 .new-div {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-    padding: 10px;
+    margin-bottom: 3px;
+    /* padding: 10px; */
     border-radius: 5px;
-    background-color: #fff;
     transition: transform 0.2s ease, opacity 0.2s ease;
     position: relative;
 }
@@ -203,7 +204,7 @@
 
 .new-div-input {
     margin-right: 10px;
-    padding: 5px;
+    padding: 3px;
     border-radius: 7px;
     outline: none;
     border-style: none;
@@ -211,7 +212,7 @@
     font-optical-sizing: auto;
     font-weight: 500;
     font-style: normal;
-    font-size: 17px;
+    font-size: 13px;
     width: 40%;
 }
 .close_button{
@@ -541,11 +542,13 @@
 } */
   .container {
     background: white;
-    padding: 0px;
+    padding: 5px;
     border-radius: 8px;
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
     width: 60vw;
+    height: 85%;
     text-align: center;
+    overflow: scroll;
   }
   
   .close-btn {
