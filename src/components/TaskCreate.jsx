@@ -1426,7 +1426,12 @@ const closeModal = () => {
                       {
                         allotterId==currentPersonnelId &&(
                         <div>
-                          <img src={revert_icon} className='revert_icon' onClick={() => handleRevertClick(taskId)}/>
+                          <img src={revert_icon} className='revert_icon' 
+                            onClick={(e) =>{
+                              e.stopPropagation();
+                              handleRevertClick(taskId);
+                            }
+                            }/>
                         </div>
                         )
                       }   
