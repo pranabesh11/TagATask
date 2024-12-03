@@ -922,24 +922,23 @@ const handleAllotteeClick = (allotteeName, tasks) => {
 
   
 
-  const editTask = async (allotteeName, followUpTasks) => {
+  const editTask = async (allotteeName , followUpTasks) => {
     const allotteeId = await fetchAllotteeId(allotteeName);
     setInputValue(allotteeId);
     setEditingTask(true);
-  
-    followUpTasks = followUpTasks.filter(
-      ([taskId, taskDescription, completionDate, verificationDate, allotterId, currentAllotteeId]) =>
-        currentAllotteeId === allotteeId
-    );
-  
-    const transformedTasks = followUpTasks.map(([taskId, taskDescription, completionDate, verificationDate]) => {
+    followUpTasks = followUpTasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+      return allotteeId == allotteeId;
+    });
+    let all_taskrefs = []
+    const transformedTasks = followUpTasks.map(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
       const taskRef = React.createRef();
+      all_taskrefs.push(taskRef);
       return {
         taskId,
         allotteeId,
         text: taskDescription,
         ref: taskRef,
-        completed: !!completionDate,
+        completed: completionDate ? true : false,
         datetime: completionDate || verificationDate || null,
         label: '',
         workType: '',
@@ -948,59 +947,65 @@ const handleAllotteeClick = (allotteeName, tasks) => {
         isItalic: false,
       };
     });
-  
     setTasks(transformedTasks);
     tasksRef.current = transformedTasks;
-  
     openModal();
-  
-    // Add global event listener for Escape
-    const handleSaveAllTasks = (event) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        const updatedTasks = tasksRef.current.map((task) => ({
-          taskId: task.taskId,
-          allotteeId: task.allotteeId,
-          updatedText: DOMPurify.sanitize(task.ref?.current?.innerText || task.text),
-        }));
-  
-        console.log('Saving updated tasks:', updatedTasks);
-        saveEditTask(updatedTasks);
-        closeModal();
-        setTasks([]);
-      }
-    };
-  
-    document.addEventListener('keydown', handleSaveAllTasks);
-  
-    return () => {
-      document.removeEventListener('keydown', handleSaveAllTasks);
-    };
-  };
-  
-
-  const saveEditTask = async (tasksToSave) => {
-    try {
-      const dataToEdit = tasksToSave.map((task) => ({
-        task_id: task.taskId || null, // Use null for newly created tasks without IDs
-        allottee_id: task.allotteeId,
-        text: task.updatedText,
-      }));
-  
-      const response = await fetch('https://4688-49-37-8-126.ngrok-free.app/edit_task', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          'ngrok-skip-browser-warning': 'any',
-        },
-        body: JSON.stringify(dataToEdit),
+    console.log("followup tasks",followUpTasks);
+    console.log("these are all taskrefs",all_taskrefs)
+    setTimeout(() => {
+      const handleSaveAllTasks = (event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          event.target.blur();
+          console.log("handleSaveAllTasks this part is running")
+          const updatedTasks = tasksRef.current.map(task => ({
+            taskId: task.taskId,
+            allotteeId: task.allotteeId,
+            updatedText: task.text,
+          }));
+          console.log("these are updatedtask", updatedTasks);
+          saveEditTask(updatedTasks);
+          console.log("these are all updated tasks", updatedTasks);
+          setEditingTask(null);
+          closeModal();
+          setTasks([]);
+        }
+      };
+      transformedTasks.forEach((task) => {
+        if (task.ref.current) {
+          task.ref.current.addEventListener('keydown', handleSaveAllTasks);
+        }
       });
-  
+      return () => {
+        transformedTasks.forEach((task) => {
+          if (task.ref.current) {
+            task.ref.current.removeEventListener('keydown', handleSaveAllTasks);
+          }
+        });
+      };
+    }, 0);
+};
+
+const saveEditTask =  async (taskId, allotteeId, updatedText) => {
+  try {
+      const dataToEdit = {
+        task_id: taskId,
+        allottee_id: allotteeId,
+        text: updatedText,
+      };
+      const response = await fetch('https://4688-49-37-8-126.ngrok-free.app/edit_task', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'ngrok-skip-browser-warning': 'any',
+          },
+          body: JSON.stringify(dataToEdit),
+      });
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-  
-      const data = await response.json();
-  
+      const responseText = await response.text();
+      const data = responseText ? JSON.parse(responseText) : null;
+      
       if (data) {
         console.log('Edit Success:', data);
         setTimeout(fetchAllotteeData, 200);
@@ -1010,11 +1015,11 @@ const handleAllotteeClick = (allotteeName, tasks) => {
       } else {
         console.error('No data returned from edit task API');
       }
-    } catch (error) {
-      console.error('Error saving edited tasks:', error);
-    }
-  };
-  
+  } catch (error) {
+      console.error('Error saving edited task:', error);
+  }
+};
+
 const fetchAllotteeId = async (allotteeName) => {
     try {
         const response = await axios.post(
