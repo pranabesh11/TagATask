@@ -765,7 +765,7 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
 const fetchAllotteeData = async () => {
   try {
     const userId = new URLSearchParams(window.location.search).get('id');
-    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com/task_data?user_id=${userId}`, {
+    const response = await axios.get(`https://4688-49-37-8-126.ngrok-free.app/task_data?user_id=${userId}`, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
