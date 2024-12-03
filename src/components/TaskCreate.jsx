@@ -207,7 +207,7 @@ useEffect(() => {
       if (editableInputRef.current) editableInputRef.current.value = "";
       document.getElementById("inputField").focus();
 
-      fetch("https://4688-49-37-8-126.ngrok-free.app/create_task", {
+      fetch("https://prioritease2-c953f12d76f1.herokuapp.com/create_task", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -293,7 +293,7 @@ useEffect(() => {
       const urlParams = new URLSearchParams(window.location.search);
       const currentPersonnelId = parseInt(urlParams.get('id'));
       const response = await axios.post(
-        "https://4688-49-37-8-126.ngrok-free.app/done_mark",
+        "https://prioritease2-c953f12d76f1.herokuapp.com/done_mark",
         {
           task_id: taskId,
           completed: isChecked,
@@ -842,7 +842,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
       if (editableInputRef.current) editableInputRef.current.value = '';
       document.getElementById('inputField').focus();
 
-      fetch('https://4688-49-37-8-126.ngrok-free.app/create_task', {
+      fetch('https://prioritease2-c953f12d76f1.herokuapp.com/create_task', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -993,7 +993,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
         allottee_id: allotteeId,
         text: updatedText,
       };
-      const response = await fetch('https://4688-49-37-8-126.ngrok-free.app/edit_task', {
+      const response = await fetch('https://prioritease2-c953f12d76f1.herokuapp.com/edit_task', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -1023,7 +1023,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
 const fetchAllotteeId = async (allotteeName) => {
     try {
         const response = await axios.post(
-            'https://4688-49-37-8-126.ngrok-free.app/id_name_converter',
+            'https://prioritease2-c953f12d76f1.herokuapp.com/id_name_converter',
             { name: allotteeName },
             { headers: { 
               'Content-Type': 'application/json',
@@ -1052,7 +1052,7 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
 
   try {
     const response = await axios.post(
-      "https://4688-49-37-8-126.ngrok-free.app/task_transfer",
+      "https://prioritease2-c953f12d76f1.herokuapp.com/task_transfer",
       dataToSend,
       {
         headers: {
@@ -1106,7 +1106,7 @@ const handleAllotteeReorder = (targetAllotteeName) => {
     fullOrder: Object.keys(newAllotteeState),
   };
   axios
-    .post("https://4688-49-37-8-126.ngrok-free.app/allottee_card_reorder", dataToSend, {
+    .post("https://prioritease2-c953f12d76f1.herokuapp.com/allottee_card_reorder", dataToSend, {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -1147,7 +1147,7 @@ const handleToggleChange = (newState) => {
 
 const handleRevertClick = async (taskId) => {
   try {
-    const response = await axios.post('https://4688-49-37-8-126.ngrok-free.app/revert', {
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/revert', {
       task_id: taskId,
       status: "task is reverted",
     },
