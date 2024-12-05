@@ -175,6 +175,7 @@ useEffect(() => {
       setTimeout(() => {
         if (editingTask) {
           updateData();
+          fetchAllottee(setAllottee,setError);
         }
         saveAllDataWithInputValue();
         console.log("Clicked outside");
@@ -737,6 +738,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
       const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
       sendEditTasksData(sanitizedData);
       fetchAllottee(setAllottee,setError);
+      fetchAllotteeData();
     }else{
      // Debugging line
     const params = new URLSearchParams(window.location.search);
