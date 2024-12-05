@@ -172,7 +172,7 @@ export const sendEditTasksData = async (tasksData) => {
   try {
     const currentPersonnelId = new URLSearchParams(window.location.search).get('id');
     const tasksData = {
-      currentPersonnelId,
+      currentPersonnelId:currentPersonnelId,
       tasks: tasksData,
     };
     const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/edit_task', tasksData, {
