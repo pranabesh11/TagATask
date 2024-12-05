@@ -80,6 +80,7 @@ useEffect(() => {
       setIsModalOpen(false);
       const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
       sendEditTasksData(sanitizedData);
+      fetchAllotteeData();
     }
   }
   
@@ -222,7 +223,7 @@ useEffect(() => {
       const urlParams = new URLSearchParams(window.location.search);
       const currentPersonnelId = parseInt(urlParams.get('id'));
       const response = await axios.post(
-        "https://prioritease2-c953f12d76f1.herokuapp.com//done_mark",
+        "https://prioritease2-c953f12d76f1.herokuapp.com/done_mark",
         {
           task_id: taskId,
           completed: isChecked,
@@ -694,7 +695,7 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
 const fetchAllotteeData = async () => {
   try {
     const userId = new URLSearchParams(window.location.search).get('id');
-    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com//task_data?user_id=${userId}`, {
+    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com/task_data?user_id=${userId}`, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -735,6 +736,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
       console.log("Saving all data from first line", { inputValue, tasks });
       const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
       sendEditTasksData(sanitizedData);
+      fetchAllotteeData();
     }else{
      // Debugging line
     const params = new URLSearchParams(window.location.search);
@@ -776,7 +778,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
       if (editableInputRef.current) editableInputRef.current.value = '';
       document.getElementById('inputField').focus();
 
-      fetch('https://prioritease2-c953f12d76f1.herokuapp.com//create_task', {
+      fetch('https://prioritease2-c953f12d76f1.herokuapp.com/create_task', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -939,7 +941,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
         allottee_id: allotteeId,
         text: updatedText,
       };
-      const response = await fetch('https://prioritease2-c953f12d76f1.herokuapp.com//edit_task', {
+      const response = await fetch('https://prioritease2-c953f12d76f1.herokuapp.com/edit_task', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -969,7 +971,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
 const fetchAllotteeId = async (allotteeName) => {
     try {
         const response = await axios.post(
-            'https://prioritease2-c953f12d76f1.herokuapp.com//id_name_converter',
+            'https://prioritease2-c953f12d76f1.herokuapp.com/id_name_converter',
             { name: allotteeName },
             { headers: { 
               'Content-Type': 'application/json',
@@ -998,7 +1000,7 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
 
   try {
     const response = await axios.post(
-      "https://prioritease2-c953f12d76f1.herokuapp.com//task_transfer",
+      "https://prioritease2-c953f12d76f1.herokuapp.com/task_transfer",
       dataToSend,
       {
         headers: {
@@ -1052,7 +1054,7 @@ const handleAllotteeReorder = (targetAllotteeName) => {
     fullOrder: Object.keys(newAllotteeState),
   };
   axios
-    .post("https://prioritease2-c953f12d76f1.herokuapp.com//allottee_card_reorder", dataToSend, {
+    .post("https://prioritease2-c953f12d76f1.herokuapp.com/allottee_card_reorder", dataToSend, {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -1093,7 +1095,7 @@ const handleToggleChange = (newState) => {
 
 const handleRevertClick = async (taskId) => {
   try {
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com//revert', {
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/revert', {
       task_id: taskId,
       status: "task is reverted",
     },
