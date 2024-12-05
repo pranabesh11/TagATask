@@ -179,6 +179,7 @@ export const sendEditTasksData = async (tasksData) => {
       },
     });
     console.log('Edit tasks response:', response.data);
+    fetchAllottee();
   } catch (error) {
     console.error('Error editing tasks:', error);
   }
