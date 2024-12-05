@@ -80,7 +80,7 @@ useEffect(() => {
       setIsModalOpen(false);
       const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
       sendEditTasksData(sanitizedData);
-      fetchAllotteeData();
+      fetchAllottee(setAllottee,setError);
     }
   }
   
@@ -736,7 +736,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
       console.log("Saving all data from first line", { inputValue, tasks });
       const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
       sendEditTasksData(sanitizedData);
-      fetchAllotteeData();
+      fetchAllottee(setAllottee,setError);
     }else{
      // Debugging line
     const params = new URLSearchParams(window.location.search);
