@@ -171,11 +171,8 @@ export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTa
 export const sendEditTasksData = async (tasksData) => {
   try {
     const currentPersonnelId = new URLSearchParams(window.location.search).get('id');
-    const all_data = {
-      currentPersonnelId:currentPersonnelId,
-      tasks: tasksData,
-    };
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/edit_task', all_data, {
+    
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/edit_task', tasksData, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
