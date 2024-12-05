@@ -16,9 +16,11 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI } from './ApiList';
+import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI, sendEditTasksData } from './ApiList';
 import  ToggleButton  from './ToggleButton';
-import revert_icon from '../assets/revert.png'
+import revert_icon from '../assets/revert.png';
+import { useSelector, useDispatch } from 'react-redux';
+import { setEditingTask } from '../components/slices/Taskslice'
 
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
@@ -38,9 +40,11 @@ function TaskCreate() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [Allottee, setAllottee] = useState({});
-  const [editingTask, setEditingTask] = useState(null);
+  // const [editingTask, setEditingTask] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const tasksRef = useRef(tasks);
+  const editingTask = useSelector((state) => state.task.editingTask);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     tasksRef.current = tasks;
@@ -48,116 +52,37 @@ function TaskCreate() {
 
 
   useEffect(() => {
+    if (editingTask) {
+      console.log("Editing task is now true");
+      // Perform actions here
+    }
+    console.log("now the task is in edit mode.",editingTask);
+  }, [editingTask]);
+
+  useEffect(()=>{
+    console.log(`the status of editing state ${editingTask}`);
+  },[editingTask])
+  
+
+  useEffect(() => {
     sendUserId(setData, setError);
     fetchData(setData, setError);
     fetchAllottee(setAllottee, setError);
   }, []);
 
-  // useEffect(() => {
-  //   const handleSaveEditTask = async (taskId, allotteeId, updatedText) => {
-  //     try {
-  //       const dataToEdit = {
-  //         task_id: taskId,
-  //         allottee_id: allotteeId,
-  //         text: updatedText,
-  //       };
-  //       const response = await fetch('https://4688-49-37-8-126.ngrok-free.app/edit_task', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Accept': 'application/json',
-  //           'ngrok-skip-browser-warning': 'any',
-  //         },
-  //         body: JSON.stringify(dataToEdit),
-  //       });
-  //       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-  //       const responseText = await response.text();
-  //       const data = responseText ? JSON.parse(responseText) : null;
-  
-  //       if (data) {
-  //         console.log('Edit Success:', data);
-  //         setTimeout(fetchAllotteeData, 200);
-  //         setTasks([]); // Clear tasks after successful save
-  //         setInputValue('');
-  //         setEditingTask(null); // Exit edit mode
-  //       } else {
-  //         console.error('No data returned from edit task API');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error saving edited task:', error);
-  //     }
-  //   };
-  
-  //   const handleClickOutside = (event) => {
-  //     if (editingTask && containerRef.current && !containerRef.current.contains(event.target)) {
-  //       const { taskId, allotteeId, taskRef } = editingTask;
-  //       const updatedText = taskRef?.current?.innerText?.trim();
-  
-  //       if (updatedText) {
-  //         handleSaveEditTask(taskId, allotteeId, updatedText); // Save data when clicking outside
-  //         console.log("Clicked outside - edited task saved");
-  //       } else {
-  //         console.log("Clicked outside - no text to save for edited task");
-  //       }
-  
-  //       setEditingTask(null); // Exit edit mode regardless of save
-  //     }
-  //   };
-  
-  //   window.addEventListener('mousedown', handleClickOutside);
-  
-  //   return () => {
-  //     window.removeEventListener('mousedown', handleClickOutside);
-  //   };
-  // }, [editingTask]);
-
-
-
-
-
-
-
-// // useEffect(() => {
-// //   const handleClickOutside = (event) => {
-// //     // Ensure click is outside the container and tasks exist
-// //     if (containerRef.current && !containerRef.current.contains(event.target) && tasks.length > 0) {
-// //       if (isEditing) {
-// //         console.log("Clicked outside in editing mode");
-        
-// //         const updatedTasks = tasks.map((task) => ({
-// //           taskId: task.taskId,
-// //           allotteeId: task.allotteeId,
-// //           updatedText: task.ref?.current?.innerText?.trim() || '',
-// //         })).filter((task) => task.updatedText);
-
-// //         // Call saveEditTask for each updated task
-// //         updatedTasks.forEach(({ taskId, allotteeId, updatedText }) => {
-// //           saveEditTask(taskId, allotteeId, updatedText);
-// //         });
-
-// //         setEditingTask(null); // Exit editing mode
-// //         setTasks([]); // Clear tasks
-// //         closeModal(); // Close modal if applicable
-// //       } else {
-// //         console.log("Clicked outside, saving new data");
-// //         saveAllDataWithInputValue(); // Call the save function for new data
-// //       }
-// //     }
-// //   };
-
-//   // Attach event listener
-//   document.addEventListener('mousedown', handleClickOutside);
-
-//   // Cleanup listener
-//   return () => {
-//     document.removeEventListener('mousedown', handleClickOutside);
-//   };
-// }, [containerRef, tasks, isEditing, saveEditTask]);
-
-  
 
 
 useEffect(() => {
+  const updateData = () => {
+    if(editingTask){
+      console.log("this function is from outside click");
+      console.log(tasks);
+      setIsModalOpen(false);
+      const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
+      sendEditTasksData(sanitizedData);
+    }
+  }
+  
   console.log("useEffect function is calling");
 
   const saveAllDataWithInputValue = () => {
@@ -207,7 +132,7 @@ useEffect(() => {
       if (editableInputRef.current) editableInputRef.current.value = "";
       document.getElementById("inputField").focus();
 
-      fetch("https://prioritease2-c953f12d76f1.herokuapp.com/create_task", {
+      fetch("prioritease2-c953f12d76f1.herokuapp.com/create_task", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -247,8 +172,12 @@ useEffect(() => {
       console.log("Clicked inside");
     } else {
       setTimeout(() => {
+        if (editingTask) {
+          updateData();
+        }
         saveAllDataWithInputValue();
         console.log("Clicked outside");
+          updateData();
       }, 100);
     }
   };
@@ -293,7 +222,7 @@ useEffect(() => {
       const urlParams = new URLSearchParams(window.location.search);
       const currentPersonnelId = parseInt(urlParams.get('id'));
       const response = await axios.post(
-        "https://prioritease2-c953f12d76f1.herokuapp.com/done_mark",
+        "https://prioritease2-c953f12d76f1.herokuapp.com//done_mark",
         {
           task_id: taskId,
           completed: isChecked,
@@ -765,7 +694,7 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
 const fetchAllotteeData = async () => {
   try {
     const userId = new URLSearchParams(window.location.search).get('id');
-    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com/task_data?user_id=${userId}`, {
+    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com//task_data?user_id=${userId}`, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -802,7 +731,12 @@ const handleAllotteeClick = (allotteeName, tasks) => {
 
 
   const saveAllData = useCallback(() => {
-    console.log("Saving all data", { inputValue, tasks }); // Debugging line
+    if(editingTask){
+      console.log("Saving all data from first line", { inputValue, tasks });
+      const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
+      sendEditTasksData(sanitizedData);
+    }else{
+     // Debugging line
     const params = new URLSearchParams(window.location.search);
     const notify_success = () => toast.success("Task Created Successfully !");
     const notify_fail = () => toast.error("Task Creation Failed !");
@@ -842,7 +776,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
       if (editableInputRef.current) editableInputRef.current.value = '';
       document.getElementById('inputField').focus();
 
-      fetch('https://prioritease2-c953f12d76f1.herokuapp.com/create_task', {
+      fetch('https://prioritease2-c953f12d76f1.herokuapp.com//create_task', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -871,6 +805,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
     console.log("Data to Save:", dataToSave); // Verify the payload
 
     setIsSaving(false);
+    }
   }, [tasks, inputValue, userId]);
 
 
@@ -922,69 +857,80 @@ const handleAllotteeClick = (allotteeName, tasks) => {
 
   
 
-  const editTask = async (allotteeName , followUpTasks) => {
+  const editTask = async (allotteeName, followUpTasks) => {
     const allotteeId = await fetchAllotteeId(allotteeName);
     setInputValue(allotteeId);
-    setEditingTask(true);
     followUpTasks = followUpTasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
-      return allotteeId == allotteeId;
+        return allotteeId == allotteeId;
     });
-    let all_taskrefs = []
+    let all_taskrefs = [];
     const transformedTasks = followUpTasks.map(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
-      const taskRef = React.createRef();
-      all_taskrefs.push(taskRef);
-      return {
-        taskId,
-        allotteeId,
-        text: taskDescription,
-        ref: taskRef,
-        completed: completionDate ? true : false,
-        datetime: completionDate || verificationDate || null,
-        label: '',
-        workType: '',
-        comments: [],
-        isBold: false,
-        isItalic: false,
-      };
+        const taskRef = React.createRef();
+        all_taskrefs.push(taskRef);
+        return {
+            taskId,
+            allotteeId,
+            text: taskDescription,
+            ref: taskRef,
+            completed: completionDate ? true : false,
+            datetime: completionDate || verificationDate || null,
+            label: '',
+            workType: '',
+            comments: [],
+            isBold: false,
+            isItalic: false,
+        };
     });
     setTasks(transformedTasks);
     tasksRef.current = transformedTasks;
     openModal();
-    console.log("followup tasks",followUpTasks);
-    console.log("these are all taskrefs",all_taskrefs)
-    setTimeout(() => {
-      const handleSaveAllTasks = (event) => {
+    console.log("followup tasks", followUpTasks);
+    console.log("these are all taskrefs", all_taskrefs);
+
+    const handleSaveAllTasks = (event) => {
         if (event.key === 'Escape') {
-          event.preventDefault();
-          event.target.blur();
-          console.log("handleSaveAllTasks this part is running")
-          const updatedTasks = tasksRef.current.map(task => ({
-            taskId: task.taskId,
-            allotteeId: task.allotteeId,
-            updatedText: task.text,
-          }));
-          console.log("these are updatedtask", updatedTasks);
-          saveEditTask(updatedTasks);
-          console.log("these are all updated tasks", updatedTasks);
-          setEditingTask(null);
-          closeModal();
-          setTasks([]);
+            event.preventDefault();
+            event.target.blur();
+            console.log("handleSaveAllTasks this part is running");
+            const updatedTasks = tasksRef.current.map(task => ({
+                taskId: task.taskId,
+                allotteeId: task.allotteeId,
+                updatedText: task.text,
+            }));
+            console.log("these are updatedtask", updatedTasks);
+            saveEditTask(updatedTasks);
+            console.log("these are all updated tasks", updatedTasks);
+            // setEditingTask(null);
+            setIsModalOpen(false);
+            setTasks([]);
         }
-      };
-      transformedTasks.forEach((task) => {
-        if (task.ref.current) {
-          task.ref.current.addEventListener('keydown', handleSaveAllTasks);
-        }
-      });
-      return () => {
+    };
+
+    setTimeout(() => {
+        // Attach 'keydown' listener to existing and newly added tasks
         transformedTasks.forEach((task) => {
-          if (task.ref.current) {
-            task.ref.current.removeEventListener('keydown', handleSaveAllTasks);
-          }
+            if (task.ref.current) {
+                task.ref.current.addEventListener('keydown', handleSaveAllTasks);
+            }
         });
-      };
+
+        // Add event listeners for newly created tasks
+        editableInputRef.current.addEventListener('keydown', handleSaveAllTasks);
+
+        return () => {
+            transformedTasks.forEach((task) => {
+                if (task.ref.current) {
+                    task.ref.current.removeEventListener('keydown', handleSaveAllTasks);
+                }
+            });
+
+            if (editableInputRef.current) {
+                editableInputRef.current.removeEventListener('keydown', handleSaveAllTasks);
+            }
+        };
     }, 0);
 };
+
 
 const saveEditTask =  async (taskId, allotteeId, updatedText) => {
   try {
@@ -993,7 +939,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
         allottee_id: allotteeId,
         text: updatedText,
       };
-      const response = await fetch('https://prioritease2-c953f12d76f1.herokuapp.com/edit_task', {
+      const response = await fetch('https://prioritease2-c953f12d76f1.herokuapp.com//edit_task', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -1011,7 +957,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
         setTimeout(fetchAllotteeData, 200);
         setTasks([]);
         setInputValue('');
-        setEditingTask(null);
+        // setEditingTask(null);
       } else {
         console.error('No data returned from edit task API');
       }
@@ -1023,7 +969,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
 const fetchAllotteeId = async (allotteeName) => {
     try {
         const response = await axios.post(
-            'https://prioritease2-c953f12d76f1.herokuapp.com/id_name_converter',
+            'https://prioritease2-c953f12d76f1.herokuapp.com//id_name_converter',
             { name: allotteeName },
             { headers: { 
               'Content-Type': 'application/json',
@@ -1052,7 +998,7 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
 
   try {
     const response = await axios.post(
-      "https://prioritease2-c953f12d76f1.herokuapp.com/task_transfer",
+      "https://prioritease2-c953f12d76f1.herokuapp.com//task_transfer",
       dataToSend,
       {
         headers: {
@@ -1106,7 +1052,7 @@ const handleAllotteeReorder = (targetAllotteeName) => {
     fullOrder: Object.keys(newAllotteeState),
   };
   axios
-    .post("https://prioritease2-c953f12d76f1.herokuapp.com/allottee_card_reorder", dataToSend, {
+    .post("https://prioritease2-c953f12d76f1.herokuapp.com//allottee_card_reorder", dataToSend, {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -1147,7 +1093,7 @@ const handleToggleChange = (newState) => {
 
 const handleRevertClick = async (taskId) => {
   try {
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/revert', {
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com//revert', {
       task_id: taskId,
       status: "task is reverted",
     },
@@ -1196,7 +1142,7 @@ const closeModal = () => {
             <select
               className="select_allottee"
               id="inputField"
-              value={inputValue}
+              value={inputValue || ""}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyPress}
 
@@ -1398,7 +1344,11 @@ const closeModal = () => {
                   console.log("Dragging allottee:", allotteeName);
                 }}
                 onDrop={() => handleDrop(allotteeName)}
-                onClick={() => editTask(allotteeName , follow_up_tasks)}
+                onClick={() => {
+                  dispatch(setEditingTask(true));
+                  editTask(allotteeName , follow_up_tasks)
+                  }
+                }
               >
                 <p className="name_text">{allotteeName}</p>
                 {/* To-Do Tasks */}

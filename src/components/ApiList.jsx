@@ -33,7 +33,7 @@ export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const currentPersonnelId = parseInt(urlParams.get('id'));
-    const response = await axios.post('https://4688-49-37-8-126.ngrok-free.app/done_mark', {
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com//done_mark', {
       task_id: taskId,
       completed: isChecked,
       current_personnel: currentPersonnelId
@@ -64,7 +64,7 @@ export const sendUserId = async(setData, setError) => {
 
   if (userId) {
     try {
-      const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/allot', {
+      const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com//allot', {
         user_id: userId,
       }, {
         headers: {
@@ -87,7 +87,7 @@ export const sendUserId = async(setData, setError) => {
 // Function to fetch options from Rails API
 export const fetchData = async (setData, setError) => {
   try {
-    const response = await axios.get('https://prioritease2-c953f12d76f1.herokuapp.com/allot', {
+    const response = await axios.get('https://prioritease2-c953f12d76f1.herokuapp.com//allot', {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any"
@@ -105,27 +105,12 @@ export const fetchData = async (setData, setError) => {
   }
 };
 
-// Function to fetch allottee data
-// export const fetchAllottee = async (setAllottee, setError) => {
-//   try {
-//     const response = await axios.get('https://4688-49-37-8-126.ngrok-free.app/task_data', {
-//       headers: {
-//         'Accept': 'application/json',
-//         'ngrok-skip-browser-warning': "any"
-//       },
-//     });
-//     console.log(response.data.personnels);
-//     setAllottee(response.data.personnels);
-//   } catch (error) {
-//     console.error('Error fetching data:', error);
-//     setError('Error fetching data. Please check the console for more details.');
-//   }
-// };
+
 
 export const fetchAllottee = async (setAllottee, setError) => {
   try {
     const userId = new URLSearchParams(window.location.search).get('id'); // Get user ID from URL
-    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com/task_data?user_id=${userId}`, {
+    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com//task_data?user_id=${userId}`, {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any",
@@ -169,7 +154,7 @@ export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTa
     // Log payload to Chrome console
     console.log("Payload sent to backend:", payload);
 
-    const response = await axios.post('https://4688-49-37-8-126.ngrok-free.app/task_order', payload, {
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com//task_order', payload, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -180,5 +165,20 @@ export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTa
     console.log('Task order updated successfully:', response.data);
   } catch (error) {
     console.error('Error updating task order:', error);
+  }
+};
+
+export const sendEditTasksData = async (tasksData) => {
+  try {
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com//edit_task', tasksData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    });
+
+    console.log('Edit tasks response:', response.data);
+  } catch (error) {
+    console.error('Error editing tasks:', error);
   }
 };
