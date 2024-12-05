@@ -33,7 +33,7 @@ export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const currentPersonnelId = parseInt(urlParams.get('id'));
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com//done_mark', {
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/done_mark', {
       task_id: taskId,
       completed: isChecked,
       current_personnel: currentPersonnelId
@@ -64,7 +64,7 @@ export const sendUserId = async(setData, setError) => {
 
   if (userId) {
     try {
-      const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com//allot', {
+      const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/allot', {
         user_id: userId,
       }, {
         headers: {
@@ -87,7 +87,7 @@ export const sendUserId = async(setData, setError) => {
 // Function to fetch options from Rails API
 export const fetchData = async (setData, setError) => {
   try {
-    const response = await axios.get('https://prioritease2-c953f12d76f1.herokuapp.com//allot', {
+    const response = await axios.get('https://prioritease2-c953f12d76f1.herokuapp.com/allot', {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any"
@@ -110,7 +110,7 @@ export const fetchData = async (setData, setError) => {
 export const fetchAllottee = async (setAllottee, setError) => {
   try {
     const userId = new URLSearchParams(window.location.search).get('id'); // Get user ID from URL
-    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com//task_data?user_id=${userId}`, {
+    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com/task_data?user_id=${userId}`, {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any",
@@ -154,7 +154,7 @@ export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTa
     // Log payload to Chrome console
     console.log("Payload sent to backend:", payload);
 
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com//task_order', payload, {
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/task_order', payload, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -175,7 +175,7 @@ export const sendEditTasksData = async (tasksData) => {
       currentPersonnelId,
       tasks: tasksData,
     };
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com//edit_task', tasksData, {
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/edit_task', tasksData, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
