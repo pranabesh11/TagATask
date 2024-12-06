@@ -92,7 +92,9 @@
 .allottee_wise_task{
     font-family: 'Poppins', sans-serif;
     color: #484848;
-    margin: 0;
+    margin: 4px;
+    font-size: 25px;
+
 }
 
 .new-div {
