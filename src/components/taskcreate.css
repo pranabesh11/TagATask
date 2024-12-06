@@ -492,11 +492,12 @@
 }
 
 .checkbox{
-    border: none;
     font-size: large;
     cursor: pointer;
     width: 20px;
     height: 20px;
+    accent-color: grey;
+    border: none;
 }
 .revert_icon{
     height: 25px;
