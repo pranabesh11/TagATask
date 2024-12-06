@@ -405,8 +405,8 @@
     }
 
 .name_text{
-    font-weight: bolder;
-    font-size: x-large;
+    font-weight: bold;
+    font-size: 18px;
     position: sticky;
     top: 0;
     background-color: white;
@@ -487,7 +487,8 @@
     font-family: 'Poppins', sans-serif;
     color: #484848;
     text-align: left;
-    font-weight: 100;
+    font-weight: 600;
+    font-size: 15px;
 }
 
 .checkbox{
