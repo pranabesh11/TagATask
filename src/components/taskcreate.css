@@ -395,10 +395,11 @@
         flex-direction: column;
         border-radius: 8px;
         overflow-x: hidden;
-        border: 2px solid #888;
+        border: 1px solid #d5d5d5;
     }
     .allottee_container:hover{
-        box-shadow: rgba(0, 0, 0, 0.56) 0px 5px 10px 4px;
+        box-shadow: 0px 0px 3px 3px rgba(119, 119, 119, 0.2);
+        
     }
 
 .name_text{
@@ -408,11 +409,10 @@
     top: 0;
     background-color: white;
     /* padding: 15px;  */
-    color: #484848;
+    color: #202124;
     width: 100%;
     font-family: 'Poppins', sans-serif;
     text-align: center;
-    text-decoration: underline;
     margin-bottom: -8px;
     
 }
@@ -434,6 +434,7 @@
    cursor: pointer;
    font-family: 'Poppins', sans-serif;
    text-align: left;
+   font-size: 18px;
    color: rgb(99, 86, 86);
 }
 .task-item-container{
