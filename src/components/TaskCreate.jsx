@@ -133,7 +133,7 @@ useEffect(() => {
       if (editableInputRef.current) editableInputRef.current.value = "";
       document.getElementById("inputField").focus();
 
-      fetch("prioritease2-c953f12d76f1.herokuapp.com/create_task", {
+      fetch("https://prioritease2-c953f12d76f1.herokuapp.com/create_task", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
