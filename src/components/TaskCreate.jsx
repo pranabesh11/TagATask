@@ -85,7 +85,7 @@ useEffect(() => {
   }
   
   console.log("useEffect function is calling");
-  if(!editingTask){
+  
   const saveAllDataWithInputValue = () => {
     if (!inputValue) {
       console.log("Input value is required to save data");
@@ -167,7 +167,6 @@ useEffect(() => {
 
     setIsSaving(false);
   };
-}
 
   const handleClick = (event) => {
     if (containerRef.current && containerRef.current.contains(event.target)) {
@@ -180,7 +179,7 @@ useEffect(() => {
         }
         saveAllDataWithInputValue();
         console.log("Clicked outside");
-          updateData();
+          // updateData();
       }, 100);
     }
   };
