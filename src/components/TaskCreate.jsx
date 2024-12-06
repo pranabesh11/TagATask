@@ -1357,7 +1357,7 @@ const closeModal = () => {
                 <p className="name_text">{allotteeName}</p>
                 {/* To-Do Tasks */}
                 <div id="to_do_tasks">
-                  <h3 className='section'>ToDo</h3>
+                  <h3 className='section'>To-Do</h3>
                   {to_do_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
                     <div
                       key={taskId}
