@@ -176,6 +176,7 @@ useEffect(() => {
         if (editingTask) {
           updateData();
           fetchAllottee(setAllottee,setError);
+          dispatch(setEditingTask(false));
         }
         saveAllDataWithInputValue();
         console.log("Clicked outside");
