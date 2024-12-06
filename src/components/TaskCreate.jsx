@@ -85,7 +85,7 @@ useEffect(() => {
   }
   
   console.log("useEffect function is calling");
-
+  if(!editingTask){
   const saveAllDataWithInputValue = () => {
     if (!inputValue) {
       console.log("Input value is required to save data");
@@ -167,6 +167,7 @@ useEffect(() => {
 
     setIsSaving(false);
   };
+}
 
   const handleClick = (event) => {
     if (containerRef.current && containerRef.current.contains(event.target)) {
@@ -1281,7 +1282,7 @@ const closeModal = () => {
       
 
       <div className='add_task_btn_div'>
-        <button className='add_task_btn' onClick={openModal}><i className="fa fa-plus"></i> New Card</button>
+        <button className='add_task_btn' onClick={openModal}><i className="fa fa-plus"></i><p>New Card</p></button>
       </div>
 
 
