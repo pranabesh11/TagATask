@@ -1436,7 +1436,7 @@ const closeModal = () => {
                           padding: "5px",
                           minHeight: "20px",
                           whiteSpace: "pre-wrap",
-                          fontSize: "18px",
+                          fontSize: "15px",
                           
                         }}
                         dangerouslySetInnerHTML={{ __html: taskDescription }}
