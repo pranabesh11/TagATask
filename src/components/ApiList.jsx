@@ -137,7 +137,7 @@ export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTa
     // Log payload to Chrome console
     console.log("Payload sent to backend:", payload);
 
-    const response = await axios.post('https://4688-49-37-8-126.ngrok-free.app/task_order', payload, {
+    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/task_order', payload, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

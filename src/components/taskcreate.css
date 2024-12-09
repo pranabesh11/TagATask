@@ -303,6 +303,7 @@
 }
 
 .drag_image_logo {
+    margin-top: 8px;
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -440,7 +441,7 @@
 .each_task{
    width: 90%;
    padding: 10px;
-   margin: 2px;
+   margin: -2px;
    cursor: pointer;
    font-family: 'Poppins', sans-serif;
    text-align: left;
@@ -449,7 +450,7 @@
 }
 .task-item-container{
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
 }
 
@@ -506,6 +507,7 @@
     height: 20px;
     accent-color: grey;
     border: none;
+    margin-top: 8px;
 }
 .revert_icon{
     height: 25px;
@@ -591,9 +593,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: grey;
-    color: white;
-    border-radius: 5px;
+    border: 2px solid grey;
+    background-color: #fff;
+    color: grey;
+    border-radius: 30px;
     cursor: pointer;
     width: 40px;
     height: 40px;

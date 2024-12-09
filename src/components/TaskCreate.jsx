@@ -1006,7 +1006,7 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
 
     try {
       const response = await axios.post(
-        "https://4688-49-37-8-126.ngrok-free.app/task_transfer",
+        "https://prioritease2-c953f12d76f1.herokuapp.com/task_transfer",
         dataToSend,
         {
           headers: {
@@ -1317,7 +1317,7 @@ const closeModal = () => {
       </div>
       {!isToggleOn ?
       <div className='task_container'>
-        <h1 className='allottee_wise_task'>Allottee Wise Tasks</h1>
+        {/* <h1 className='allottee_wise_task'>Allottee Wise Tasks</h1> */}
         <div className='tasks'>
         {
           Object.entries(Allottee).map(([allotteeName, tasks]) => {
