@@ -303,7 +303,7 @@
 }
 
 .drag_image_logo {
-    margin-top: 8px;
+    margin-top: 5px;
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -507,7 +507,7 @@
     height: 20px;
     accent-color: grey;
     border: none;
-    margin-top: 8px;
+    margin-top: 5px;
 }
 .revert_icon{
     height: 25px;
