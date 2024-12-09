@@ -503,8 +503,8 @@
 .checkbox{
     font-size: large;
     cursor: pointer;
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     accent-color: grey;
     border: none;
     margin-top: 5px;
