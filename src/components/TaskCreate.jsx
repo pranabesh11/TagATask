@@ -20,7 +20,9 @@ import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI, sendEditTasks
 import  ToggleButton  from './ToggleButton';
 import revert_icon from '../assets/revert.png';
 import { useSelector, useDispatch } from 'react-redux';
-import { setEditingTask } from '../components/slices/Taskslice'
+import { setEditingTask } from '../components/slices/Taskslice';
+import "react-tooltip/dist/react-tooltip.css";
+import {Tooltip} from "react-tooltip";
 
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
@@ -40,7 +42,7 @@ function TaskCreate() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [Allottee, setAllottee] = useState({});
-  // const [editingTask, setEditingTask] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const tasksRef = useRef(tasks);
   const editingTask = useSelector((state) => state.task.editingTask);
@@ -686,8 +688,9 @@ const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
   }));
 
   // Send reorderedTasks, draggedTaskId, and targetTaskId to backend
-  updateTaskOrderAPI(reorderedTasks, draggingTask.taskId, targetTaskId);
-
+  if (draggingTask.allotteeName == targetAllotteeName) {
+    updateTaskOrderAPI(reorderedTasks, draggingTask.taskId, targetTaskId);
+  }
   setAllottee(updatedAllottee);
   setDraggingTask(null);
 };
@@ -993,34 +996,37 @@ const fetchAllotteeId = async (allotteeName) => {
 
 const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
   if (!draggingTask) return;
+  if (draggingTask.allotteeName !== targetAllotteeName) {
+    console.log("Dragged Task ID:", draggingTask.taskId);
+    console.log("Dropped on Allottee:", targetAllotteeName);
+    const dataToSend = {
+      taskId: draggingTask.taskId,
+      newAllottee: targetAllotteeName,
+    };
 
-  console.log("Dragged Task ID:", draggingTask.taskId);
-  console.log("Dropped on Allottee:", targetAllotteeName);
-  const dataToSend = {
-    taskId: draggingTask.taskId,
-    newAllottee: targetAllotteeName,
-  };
-
-  try {
-    const response = await axios.post(
-      "https://prioritease2-c953f12d76f1.herokuapp.com/task_transfer",
-      dataToSend,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "ngrok-skip-browser-warning": "any"
+    try {
+      const response = await axios.post(
+        "https://4688-49-37-8-126.ngrok-free.app/task_transfer",
+        dataToSend,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "ngrok-skip-browser-warning": "any"
+          }
         }
-      }
-    );
-    setTimeout(fetchAllotteeData, 0);
-    toast.success("Task transferred Successfully !", {
-      position: "top-center", 
-      style: { backgroundColor: "white", color: "black" },
-    });
-    console.log("API response:", response.data);
-  } catch (error) {
-    console.error("Error sending task transfer data:", error);
+      );
+      setTimeout(fetchAllotteeData, 0);
+      toast.success("Task transferred Successfully !", {
+        position: "top-center", 
+        style: { backgroundColor: "white", color: "black" },
+      });
+      console.log("API response:", response.data);
+    } catch (error) {
+      console.error("Error sending task transfer data:", error);
+    }
+  }else{
+    console.log("Dragged task dropped within the same allottee. No transfer required.");
   }
 };
 
@@ -1090,7 +1096,7 @@ const handleDrop = (allotteeName) => {
 
 const handleToggleChange = (newState) => {
   console.log('Toggle button state:', newState);
-  setIsToggleOn(newState); // Update state in TaskCreate
+  setIsToggleOn(newState);
 };
 
 
@@ -1121,6 +1127,10 @@ const handleRevertClick = async (taskId) => {
     console.error('An error occurred while updating task status:', error);
   }
 };
+
+
+
+
 const openModal = () => {
   setIsModalOpen(true);
 };
@@ -1281,8 +1291,20 @@ const closeModal = () => {
 
       
 
-      <div className='add_task_btn_div'>
+      {/* <div className='add_task_btn_div'>
         <button className='add_task_btn' onClick={openModal}><i className="fa fa-plus"></i><p>New Card</p></button>
+      </div> */}
+
+      <div className="add_task_btn_div">
+        <div
+          className={`add-card-button ${isHovered ? 'hovered' : ''}`}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={openModal}
+        >
+          <i className="fa fa-plus plus_btn"></i>
+          {isHovered && <span className="add-card-text">Add Card</span>}
+        </div>
       </div>
 
 
@@ -1358,7 +1380,7 @@ const closeModal = () => {
                 <p className="name_text">{allotteeName}</p>
                 {/* To-Do Tasks */}
                 <div id="to_do_tasks">
-                  <h3 className='section'>To-Do</h3>
+                  {to_do_tasks.length > 0 && <h3 className='section'>To-Do</h3>}
                   {to_do_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
                     <div
                       key={taskId}
@@ -1381,12 +1403,21 @@ const closeModal = () => {
                       {
                         allotterId==currentPersonnelId &&(
                         <div>
-                          <img src={revert_icon} className='revert_icon' 
+                          <img 
+                            src={revert_icon} 
+                            className='revert_icon'
+                            data-tip="Send back this task to the Allottee"
                             onClick={(e) =>{
                               e.stopPropagation();
                               handleRevertClick(taskId);
                             }
                             }/>
+                            <Tooltip
+                              place="top"
+                              type="dark"
+                              effect="solid"
+                              delayShow={200}
+                            />
                         </div>
                         )
                       }   
@@ -1395,7 +1426,6 @@ const closeModal = () => {
                         suppressContentEditableWarning={true}
                         className="each_task"
                         style={{
-                          border: "1px solid #ccc",
                           padding: "5px",
                           minHeight: "20px",
                           whiteSpace: "pre-wrap",
@@ -1408,16 +1438,16 @@ const closeModal = () => {
                 </div>
                 {/* Follow-Up Tasks */}
                 <div id="follow_up_tasks">
-                <h3 className='section'>Follow Up</h3> 
+                {follow_up_tasks.length > 0 && <h3 className='section'>Follow Up</h3>} 
                   {follow_up_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
                     <div
                       key={taskId}
                       className="task-item-container"
                       draggable
-                      // onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
-                      // onDragOver={handleTaskDragOver}
-                      // onDrop={() => handleTaskReorder(allotteeName, index)}
-                      // onDragEnd={() => setDraggingTask(null)}
+                      onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
+                      onDragOver={handleTaskDragOver}
+                      onDrop={() => handleTaskReorder(allotteeName, index)}
+                      onDragEnd={() => setDraggingTask(null)}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
                       <input
@@ -1433,7 +1463,6 @@ const closeModal = () => {
                         suppressContentEditableWarning={true}
                         className="each_task"
                         style={{
-                          border: "1px solid #ccc",
                           padding: "5px",
                           minHeight: "20px",
                           whiteSpace: "pre-wrap",

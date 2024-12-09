@@ -301,13 +301,22 @@
     display: inline-block;
     margin-left: 10px;
 }
-.drag_image_logo{
-    opacity: 1;
+
+.drag_image_logo {
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
   
-.drag_image_logo:hover{
-    opacity: 0;
+#follow_up_tasks:hover .drag_image_logo{
+    opacity: 1;
+    cursor: move;
 }
+
+#to_do_tasks:hover .drag_image_logo{
+    opacity: 1;
+    cursor: move;
+}
+  
 
 .label_select {
     padding: 5px;
@@ -431,7 +440,6 @@
 .each_task{
    width: 90%;
    padding: 10px;
-   border: 1px solid gainsboro;
    margin: 2px;
    cursor: pointer;
    font-family: 'Poppins', sans-serif;
@@ -506,9 +514,10 @@
     cursor: pointer;
 }
 .add_task_btn_div{
-    position: absolute;
+    position: fixed;
     left: 1%;
     margin: 5px;
+    z-index: 3;
 }
 .add_task_btn{
     height: 50px;
@@ -576,3 +585,45 @@
   .close-btn:hover {
     background-color: darkred;
   }
+
+
+.add-card-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: grey;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    transition: width 0.3s ease, padding 0.3s ease;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 5px;
+  }
+  
+  
+  .add-card-button.hovered {
+    width: 125px;
+    justify-content: flex-start;
+    padding: 5px;
+    height: 40px;
+    transition: width 0.3s ease, padding 0.3s ease;
+  }
+  
+  .plus_btn{
+    margin: 10px;
+  }
+  .plus-icon {
+    font-size: 16px;
+    margin-right: 10px;
+    margin-left: 5px;
+  }
+  
+  .add-card-text {
+    font-size: 20px;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+  

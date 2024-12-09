@@ -126,23 +126,6 @@ export const fetchAllottee = async (setAllottee, setError) => {
 
 
 
-// export const updateTaskOrderAPI = async (reorderedTasks) => {
-//   try {
-//     const response = await axios.post('https://2a5f-49-37-9-67.ngrok-free.app/task_order', reorderedTasks, {
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Accept': 'application/json',
-//       },
-//     });
-//     console.log('Task order updated successfully:', response.data);
-//   } catch (error) {
-//     console.error('Error updating task order:', error);
-//   }
-// };
-
-
-
-
 export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTaskId) => {
   try {
     const payload = {
@@ -154,7 +137,7 @@ export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTa
     // Log payload to Chrome console
     console.log("Payload sent to backend:", payload);
 
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/task_order', payload, {
+    const response = await axios.post('https://4688-49-37-8-126.ngrok-free.app/task_order', payload, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
