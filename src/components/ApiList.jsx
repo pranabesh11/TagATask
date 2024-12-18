@@ -135,7 +135,7 @@ export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTa
   try {
     const payload = {
       "current_personnel":userId,
-      "card_holder_Name":reorderedTasks,
+      "card_holder_name":reorderedTasks,
       draggedTaskId,
       targetTaskId,
     };
