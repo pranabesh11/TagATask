@@ -48,10 +48,11 @@ function TaskCreate() {
   const editingTask = useSelector((state) => state.task.editingTask);
   const dispatch = useDispatch();
 
+const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
+// const Base_URL = "https://5b37-49-37-8-126.ngrok-free.app";
   useEffect(() => {
     tasksRef.current = tasks;
   }, [tasks]);
-
 
   useEffect(() => {
     if (editingTask) {
@@ -65,13 +66,12 @@ function TaskCreate() {
     console.log(`the status of editing state ${editingTask}`);
   },[editingTask])
   
-
+  
   useEffect(() => {
     sendUserId(setData, setError);
     fetchData(setData, setError);
     fetchAllottee(setAllottee, setError);
   }, []);
-
 
 
 useEffect(() => {
@@ -135,7 +135,7 @@ useEffect(() => {
       if (editableInputRef.current) editableInputRef.current.value = "";
       document.getElementById("inputField").focus();
 
-      fetch("https://prioritease2-c953f12d76f1.herokuapp.com/create_task", {
+      fetch(`${Base_URL}/create_task`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -182,6 +182,7 @@ useEffect(() => {
         }
         saveAllDataWithInputValue();
         console.log("Clicked outside");
+        setIsModalOpen(false);
           // updateData();
       }, 100);
     }
@@ -198,7 +199,6 @@ useEffect(() => {
   
   
   
-
 
   const handleCheckboxChange = async (taskId, isChecked) => {
     if (!taskId || typeof isChecked !== "boolean") {
@@ -227,7 +227,7 @@ useEffect(() => {
       const urlParams = new URLSearchParams(window.location.search);
       const currentPersonnelId = parseInt(urlParams.get('id'));
       const response = await axios.post(
-        "https://prioritease2-c953f12d76f1.herokuapp.com/done_mark",
+        `${Base_URL}/done_mark`,
         {
           task_id: taskId,
           completed: isChecked,
@@ -315,7 +315,6 @@ useEffect(() => {
     }
   };
 
-
   const createNewTask = (initialChar) => {
     if (!inputValue) {
       showToastMessage();
@@ -365,7 +364,6 @@ useEffect(() => {
   const handleTextSelect = (index) => {
     setSelectedTaskIndex(index);
   };
-
 
 
   const handleTaskKeyDown = (index, event) => {
@@ -433,7 +431,6 @@ useEffect(() => {
   };
 
 
-
   let debounceTimer = null;
   let accumulatedChars = '';
   const handleEditableInputChange = (event) => {
@@ -476,7 +473,6 @@ useEffect(() => {
     }
   };
 
-
   const createNewTaskAtIndex = (index) => {
     const newTask = {
       text: '',
@@ -496,7 +492,6 @@ useEffect(() => {
   };
 
 
-
   const handleDatetimeChange = (index, datetime) => {
     const newTasks = [...tasks];
     newTasks[index].datetime = datetime;
@@ -508,7 +503,6 @@ useEffect(() => {
     newTasks[index].selectedTags = tags;
     setTasks(newTasks);
   };
-
 
   const handleDeleteTask = (index) => {
     setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
@@ -555,7 +549,6 @@ useEffect(() => {
   const handleTaskDragOverSmooth = (e) => {
     e.preventDefault(); // Necessary to allow dropping
   };
-
 
   // const handleTaskDragStart = (e, cardIndex, taskIndex) => {
   //   setDraggingIndex({ cardIndex, taskIndex });
@@ -654,53 +647,85 @@ useEffect(() => {
 //   console.log('New Order:', targetTasks);
 // };
 
+// const handleTaskReorder = (targetAllotteeName, targetTaskIndex, sectionType) => {
+//   if (!draggingTask) return;
 
-const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
+//   const updatedAllottee = { ...Allottee };
+//   const sourceTasks = updatedAllottee[draggingTask.allotteeName];
+//   const targetTasks = updatedAllottee[targetAllotteeName];
+//   const draggedTaskIndex = sourceTasks.findIndex((task) => task[0] === draggingTask.taskId);
+//   const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
+
+//   // Insert the dragged task at the new position
+//   targetTasks.splice(targetTaskIndex, 0, draggedTask);
+
+//   // Fetch and log only the updated data for the target allottee container
+//   const targetContainer = Array.from(document.querySelectorAll('.allottee_container')).find(
+//     (container) => container.querySelector('.name_text').innerText.trim() === targetAllotteeName
+//   );
+
+//   if (targetContainer) {
+//     const taskElements = targetContainer.querySelectorAll('.task-item-container');
+//     console.log(`Allottee: ${targetAllotteeName}`);
+
+//     const updatedTaskOrder = [];
+//     taskElements.forEach((taskElement) => {
+//       const taskContent = taskElement.querySelector('.each_task').innerText.trim();
+//       updatedTaskOrder.push(taskContent);
+//     });
+
+//     console.log(`Updated Task Order for ${targetAllotteeName}:`, updatedTaskOrder);
+//   } else {
+//     console.error(`Target container for allottee ${targetAllotteeName} not found.`);
+//   }
+
+//   // Send data to backend
+//   const reorderedTasks = targetTasks.map((task) => ({
+//     taskId: task[0],
+//     description: task[1],
+//   }));
+
+//   updateTaskOrderAPI(
+//     reorderedTasks,
+//     draggingTask.taskId,
+//     targetTaskIndex === 0 ? "top" : targetTasks[targetTaskIndex - 1][0],
+//     sectionType
+//   );
+
+//   setAllottee(updatedAllottee);
+//   setDraggingTask(null);
+// };
+
+
+const handleTaskReorder = (targetAllotteeName, targetTaskIndex, sectionType) => {
   if (!draggingTask) return;
 
   const updatedAllottee = { ...Allottee };
   const sourceTasks = updatedAllottee[draggingTask.allotteeName];
   const targetTasks = updatedAllottee[targetAllotteeName];
-  const draggedTaskIndex = sourceTasks.findIndex(task => task[0] === draggingTask.taskId);
+  const draggedTaskIndex = sourceTasks.findIndex((task) => task[0] === draggingTask.taskId);
   const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
-
-  // Determine targetTaskId based on drop position
-  let targetTaskId = null;
-  if (targetTaskIndex === 0) {
-    targetTaskId = "top";  // Dropped at the top position
-  } else if (targetTaskIndex === targetTasks.length) {
-    targetTaskId = targetTasks[targetTasks.length - 1][0]; // ID of the last task
-  } else {
-    targetTaskId = targetTasks[targetTaskIndex - 1][0]; // ID of the item just above the drop position
-  }
 
   // Insert the dragged task at the new position
   targetTasks.splice(targetTaskIndex, 0, draggedTask);
 
-  // Log to Chrome console
-  console.log("Dragged Task ID:", draggingTask.taskId);
-  console.log("Dropped Over Task ID:", targetTaskId);
+  // Get the IDs of the dragged task and the target task
+  const draggedTaskId = draggingTask.taskId;
+  const targetTaskId = targetTasks[targetTaskIndex - 1]?.[0] || "top";
 
-  // Prepare reordered task list for backend
-  const reorderedTasks = targetTasks.map(task => ({
-    taskId: task[0],
-    description: task[1],
-  }));
-
-  // Send reorderedTasks, draggedTaskId, and targetTaskId to backend
-  if (draggingTask.allotteeName == targetAllotteeName) {
-    updateTaskOrderAPI(reorderedTasks, draggingTask.taskId, targetTaskId);
-  }
-  setAllottee(updatedAllottee);
+  console.log(`Dragged Task ID: ${draggedTaskId}`);
+  console.log(`Dropped Over Task ID: ${targetTaskId}`);
+  updateTaskOrderAPI(targetAllotteeName , draggedTaskId , targetTaskId);
   setDraggingTask(null);
 };
+
 
 
   
 const fetchAllotteeData = async () => {
   try {
     const userId = new URLSearchParams(window.location.search).get('id');
-    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com/task_data?user_id=${userId}`, {
+    const response = await axios.get(`${Base_URL}/task_data?user_id=${userId}`, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -725,7 +750,6 @@ const handleAllotteeClick = (allotteeName, tasks) => {
   setEditableTasks(followUpTasks);  // Populate editable tasks with follow-up tasks
   setEditMode(true);  // Enable edit mode
 };
-
 
 
 
@@ -784,7 +808,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
       if (editableInputRef.current) editableInputRef.current.value = '';
       document.getElementById('inputField').focus();
 
-      fetch('https://prioritease2-c953f12d76f1.herokuapp.com/create_task', {
+      fetch(`${Base_URL}/create_task`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -815,7 +839,6 @@ const handleAllotteeClick = (allotteeName, tasks) => {
     setIsSaving(false);
     }
   }, [tasks, inputValue, userId]);
-
 
 
 
@@ -939,7 +962,6 @@ const handleAllotteeClick = (allotteeName, tasks) => {
     }, 0);
 };
 
-
 const saveEditTask =  async (taskId, allotteeId, updatedText) => {
   try {
       const dataToEdit = {
@@ -947,7 +969,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
         allottee_id: allotteeId,
         text: updatedText,
       };
-      const response = await fetch('https://prioritease2-c953f12d76f1.herokuapp.com/edit_task', {
+      const response = await fetch(`${Base_URL}/edit_task`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -977,7 +999,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
 const fetchAllotteeId = async (allotteeName) => {
     try {
         const response = await axios.post(
-            'https://prioritease2-c953f12d76f1.herokuapp.com/id_name_converter',
+            `${Base_URL}/id_name_converter`,
             { name: allotteeName },
             { headers: { 
               'Content-Type': 'application/json',
@@ -1006,7 +1028,7 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
 
     try {
       const response = await axios.post(
-        "https://prioritease2-c953f12d76f1.herokuapp.com/task_transfer",
+        `${Base_URL}/task_transfer`,
         dataToSend,
         {
           headers: {
@@ -1063,7 +1085,7 @@ const handleAllotteeReorder = (targetAllotteeName) => {
     fullOrder: Object.keys(newAllotteeState),
   };
   axios
-    .post("https://prioritease2-c953f12d76f1.herokuapp.com/allottee_card_reorder", dataToSend, {
+    .post(`${Base_URL}/allottee_card_reorder`, dataToSend, {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -1085,7 +1107,6 @@ const handleAllotteeReorder = (targetAllotteeName) => {
   setDraggingAllottee(null);
 };
 
-
 const handleDrop = (allotteeName) => {
   if (draggingTask) {
     handleDropOnAllotteeContainer(allotteeName);
@@ -1101,10 +1122,9 @@ const handleToggleChange = (newState) => {
 
 
 
-
 const handleRevertClick = async (taskId) => {
   try {
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/revert', {
+    const response = await axios.post(`${Base_URL}/revert`, {
       task_id: taskId,
       status: "task is reverted",
     },
@@ -1130,7 +1150,6 @@ const handleRevertClick = async (taskId) => {
 
 
 
-
 const openModal = () => {
   setIsModalOpen(true);
 };
@@ -1141,9 +1160,7 @@ const closeModal = () => {
   setInputValue('');
 };
 
-
   
-
 
   return (
 
@@ -1172,7 +1189,6 @@ const closeModal = () => {
                 </option>
               ))}
             </select>
-
 
             <div className="editable-div-container">
               {tasks.map((task, index) => (
@@ -1309,7 +1325,6 @@ const closeModal = () => {
 
 
 
-
       <div className='toggle_button'>
         <p>Allottee Wise</p>
         <ToggleButton onToggleChange={handleToggleChange}/>
@@ -1386,10 +1401,10 @@ const closeModal = () => {
                       key={taskId}
                       className="task-item-container"
                       draggable
-                      // onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
-                      // onDragOver={handleTaskDragOver}
-                      // onDrop={() => handleTaskReorder(allotteeName, index)}
-                      // onDragEnd={() => setDraggingTask(null)}
+                      onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
+                      onDragOver = {handleTaskDragOver}
+                      onDrop={() => handleTaskReorder(allotteeName, index , "TO-DO")}
+                      onDragEnd={() => setDraggingTask(null)}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
                       <input
@@ -1446,7 +1461,7 @@ const closeModal = () => {
                       draggable
                       onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
                       onDragOver={handleTaskDragOver}
-                      onDrop={() => handleTaskReorder(allotteeName, index)}
+                      onDrop={() => handleTaskReorder(allotteeName, index , "Follow-Up")}
                       onDragEnd={() => setDraggingTask(null)}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
@@ -1491,3 +1506,4 @@ const closeModal = () => {
 }
 
 export default TaskCreate;
+

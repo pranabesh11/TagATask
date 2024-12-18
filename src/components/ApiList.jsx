@@ -1,4 +1,7 @@
 import axios from 'axios';
+const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
+// const Base_URL = "https://5b37-49-37-8-126.ngrok-free.app";
+
 export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
   // Initial input validation and logging
   if (!taskId || typeof isChecked !== "boolean" || typeof setAllottee !== "function") {
@@ -33,7 +36,7 @@ export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const currentPersonnelId = parseInt(urlParams.get('id'));
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/done_mark', {
+    const response = await axios.post(`${Base_URL}/done_mark`, {
       task_id: taskId,
       completed: isChecked,
       current_personnel: currentPersonnelId
@@ -64,7 +67,7 @@ export const sendUserId = async(setData, setError) => {
 
   if (userId) {
     try {
-      const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/allot', {
+      const response = await axios.post(`${Base_URL}/allot`, {
         user_id: userId,
       }, {
         headers: {
@@ -87,7 +90,7 @@ export const sendUserId = async(setData, setError) => {
 // Function to fetch options from Rails API
 export const fetchData = async (setData, setError) => {
   try {
-    const response = await axios.get('https://prioritease2-c953f12d76f1.herokuapp.com/allot', {
+    const response = await axios.get(`${Base_URL}/allot`, {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any"
@@ -110,7 +113,7 @@ export const fetchData = async (setData, setError) => {
 export const fetchAllottee = async (setAllottee, setError) => {
   try {
     const userId = new URLSearchParams(window.location.search).get('id'); // Get user ID from URL
-    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com/task_data?user_id=${userId}`, {
+    const response = await axios.get(`${Base_URL}/task_data?user_id=${userId}`, {
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any",
@@ -126,9 +129,13 @@ export const fetchAllottee = async (setAllottee, setError) => {
 
 
 
-export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTaskId) => {
+export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTaskId, sectionType) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get('id');
   try {
     const payload = {
+      type: sectionType,
+      userId,
       reorderedTasks,
       draggedTaskId,
       targetTaskId,
@@ -137,7 +144,7 @@ export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTa
     // Log payload to Chrome console
     console.log("Payload sent to backend:", payload);
 
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/task_order', payload, {
+    const response = await axios.post(`${Base_URL}/task_order`, payload, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -155,7 +162,7 @@ export const sendEditTasksData = async (tasksData) => {
   try {
     const currentPersonnelId = new URLSearchParams(window.location.search).get('id');
     
-    const response = await axios.post('https://prioritease2-c953f12d76f1.herokuapp.com/edit_task', tasksData, {
+    const response = await axios.post(`${Base_URL}/edit_task`, tasksData, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
