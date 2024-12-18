@@ -129,14 +129,13 @@ export const fetchAllottee = async (setAllottee, setError) => {
 
 
 
-export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTaskId, sectionType) => {
+export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTaskId) => {
   const urlParams = new URLSearchParams(window.location.search);
   const userId = urlParams.get('id');
   try {
     const payload = {
-      type: sectionType,
-      userId,
-      reorderedTasks,
+      "current_personnel":userId,
+      "card_holder_Name":reorderedTasks,
       draggedTaskId,
       targetTaskId,
     };
