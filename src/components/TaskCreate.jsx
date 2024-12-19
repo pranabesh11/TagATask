@@ -550,16 +550,7 @@ useEffect(() => {
     e.preventDefault(); // Necessary to allow dropping
   };
 
-  // const handleTaskDragStart = (e, cardIndex, taskIndex) => {
-  //   setDraggingIndex({ cardIndex, taskIndex });
-  //   const draggedTask = savedItems[cardIndex].items[taskIndex];
-  //   // alert(`Dragging task: ${draggedTask.text} (Task index: ${taskIndex}, Card index: ${cardIndex})`);
-  //   console.log(`Dragging task: ${draggedTask.text} (Task index: ${taskIndex}, Card index: ${cardIndex})`);
-  // };
 
-  // const handleTaskDragOver = (e) => {
-  //   e.preventDefault();
-  // };
   
   
 
@@ -592,30 +583,7 @@ useEffect(() => {
 
   
 
-  // const handleTaskReorder = (e, cardIndex, targetTaskIndex) => {
-  //   e.preventDefault();
 
-  //   if (draggingIndex && draggingIndex.cardIndex === cardIndex && draggingIndex.taskIndex !== targetTaskIndex) {
-  //     setSavedItems((prevItems) => {
-  //       const newItems = prevItems.map((item, i) =>
-  //         i === cardIndex ? { ...item, items: [...item.items] } : item
-  //       );
-  //       const tasks = newItems[cardIndex].items;  
-  //       console.log('Final task order before drop:', tasks.map(task => task.text));
-  //       const movedTask = tasks[draggingIndex.taskIndex];  
-  //       const updatedTasks = tasks.filter((_, i) => i !== draggingIndex.taskIndex);
-  //       let insertIndex = targetTaskIndex;
-  //       if (draggingIndex.taskIndex < targetTaskIndex) {
-  //         insertIndex += 0;
-  //       }
-  //       updatedTasks.splice(insertIndex, 0, movedTask);
-  //       console.log('Final task order after drop:', updatedTasks.map(task => task.text));
-  //       newItems[cardIndex].items = updatedTasks;
-  //       return newItems;
-  //     });
-  //     setDraggingIndex(null);
-  //   }
-  // };
 
   const handleTaskDragStart = (taskId, taskDescription, allotteeName) => {
     setDraggingTask({ taskId, taskDescription, allotteeName });
@@ -626,98 +594,32 @@ useEffect(() => {
     e.preventDefault();
   };
   
- 
-// const handleTaskReorder = (targetAllotteeName, targetTaskIndex) => {
-//   if (!draggingTask) return;
-
-//   const updatedAllottee = { ...Allottee };
-//   const sourceTasks = updatedAllottee[draggingTask.allotteeName];
-//   const targetTasks = updatedAllottee[targetAllotteeName];
-//   const draggedTaskIndex = sourceTasks.findIndex(task => task[0] === draggingTask.taskId);
-//   const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
-//   targetTasks.splice(targetTaskIndex, 0, draggedTask);
-//   const reorderedTasks = targetTasks.map(task => ({
-//     taskId: task[0],
-//     description: task[1],
-//   }));
-//   updateTaskOrderAPI(reorderedTasks);
-//   setAllottee(updatedAllottee);
-//   setDraggingTask(null);
-//   console.log('Previous Order:', sourceTasks);
-//   console.log('New Order:', targetTasks);
-// };
-
-// const handleTaskReorder = (targetAllotteeName, targetTaskIndex, sectionType) => {
-//   if (!draggingTask) return;
-
-//   const updatedAllottee = { ...Allottee };
-//   const sourceTasks = updatedAllottee[draggingTask.allotteeName];
-//   const targetTasks = updatedAllottee[targetAllotteeName];
-//   const draggedTaskIndex = sourceTasks.findIndex((task) => task[0] === draggingTask.taskId);
-//   const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
-
-//   // Insert the dragged task at the new position
-//   targetTasks.splice(targetTaskIndex, 0, draggedTask);
-
-//   // Fetch and log only the updated data for the target allottee container
-//   const targetContainer = Array.from(document.querySelectorAll('.allottee_container')).find(
-//     (container) => container.querySelector('.name_text').innerText.trim() === targetAllotteeName
-//   );
-
-//   if (targetContainer) {
-//     const taskElements = targetContainer.querySelectorAll('.task-item-container');
-//     console.log(`Allottee: ${targetAllotteeName}`);
-
-//     const updatedTaskOrder = [];
-//     taskElements.forEach((taskElement) => {
-//       const taskContent = taskElement.querySelector('.each_task').innerText.trim();
-//       updatedTaskOrder.push(taskContent);
-//     });
-
-//     console.log(`Updated Task Order for ${targetAllotteeName}:`, updatedTaskOrder);
-//   } else {
-//     console.error(`Target container for allottee ${targetAllotteeName} not found.`);
-//   }
-
-//   // Send data to backend
-//   const reorderedTasks = targetTasks.map((task) => ({
-//     taskId: task[0],
-//     description: task[1],
-//   }));
-
-//   updateTaskOrderAPI(
-//     reorderedTasks,
-//     draggingTask.taskId,
-//     targetTaskIndex === 0 ? "top" : targetTasks[targetTaskIndex - 1][0],
-//     sectionType
-//   );
-
-//   setAllottee(updatedAllottee);
-//   setDraggingTask(null);
-// };
 
 
-const handleTaskReorder = (targetAllotteeName, targetTaskIndex, sectionType) => {
-  if (!draggingTask) return;
+function handleDragStart(event, taskId, taskDescription) {
+  event.dataTransfer.setData("text/plain", JSON.stringify({ taskId, taskDescription }));
+  console.log("Dragging Task:", { taskId, taskDescription });
+}
 
-  const updatedAllottee = { ...Allottee };
-  const sourceTasks = updatedAllottee[draggingTask.allotteeName];
-  const targetTasks = updatedAllottee[targetAllotteeName];
-  const draggedTaskIndex = sourceTasks.findIndex((task) => task[0] === draggingTask.taskId);
-  const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
 
-  // Insert the dragged task at the new position
-  targetTasks.splice(targetTaskIndex, 0, draggedTask);
-
-  // Get the IDs of the dragged task and the target task
-  const draggedTaskId = draggingTask.taskId;
-  const targetTaskId = targetTasks[targetTaskIndex - 1]?.[0] || "top";
-
-  console.log(`Dragged Task ID: ${draggedTaskId}`);
-  console.log(`Dropped Over Task ID: ${targetTaskId}`);
-  updateTaskOrderAPI(targetAllotteeName , draggedTaskId , targetTaskId);
-  setDraggingTask(null);
-};
+function handleDrop(event, dropTargetTaskId, dropTargetTaskDescription) {
+  if (!event || typeof event.preventDefault !== "function") {
+    console.error("Invalid event object passed to handleDrop.");
+    return;
+  }
+  event.preventDefault();
+  const draggedData = JSON.parse(event.dataTransfer.getData("text/plain"));
+  const dropTargetTaskIdInt = parseInt(dropTargetTaskId, 10);
+  const droppedData = { dropTargetTaskId: dropTargetTaskIdInt, dropTargetTaskDescription };
+  console.log("Dragged Task:", draggedData);
+  console.log("Dropped Over Task:", {
+    taskId: dropTargetTaskId,
+    taskDescription: dropTargetTaskDescription,
+  });
+  updateTaskOrderAPI(draggingAllottee, draggedData , droppedData);
+  setDraggingIndex(null);
+  fetchAllottee(setAllottee,setError);
+}
 
 
 
@@ -1107,13 +1009,13 @@ const handleAllotteeReorder = (targetAllotteeName) => {
   setDraggingAllottee(null);
 };
 
-const handleDrop = (allotteeName) => {
-  if (draggingTask) {
-    handleDropOnAllotteeContainer(allotteeName);
-  } else if (draggingAllottee) {
-    handleAllotteeReorder(allotteeName);
-  }
-};
+// const handleDrop = (allotteeName) => {
+//   if (draggingTask) {
+//     handleDropOnAllotteeContainer(allotteeName);
+//   } else if (draggingAllottee) {
+//     handleAllotteeReorder(allotteeName);
+//   }
+// };
 
 const handleToggleChange = (newState) => {
   console.log('Toggle button state:', newState);
@@ -1401,10 +1303,17 @@ const closeModal = () => {
                       key={taskId}
                       className="task-item-container"
                       draggable
-                      onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
-                      onDragOver = {handleTaskDragOver}
-                      onDrop={() => handleTaskReorder(allotteeName, index , "TO-DO")}
-                      onDragEnd={() => setDraggingTask(null)}
+                      data-task-id={taskId}
+                      data-task-description={taskDescription}
+                      onDragStart={(e) => handleDragStart(e, taskId, taskDescription)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const dropTargetTaskId = e.currentTarget.dataset.taskId;
+                        const dropTargetTaskDescription = e.currentTarget.dataset.taskDescription;
+                        console.log("Drop target attributes:", e.currentTarget.dataset);
+                        handleDrop(e, dropTargetTaskId, dropTargetTaskDescription);
+                      }}                                            
+                      onDragOver={(e) => e.preventDefault()}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
                       <input
@@ -1459,10 +1368,17 @@ const closeModal = () => {
                       key={taskId}
                       className="task-item-container"
                       draggable
-                      onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
-                      onDragOver={handleTaskDragOver}
-                      onDrop={() => handleTaskReorder(allotteeName, index , "Follow-Up")}
-                      onDragEnd={() => setDraggingTask(null)}
+                      data-task-id={taskId}
+                      data-task-description={taskDescription}
+                      onDragStart={(e) => handleDragStart(e, taskId, taskDescription)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const dropTargetTaskId = e.currentTarget.dataset.taskId;
+                        const dropTargetTaskDescription = e.currentTarget.dataset.taskDescription;
+                        console.log("Drop target attributes:", e.currentTarget.dataset);
+                        handleDrop(e, dropTargetTaskId, dropTargetTaskDescription);
+                      }}                                            
+                      onDragOver={(e) => e.preventDefault()}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
                       <input

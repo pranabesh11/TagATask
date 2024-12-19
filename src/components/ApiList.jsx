@@ -129,15 +129,15 @@ export const fetchAllottee = async (setAllottee, setError) => {
 
 
 
-export const updateTaskOrderAPI = async (reorderedTasks, draggedTaskId, targetTaskId) => {
+export const updateTaskOrderAPI = async (draggingAllottee, draggedData, droppedData) => {
   const urlParams = new URLSearchParams(window.location.search);
   const userId = urlParams.get('id');
   try {
     const payload = {
       "current_personnel":userId,
-      "card_holder_name":reorderedTasks,
-      draggedTaskId,
-      targetTaskId,
+      "card_holder_name":draggingAllottee,
+      draggedData,
+      droppedData,
     };
 
     // Log payload to Chrome console
