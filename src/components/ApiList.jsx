@@ -139,7 +139,8 @@ export const updateTaskOrderAPI = async (draggingAllottee,draggedTaskId,draggedT
       "draggedTaskId":draggedTaskId,
       "draggedTaskDescription":draggedTaskDescription,
       "targetTaskId":dropTargetTaskIdInt,
-      "targetTaskDescription":dropTargetTaskDescription
+      "targetTaskDescription":dropTargetTaskDescription,
+      "hello":"world"
     };
 
     // Log payload to Chrome console

@@ -602,7 +602,7 @@ function handleDragStart(event, taskId, taskDescription) {
 }
 
 
-function handleDrop(event, dropTargetTaskId, dropTargetTaskDescription) {
+function collectData(event, dropTargetTaskId, dropTargetTaskDescription) {
   if (!event || typeof event.preventDefault !== "function") {
     console.error("Invalid event object passed to handleDrop.");
     return;
@@ -618,6 +618,11 @@ function handleDrop(event, dropTargetTaskId, dropTargetTaskDescription) {
     dropTargetTaskId: dropTargetTaskIdInt,
     taskDescription: dropTargetTaskDescription,
   });
+  console.log(typeof(draggingAllottee));
+  console.log(typeof(draggedTaskId));
+  console.log(typeof(draggedTaskDescription));
+  console.log(typeof(dropTargetTaskIdInt));
+  console.log(typeof(dropTargetTaskDescription));
   updateTaskOrderAPI(draggingAllottee,draggedTaskId,draggedTaskDescription,dropTargetTaskIdInt,dropTargetTaskDescription);
   setDraggingIndex(null);
   fetchAllottee(setAllottee, setError);
@@ -1012,13 +1017,13 @@ const handleAllotteeReorder = (targetAllotteeName) => {
   setDraggingAllottee(null);
 };
 
-// const handleDrop = (allotteeName) => {
-//   if (draggingTask) {
-//     handleDropOnAllotteeContainer(allotteeName);
-//   } else if (draggingAllottee) {
-//     handleAllotteeReorder(allotteeName);
-//   }
-// };
+const handleDrop = (allotteeName) => {
+  if (draggingTask) {
+    handleDropOnAllotteeContainer(allotteeName);
+  } else if (draggingAllottee) {
+    handleAllotteeReorder(allotteeName);
+  }
+};
 
 const handleToggleChange = (newState) => {
   console.log('Toggle button state:', newState);
@@ -1314,7 +1319,7 @@ const closeModal = () => {
                         const dropTargetTaskId = e.currentTarget.dataset.taskId;
                         const dropTargetTaskDescription = e.currentTarget.dataset.taskDescription;
                         console.log("Drop target attributes:", e.currentTarget.dataset);
-                        handleDrop(e, dropTargetTaskId, dropTargetTaskDescription);
+                        collectData(e, dropTargetTaskId, dropTargetTaskDescription);
                       }}                                            
                       onDragOver={(e) => e.preventDefault()}
                     >
@@ -1379,7 +1384,7 @@ const closeModal = () => {
                         const dropTargetTaskId = e.currentTarget.dataset.taskId;
                         const dropTargetTaskDescription = e.currentTarget.dataset.taskDescription;
                         console.log("Drop target attributes:", e.currentTarget.dataset);
-                        handleDrop(e, dropTargetTaskId, dropTargetTaskDescription);
+                        collectData(e, dropTargetTaskId, dropTargetTaskDescription);
                       }}                                            
                       onDragOver={(e) => e.preventDefault()}
                     >
