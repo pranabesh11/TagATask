@@ -608,18 +608,21 @@ function handleDrop(event, dropTargetTaskId, dropTargetTaskDescription) {
     return;
   }
   event.preventDefault();
-  const draggedData = JSON.parse(event.dataTransfer.getData("text/plain"));
+  const { taskId: draggedTaskId, taskDescription: draggedTaskDescription } = JSON.parse(
+    event.dataTransfer.getData("text/plain")
+  );
   const dropTargetTaskIdInt = parseInt(dropTargetTaskId, 10);
   const droppedData = { dropTargetTaskId: dropTargetTaskIdInt, dropTargetTaskDescription };
-  console.log("Dragged Task:", draggedData);
+  console.log("Dragged Task:", { draggedTaskId, draggedTaskDescription });
   console.log("Dropped Over Task:", {
-    taskId: dropTargetTaskId,
+    dropTargetTaskId: dropTargetTaskIdInt,
     taskDescription: dropTargetTaskDescription,
   });
-  updateTaskOrderAPI(draggingAllottee, draggedData , droppedData);
+  updateTaskOrderAPI(draggingAllottee,draggedTaskId,draggedTaskDescription,dropTargetTaskIdInt,dropTargetTaskDescription);
   setDraggingIndex(null);
-  fetchAllottee(setAllottee,setError);
+  fetchAllottee(setAllottee, setError);
 }
+
 
 
 
