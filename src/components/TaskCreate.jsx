@@ -602,7 +602,7 @@ function handleDragStart(event, taskId, taskDescription) {
 }
 
 
-function collectData(event, dropTargetTaskId, dropTargetTaskDescription) {
+async function collectData(event, dropTargetTaskId, dropTargetTaskDescription) {
   if (!event || typeof event.preventDefault !== "function") {
     console.error("Invalid event object passed to handleDrop.");
     return;
@@ -623,9 +623,25 @@ function collectData(event, dropTargetTaskId, dropTargetTaskDescription) {
   console.log(typeof(draggedTaskDescription));
   console.log(typeof(dropTargetTaskIdInt));
   console.log(typeof(dropTargetTaskDescription));
-  updateTaskOrderAPI(draggingAllottee,draggedTaskId,draggedTaskDescription,dropTargetTaskIdInt,dropTargetTaskDescription);
-  setDraggingIndex(null);
-  fetchAllottee(setAllottee, setError);
+  try {
+    await updateTaskOrderAPI(
+      draggingAllottee,
+      draggedTaskId,
+      draggedTaskDescription,
+      dropTargetTaskIdInt,
+      dropTargetTaskDescription
+    );
+    console.log("Task order updated successfully. Fetching updated data...");
+  
+    // Fetch updated data
+    await fetchAllottee(setAllottee, setError);
+    console.log("Fetched updated data successfully.");
+  } catch (error) {
+    console.error("Error updating task order or fetching data:", error);
+  } finally {
+    setDraggingIndex(null);
+  }
+  
 }
 
 
