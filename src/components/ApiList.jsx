@@ -1,6 +1,6 @@
 import axios from 'axios';
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
-// const Base_URL = "https://5b37-49-37-8-126.ngrok-free.app";
+// const Base_URL = " https://3e33-49-37-8-126.ngrok-free.app";
 
 export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
   // Initial input validation and logging
@@ -129,18 +129,15 @@ export const fetchAllottee = async (setAllottee, setError) => {
 
 
 
-export const updateTaskOrderAPI = async (draggingAllottee,draggedTaskId,draggedTaskDescription,dropTargetTaskIdInt,dropTargetTaskDescription) => {
+export const updateTaskOrderAPI = async (targetAllotteeName,section,reorderedTasks) => {
   const urlParams = new URLSearchParams(window.location.search);
   const userId = urlParams.get('id');
   try {
     const payload = {
       "current_personnel":userId,
-      "card_holder_name":draggingAllottee,
-      "draggedTaskId":draggedTaskId,
-      "draggedTaskDescription":draggedTaskDescription,
-      "targetTaskId":dropTargetTaskIdInt,
-      "targetTaskDescription":dropTargetTaskDescription,
-      "hello":"world"
+      "card_holder_name":targetAllotteeName,
+      "Section_Name":section,
+      "Updated_Task_Order":reorderedTasks,
     };
 
     // Log payload to Chrome console

@@ -49,7 +49,7 @@ function TaskCreate() {
   const dispatch = useDispatch();
 
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
-// const Base_URL = "https://5b37-49-37-8-126.ngrok-free.app";
+//  const Base_URL = " https://3e33-49-37-8-126.ngrok-free.app";
   useEffect(() => {
     tasksRef.current = tasks;
   }, [tasks]);
@@ -577,6 +577,69 @@ useEffect(() => {
     }
   };
   
+
+  const handleTaskReorder = (targetAllotteeName, targetTaskIndex, section) => {
+    
+    if (!draggingTask) return;
+    const updatedAllottee = { ...Allottee };
+    const sourceTasks = updatedAllottee[draggingTask.allotteeName];
+    const targetTasks = updatedAllottee[targetAllotteeName];
+    const draggedTaskIndex = sourceTasks.findIndex((task) => task[0] === draggingTask.taskId);
+    const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
+
+  
+    // Determine targetTaskId based on drop position
+    let targetTaskId = null;
+    if (targetTaskIndex === 0) {
+      targetTaskId = "top"; // Dropped at the top position
+    } else if (targetTaskIndex === targetTasks.length) {
+      targetTaskId = targetTasks[targetTasks.length - 1][0]; // ID of the last task
+    } else {
+      targetTaskId = targetTasks[targetTaskIndex - 1][0]; // ID of the item just above the drop position
+    }
+  
+    // Insert the dragged task at the new position
+    targetTasks.splice(targetTaskIndex, 0, draggedTask);
+  
+    // Use setTimeout to fetch the updated order after the DOM updates
+    setTimeout(() => {
+      const sectionContainer = document.getElementById(
+        section === "To-Do" ? "to_do_tasks" : "follow_up_tasks"
+      );
+  
+      if (!sectionContainer) {
+        console.error(`Section container not found for section: ${section}`);
+        return;
+      }
+  
+      // Fetch the updated order from the DOM
+      const reorderedTasks = Array.from(
+        sectionContainer.querySelectorAll(".task-item-container")
+      ).map((taskElement) => ({
+        taskId: taskElement.getAttribute("data-task-id"),
+        description: taskElement.getAttribute("data-task-description"),
+      }));
+
+      console.log("targetAllotteeName:", targetAllotteeName);
+      console.log("section:", section);
+      console.log("reorderedTasks:", reorderedTasks);
+      updateTaskOrderAPI(targetAllotteeName, section, reorderedTasks);
+    }, 0);
+  
+    // Update the local state
+    setAllottee(updatedAllottee);
+    setDraggingTask(null);
+  
+    // Log the dragged and dropped task info
+    console.log("Dragged Task ID:", draggingTask.taskId);
+    console.log("Dropped Over Task ID:", targetTaskId);
+  };
+  
+  
+  
+
+  
+  
   
   
   
@@ -848,7 +911,6 @@ const handleAllotteeClick = (allotteeName, tasks) => {
         if (event.key === 'Escape') {
             event.preventDefault();
             event.target.blur();
-            console.log("handleSaveAllTasks this part is running");
             const updatedTasks = tasksRef.current.map(task => ({
                 taskId: task.taskId,
                 allotteeId: task.allotteeId,
@@ -1329,15 +1391,10 @@ const closeModal = () => {
                       draggable
                       data-task-id={taskId}
                       data-task-description={taskDescription}
-                      onDragStart={(e) => handleDragStart(e, taskId, taskDescription)}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const dropTargetTaskId = e.currentTarget.dataset.taskId;
-                        const dropTargetTaskDescription = e.currentTarget.dataset.taskDescription;
-                        console.log("Drop target attributes:", e.currentTarget.dataset);
-                        collectData(e, dropTargetTaskId, dropTargetTaskDescription);
-                      }}                                            
-                      onDragOver={(e) => e.preventDefault()}
+                      onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
+                      onDragOver={handleTaskDragOver}
+                      onDrop={() => handleTaskReorder(allotteeName, index, "To-Do")}
+                      onDragEnd={() => setDraggingTask(null)}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
                       <input
@@ -1394,15 +1451,10 @@ const closeModal = () => {
                       draggable
                       data-task-id={taskId}
                       data-task-description={taskDescription}
-                      onDragStart={(e) => handleDragStart(e, taskId, taskDescription)}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const dropTargetTaskId = e.currentTarget.dataset.taskId;
-                        const dropTargetTaskDescription = e.currentTarget.dataset.taskDescription;
-                        console.log("Drop target attributes:", e.currentTarget.dataset);
-                        collectData(e, dropTargetTaskId, dropTargetTaskDescription);
-                      }}                                            
-                      onDragOver={(e) => e.preventDefault()}
+                      onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
+                      onDragOver={handleTaskDragOver}
+                      onDrop={() => handleTaskReorder(allotteeName, index,"Follow-Up")}
+                      onDragEnd={() => setDraggingTask(null)}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
                       <input
