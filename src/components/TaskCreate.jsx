@@ -576,75 +576,63 @@ useEffect(() => {
       setDraggingIndex(null);
     }
   };
-  
+
 
   const handleTaskReorder = (targetAllotteeName, targetTaskIndex, section) => {
-    
-    if (!draggingTask) return;
-    const updatedAllottee = { ...Allottee };
-    const sourceTasks = updatedAllottee[draggingTask.allotteeName];
-    const targetTasks = updatedAllottee[targetAllotteeName];
-    const draggedTaskIndex = sourceTasks.findIndex((task) => task[0] === draggingTask.taskId);
-    const [draggedTask] = sourceTasks.splice(draggedTaskIndex, 1);
-
-  
-    // Determine targetTaskId based on drop position
-    let targetTaskId = null;
-    if (targetTaskIndex === 0) {
-      targetTaskId = "top"; // Dropped at the top position
-    } else if (targetTaskIndex === targetTasks.length) {
-      targetTaskId = targetTasks[targetTasks.length - 1][0]; // ID of the last task
-    } else {
-      targetTaskId = targetTasks[targetTaskIndex - 1][0]; // ID of the item just above the drop position
+    if (!draggingTask) {
+      console.error("No task is being dragged.");
+      return;
     }
   
-    // Insert the dragged task at the new position
-    targetTasks.splice(targetTaskIndex, 0, draggedTask);
+    const sectionContainer = document.getElementById(
+      section === "To-Do" ? "to_do_tasks" : "follow_up_tasks"
+    );
   
-    // Use setTimeout to fetch the updated order after the DOM updates
-    setTimeout(() => {
-      const sectionContainer = document.getElementById(
-        section === "To-Do" ? "to_do_tasks" : "follow_up_tasks"
-      );
+    if (!sectionContainer) {
+      console.error(`Section container not found for section: ${section}`);
+      return;
+    }
   
-      if (!sectionContainer) {
-        console.error(`Section container not found for section: ${section}`);
-        return;
-      }
+    const reorderedTasks = Array.from(
+      sectionContainer.querySelectorAll(".task-item-container")
+    ).map((taskElement) => ({
+      taskId: taskElement.getAttribute("data-task-id"),
+      description: taskElement.getAttribute("data-task-description"),
+    }));
   
-      // Fetch the updated order from the DOM
-      const reorderedTasks = Array.from(
-        sectionContainer.querySelectorAll(".task-item-container")
-      ).map((taskElement) => ({
-        taskId: taskElement.getAttribute("data-task-id"),
-        description: taskElement.getAttribute("data-task-description"),
-      }));
-
-      console.log("targetAllotteeName:", targetAllotteeName);
-      console.log("section:", section);
-      console.log("reorderedTasks:", reorderedTasks);
-      updateTaskOrderAPI(targetAllotteeName, section, reorderedTasks);
-    }, 0);
+    const draggedItemIndex = reorderedTasks.findIndex(
+      (item) => item.taskId == draggingTask.taskId
+    );
   
-    // Update the local state
-    setAllottee(updatedAllottee);
+    if (draggedItemIndex === -1) {
+      console.error("Dragged item not found in reordered tasks.");
+      return;
+    }
+  
+    const [draggedItem] = reorderedTasks.splice(draggedItemIndex, 1);
+  
+    reorderedTasks.splice(targetTaskIndex, 0, draggedItem);
+  
+    const newTargetTask = targetTaskIndex === 0
+      ? "top"
+      : reorderedTasks[targetTaskIndex - 1];
+  
+    const targetTaskId = newTargetTask === "top" ? "top" : newTargetTask.taskId;
+  
+    updateTaskOrderAPI(targetAllotteeName, section, reorderedTasks.map((task) => ({
+      taskId: task.taskId,
+      description: task.description,
+    })));
+  
+    console.log("Reordered Tasks sent to backend:", reorderedTasks);
+  
     setDraggingTask(null);
-  
-    // Log the dragged and dropped task info
-    console.log("Dragged Task ID:", draggingTask.taskId);
-    console.log("Dropped Over Task ID:", targetTaskId);
   };
   
-  
-  
 
-  
-  
-  
-  
-  
 
-  
+
+
 
 
 
