@@ -578,15 +578,15 @@ useEffect(() => {
   };
 
 
-  const handleTaskReorder = (targetAllotteeName, targetTaskIndex, section) => {
+  const handleTaskReorder = (targetAllotteeName, targetTaskIndex, section , cardIndex) => {
     if (!draggingTask) {
       console.error("No task is being dragged.");
       return;
     }
   
     const sectionContainer = document.getElementById(
-      section === "To-Do" ? "to_do_tasks" : "follow_up_tasks"
-    );
+      section === "To-Do" ? `to_do_tasks_${cardIndex}` : `follow_up_tasks_${cardIndex}`
+  );
   
     if (!sectionContainer) {
       console.error(`Section container not found for section: ${section}`);
@@ -599,6 +599,7 @@ useEffect(() => {
       taskId: taskElement.getAttribute("data-task-id"),
       description: taskElement.getAttribute("data-task-description"),
     }));
+    console.log("this is all the tasks", reorderedTasks);
   
     const draggedItemIndex = reorderedTasks.findIndex(
       (item) => item.taskId == draggingTask.taskId
@@ -1311,7 +1312,7 @@ const closeModal = () => {
         {/* <h1 className='allottee_wise_task'>Allottee Wise Tasks</h1> */}
         <div className='tasks'>
         {
-          Object.entries(Allottee).map(([allotteeName, tasks]) => {
+          Object.entries(Allottee).map(([allotteeName, tasks] , cardIndex) => {
             const urlParams = new URLSearchParams(window.location.search);
             const currentPersonnelId = parseInt(urlParams.get('id'));
             const part1Tasks = tasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
@@ -1370,7 +1371,7 @@ const closeModal = () => {
               >
                 <p className="name_text">{allotteeName}</p>
                 {/* To-Do Tasks */}
-                <div id="to_do_tasks">
+                <div id={`to_do_tasks_${cardIndex}`}>
                   {to_do_tasks.length > 0 && <h3 className='section'>To-Do</h3>}
                   {to_do_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
                     <div
@@ -1381,7 +1382,7 @@ const closeModal = () => {
                       data-task-description={taskDescription}
                       onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
                       onDragOver={handleTaskDragOver}
-                      onDrop={() => handleTaskReorder(allotteeName, index, "To-Do")}
+                      onDrop={() => handleTaskReorder(allotteeName, index, "To-Do" , cardIndex)}
                       onDragEnd={() => setDraggingTask(null)}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />
@@ -1430,7 +1431,7 @@ const closeModal = () => {
                   ))}
                 </div>
                 {/* Follow-Up Tasks */}
-                <div id="follow_up_tasks">
+                <div id={`follow_up_tasks_${cardIndex}`}>
                 {follow_up_tasks.length > 0 && <h3 className='section'>Follow Up</h3>} 
                   {follow_up_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
                     <div
@@ -1441,7 +1442,7 @@ const closeModal = () => {
                       data-task-description={taskDescription}
                       onDragStart={() => handleTaskDragStart(taskId, taskDescription, allotteeName)}
                       onDragOver={handleTaskDragOver}
-                      onDrop={() => handleTaskReorder(allotteeName, index,"Follow-Up")}
+                      onDrop={() => handleTaskReorder(allotteeName, index,"Follow-Up" , cardIndex)}
                       onDragEnd={() => setDraggingTask(null)}
                     >
                       <img className="drag_image_logo" src={drag} height={15} width={15} alt="drag" />

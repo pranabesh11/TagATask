@@ -453,6 +453,11 @@
     align-items: flex-start;
     justify-content: center;
 }
+/* .followup-task-item-container{
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+} */
 
 .allottee_container::-webkit-scrollbar {
     width: 4px;
