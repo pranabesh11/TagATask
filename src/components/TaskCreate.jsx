@@ -556,7 +556,7 @@ useEffect(() => {
 
 
 
-  const handleTaskReorder = (targetAllotteeName, targetTaskIndex, section , cardIndex) => {
+  const handleTaskReorder = async (targetAllotteeName, targetTaskIndex, section , cardIndex) => {
     if (!draggingTask) {
       console.error("No task is being dragged.");
       return;
@@ -598,11 +598,11 @@ useEffect(() => {
   
     const targetTaskId = newTargetTask === "top" ? "top" : newTargetTask.taskId;
   
-    updateTaskOrderAPI(targetAllotteeName, section, reorderedTasks.map((task) => ({
+    await updateTaskOrderAPI(targetAllotteeName, section, reorderedTasks.map((task) => ({
       taskId: task.taskId,
       description: task.description,
     })));
-    fetchAllottee(setAllottee, setError);
+    await fetchAllottee(setAllottee, setError);
     console.log("Reordered Tasks sent to backend:", reorderedTasks);
   
     setDraggingTask(null);
