@@ -46,6 +46,8 @@ function TaskCreate() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const tasksRef = useRef(tasks);
   const editingTask = useSelector((state) => state.task.editingTask);
+  const [modalitem,setModalitem] = useState(null);
+  const [allotteeCardIndex,setAllotteeCardIndex] = useState(0);
   const dispatch = useDispatch();
 
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
@@ -551,31 +553,7 @@ useEffect(() => {
   };
 
 
-  
-  
 
-  const handleTaskDrop = (e, cardIndex, targetTaskIndex) => {
-    e.preventDefault();
-    if (draggingIndex && draggingIndex.cardIndex === cardIndex && draggingIndex.taskIndex !== targetTaskIndex) {
-      if (cardIndex === null) {
-        setTasks((prevTasks) => {
-          const newTasks = [...prevTasks];
-          const [movedTask] = newTasks.splice(draggingIndex.taskIndex, 1);
-          newTasks.splice(targetTaskIndex, 0, movedTask);
-          return newTasks;
-        });
-      } else {
-        setSavedItems((prevItems) => {
-          const newItems = [...prevItems];
-          const tasks = newItems[cardIndex].items;
-          const [movedTask] = tasks.splice(draggingIndex.taskIndex, 1);
-          tasks.splice(targetTaskIndex, 0, movedTask);
-          return newItems;
-        });
-      }
-      setDraggingIndex(null);
-    }
-  };
 
 
   const handleTaskReorder = (targetAllotteeName, targetTaskIndex, section , cardIndex) => {
@@ -1029,6 +1007,20 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
   }
 };
 
+
+
+const dragAllotteeCard = (allotteeindex,allotteeName)=>{
+  setDraggingAllottee(allotteeName);
+  setAllotteeCardIndex(allotteeindex);
+  console.log("Dragging allottee:", allotteeName,"modalitem",allotteeCardIndex,allotteeindex);
+}
+
+
+
+
+
+
+
 const handleAllotteeReorder = (targetAllotteeName) => {
   if (!draggingAllottee || draggingAllottee === targetAllotteeName) {
     console.log("No draggingAllottee or dropped on the same allottee.");
@@ -1084,7 +1076,23 @@ const handleAllotteeReorder = (targetAllotteeName) => {
   setDraggingAllottee(null);
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const handleDrop = (allotteeName) => {
+  // console.log("this is card index",allotteeCardIndex);
+  // setAllotteeCardIndex(null);
   if (draggingTask) {
     handleDropOnAllotteeContainer(allotteeName);
   } else if (draggingAllottee) {
@@ -1095,6 +1103,23 @@ const handleDrop = (allotteeName) => {
 const handleToggleChange = (newState) => {
   console.log('Toggle button state:', newState);
   setIsToggleOn(newState);
+};
+
+const modalDragStart = (e,index)=>{
+  setModalitem(index);
+  e.dataTransfer.effectAllowed = "move";
+}
+const modalDragOver =(e)=>{
+  e.preventDefault();
+}
+const handleTaskDrop = (e, index) => {
+  e.preventDefault();
+  const updateItems = [...tasks]
+  const draggedItem = updateItems[modalitem]
+  updateItems.splice(modalitem, 1);
+  updateItems.splice(index, 0, draggedItem);
+  setTasks(updateItems);
+  setModalitem(null);
 };
 
 
@@ -1173,9 +1198,9 @@ const closeModal = () => {
                   key={index}
                   className={`new-div`}
                   draggable
-                  onDragStart={(e) => handleTaskDragStart(e, null, index)}
-                  onDragOver={handleTaskDragOver}
-                  onDrop={(e) => handleTaskDrop(e, null, index)}
+                  onDragStart={(e) => modalDragStart(e, index)}
+                  onDragOver={(e)=>{modalDragOver(e)}}
+                  onDrop={(e) => handleTaskDrop(e, index)}
                 >
                   <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
                   <input
@@ -1358,10 +1383,7 @@ const closeModal = () => {
                 key={allotteeName}
                 draggable
                 onDragOver={handleTaskDragOver}
-                onDragStart={(e) => {
-                  setDraggingAllottee(allotteeName);
-                  console.log("Dragging allottee:", allotteeName);
-                }}
+                onDragStart={()=>{dragAllotteeCard(cardIndex,allotteeName)}}
                 onDrop={() => handleDrop(allotteeName)}
                 onClick={() => {
                   dispatch(setEditingTask(true));
