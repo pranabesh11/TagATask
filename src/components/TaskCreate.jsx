@@ -602,7 +602,7 @@ useEffect(() => {
       taskId: task.taskId,
       description: task.description,
     })));
-  
+    fetchAllottee(setAllottee, setError);
     console.log("Reordered Tasks sent to backend:", reorderedTasks);
   
     setDraggingTask(null);
