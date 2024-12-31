@@ -971,13 +971,15 @@ const fetchAllotteeId = async (allotteeName) => {
 };
 
 const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
+  const currentPersonnelId = parseInt(urlParams.get('id'));
   if (!draggingTask) return;
   if (draggingTask.allotteeName !== targetAllotteeName) {
     console.log("Dragged Task ID:", draggingTask.taskId);
     console.log("Dropped on Allottee:", targetAllotteeName);
     const dataToSend = {
-      taskId: draggingTask.taskId,
-      newAllottee: targetAllotteeName,
+      current_personnel_id : currentPersonnelId,
+      task_priority_id: draggingTask.taskId,
+      allocated_to: targetAllotteeName,
     };
 
     try {
