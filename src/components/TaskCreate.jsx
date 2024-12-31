@@ -971,6 +971,7 @@ const fetchAllotteeId = async (allotteeName) => {
 };
 
 const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
+  const urlParams = new URLSearchParams(window.location.search);
   const currentPersonnelId = parseInt(urlParams.get('id'));
   if (!draggingTask) return;
   if (draggingTask.allotteeName !== targetAllotteeName) {
