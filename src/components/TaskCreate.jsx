@@ -12,7 +12,7 @@ import FileUpload from './FileUpload';
 import Comment from './Comment';
 import SelectText from './SelectText';
 import DOMPurify from 'dompurify';
-import axios from 'axios';
+import axios, { all } from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -51,7 +51,7 @@ function TaskCreate() {
   const dispatch = useDispatch();
 
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
-//  const Base_URL = " https://3e33-49-37-8-126.ngrok-free.app";
+//  const Base_URL = "https://05ce-49-37-8-126.ngrok-free.app";
   useEffect(() => {
     tasksRef.current = tasks;
   }, [tasks]);
@@ -582,7 +582,6 @@ useEffect(() => {
     const draggedItemIndex = reorderedTasks.findIndex(
       (item) => item.taskId == draggingTask.taskId
     );
-  
     if (draggedItemIndex === -1) {
       console.error("Dragged item not found in reordered tasks.");
       return;
@@ -1017,42 +1016,28 @@ const dragAllotteeCard = (allotteeindex,allotteeName)=>{
 
 
 
-
-
-
-
-const handleAllotteeReorder = (targetAllotteeName) => {
+const handleAllotteeReorder = (targetAllotteeName,cardIndex) => {
   if (!draggingAllottee || draggingAllottee === targetAllotteeName) {
     console.log("No draggingAllottee or dropped on the same allottee.");
     return;
   }
-
-  // Log the dragged and dropped allottee_container
+  const old_card_order = Object.keys(Allottee);
   console.log("Dragged Allottee:", draggingAllottee);
-  console.log("Dropped Over Allottee:", targetAllotteeName);
+  console.log("Dropped Over Allottee:", cardIndex);
+  console.log("these are allottees",Object.keys(Allottee));
 
-  const updatedAllotteeOrder = Object.entries(Allottee).reduce((result, [name, tasks]) => {
-    if (name === targetAllotteeName) {
-      result.push([draggingAllottee, Allottee[draggingAllottee]]);
-    }
-    if (name !== draggingAllottee) {
-      result.push([name, tasks]);
-    }
-    return result;
-  }, []);
-
-  const newAllotteeState = Object.fromEntries(updatedAllotteeOrder);
-  setAllottee(newAllotteeState);
-
-  // Log the new full order of Allottee
-  console.log("Full Allottee Order After Reorder:", Object.keys(newAllotteeState));
+  old_card_order.splice(allotteeCardIndex,1);
+  old_card_order.splice(cardIndex,0,draggingAllottee);
+  console.log("old card order",old_card_order);
+  
   const userId = new URLSearchParams(window.location.search).get('id');
   const dataToSend = {
-    current_user : userId,
+    current_user: userId,
     draggedAllottee: draggingAllottee,
     droppedAllottee: targetAllotteeName,
-    fullOrder: Object.keys(newAllotteeState),
+    fullOrder: old_card_order,
   };
+
   axios
     .post(`${Base_URL}/allottee_card_reorder`, dataToSend, {
       headers: {
@@ -1065,7 +1050,7 @@ const handleAllotteeReorder = (targetAllotteeName) => {
       console.log("Backend response:", response.data);
       fetchAllotteeData();
       toast.success("Reorder successful!", {
-        position: "top-center", 
+        position: "top-center",
         style: { backgroundColor: "white", color: "black" },
       });
     })
@@ -1089,14 +1074,13 @@ const handleAllotteeReorder = (targetAllotteeName) => {
 
 
 
-
-const handleDrop = (allotteeName) => {
+const handleDrop = (allotteeName,cardIndex) => {
   // console.log("this is card index",allotteeCardIndex);
   // setAllotteeCardIndex(null);
   if (draggingTask) {
     handleDropOnAllotteeContainer(allotteeName);
   } else if (draggingAllottee) {
-    handleAllotteeReorder(allotteeName);
+    handleAllotteeReorder(allotteeName,cardIndex);
   }
 };
 
@@ -1212,7 +1196,8 @@ const closeModal = () => {
                   <div
                     contentEditable
                     suppressContentEditableWarning={true}
-                    onInput={(e) => handleTaskInput(index, e)} // Typing input
+                    value={tasks}
+                    onChange={(e) => handleTaskInput(index, e)} // Typing input
                     onBlur={(e) => handleTaskInput(index, e)}  // Save on blur
                     onMouseUp={() => handleTextSelect(index)}
                     onKeyDown={(e) => {
@@ -1384,7 +1369,7 @@ const closeModal = () => {
                 draggable
                 onDragOver={handleTaskDragOver}
                 onDragStart={()=>{dragAllotteeCard(cardIndex,allotteeName)}}
-                onDrop={() => handleDrop(allotteeName)}
+                onDrop={() => handleDrop(allotteeName,cardIndex)}
                 onClick={() => {
                   dispatch(setEditingTask(true));
                   editTask(allotteeName , follow_up_tasks)
