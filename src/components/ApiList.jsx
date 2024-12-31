@@ -37,7 +37,7 @@ export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
     const urlParams = new URLSearchParams(window.location.search);
     const currentPersonnelId = parseInt(urlParams.get('id'));
     const response = await axios.post(`${Base_URL}/done_mark`, {
-      task_id: taskId,
+      task_priority_id: taskId,
       completed: isChecked,
       current_personnel: currentPersonnelId
     }, {
