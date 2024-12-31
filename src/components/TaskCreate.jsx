@@ -1114,7 +1114,7 @@ const handleTaskDrop = (e, index) => {
 const handleRevertClick = async (taskId) => {
   try {
     const response = await axios.post(`${Base_URL}/revert`, {
-      task_id: taskId,
+      task_priority_id: taskId,
       status: "task is reverted",
     },
     {
