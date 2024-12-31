@@ -231,7 +231,7 @@ useEffect(() => {
       const response = await axios.post(
         `${Base_URL}/done_mark`,
         {
-          task_id: taskId,
+          task_priority_id: taskId,
           completed: isChecked,
           current_personnel: currentPersonnelId
         },
