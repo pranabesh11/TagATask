@@ -1446,7 +1446,7 @@ const closeModal = () => {
                 </div>
                 {/* Follow-Up Tasks */}
                 <div id={`follow_up_tasks_${cardIndex}` } className='follow_up_tasks'>
-                {follow_up_tasks.length > 0 && <hr className='section'/>} 
+                {(to_do_tasks.length > 0 && follow_up_tasks.length>0) && <hr className='section'/>} 
                   {follow_up_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
                     <div
                       key={taskId}
