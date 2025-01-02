@@ -1381,8 +1381,8 @@ const closeModal = () => {
               >
                 <p className="name_text">{allotteeName}</p>
                 {/* To-Do Tasks */}
-                <div id={`to_do_tasks_${cardIndex}`}>
-                  {to_do_tasks.length > 0 && <h3 className='section'>To-Do</h3>}
+                <div id={`to_do_tasks_${cardIndex}`} className='to_do_section'>
+                  {/* {to_do_tasks.length > 0 && <h3 className='section'>To-Do</h3>} */}
                   {to_do_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
                     <div
                       key={taskId}
@@ -1445,8 +1445,8 @@ const closeModal = () => {
                   ))}
                 </div>
                 {/* Follow-Up Tasks */}
-                <div id={`follow_up_tasks_${cardIndex}`}>
-                {follow_up_tasks.length > 0 && <h3 className='section'>Follow Up</h3>} 
+                <div id={`follow_up_tasks_${cardIndex}` } className='follow_up_tasks'>
+                {follow_up_tasks.length > 0 && <hr className='section'/>} 
                   {follow_up_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
                     <div
                       key={taskId}

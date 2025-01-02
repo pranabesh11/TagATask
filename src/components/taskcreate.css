@@ -496,18 +496,21 @@
     width: 90%;
     margin-left: 8px;
 }
-#follow_up_tasks{
+.follow_up_tasks{
     text-align: left;
-    width: 90%;
+    width: 100%;
     margin-left: 8px;
 }
-
+.to_do_section{
+    margin-left: 8px;
+}
 .section{
     font-family: 'Poppins', sans-serif;
     color: #484848;
     text-align: left;
     font-weight: 600;
     font-size: 15px;
+    width: 100%;
 }
 
 .checkbox{
@@ -640,4 +643,12 @@
     font-weight: 600;
     margin-left: 2px;
   }
-  
+.to_do_section{
+    margin-top: 4vh;
+}
+#my-tooltip{
+    background-color: grey;
+    border-radius: 5px;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
