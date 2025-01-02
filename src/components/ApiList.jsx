@@ -1,4 +1,7 @@
 import axios from 'axios';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
 // const Base_URL = "https://05ce-49-37-8-126.ngrok-free.app";
 
@@ -152,12 +155,15 @@ export const updateTaskOrderAPI = async (targetAllotteeName,section,reorderedTas
 
     // Log successful update response from backend
     console.log('Task order updated successfully:', response.data);
+    toast.success(response.data.message,{position: 'top-center',});
   } catch (error) {
     console.error('Error updating task order:', error);
   }
 };
 
 export const sendEditTasksData = async (tasksData) => {
+ 
+
   try {
     const currentPersonnelId = new URLSearchParams(window.location.search).get('id');
     
@@ -168,6 +174,7 @@ export const sendEditTasksData = async (tasksData) => {
       },
     });
     console.log('Edit tasks response:', response.data);
+    toast.success("Task Updated Successfully !",{position: 'top-center',});
     fetchAllottee();
   } catch (error) {
     console.error('Error editing tasks:', error);

@@ -107,8 +107,7 @@ useEffect(() => {
     setTasks(updatedTasks); // Update state with synchronized tasks
 
     const params = new URLSearchParams(window.location.search);
-    const notify_success = () => toast.success("Task Created Successfully !");
-    const notify_fail = () => toast.error("Task Creation Failed !");
+    
 
     const userId = params.get("id");
     const dataToSave = {
@@ -149,20 +148,22 @@ useEffect(() => {
         .then((response) => {
           if (!response.ok) {
             throw new Error("Failed to save data");
-          }
+          }          
           return response.json();
         })
         .then((data) => {
           console.log("Success:", data);
           console.log("this function is getting called from useEffect function.");
-          notify_success();
+          toast.success(data.message,{position: 'top-center',});
+          console.log("this portion is getting hitted");
           setTasks([]);
           console.log(isModalOpen)
           fetchAllotteeData();
+          fetchAllottee(setAllottee,setError);
         })
         .catch((error) => {
           console.error("Error:", error);
-          notify_fail();
+          fetchAllottee(setAllottee,setError);
         }).finally(() => {
           closeModal();
           setIsModalOpen(false);
@@ -245,6 +246,7 @@ useEffect(() => {
       );
       if(response.data.success){
         fetchAllottee(setAllottee,setError);
+        toast.success(response.data.message,{position: 'top-center',});
       }
   
       if (!response.data.success) {
@@ -725,14 +727,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
     }else{
      // Debugging line
     const params = new URLSearchParams(window.location.search);
-    const notify_success = () => toast.success("Task Created Successfully !");
-    const notify_fail = () => toast.error("Task Creation Failed !");
-    const notify_warning = () => toast.warn("Please select Allottee Name", {
-      position: "top-center", 
-      style: { backgroundColor: "#ffcc00", color: "#fff" }
-    });
     if (inputValue==="") { 
-      // notify_warning();
       return;
     }
 
@@ -780,12 +775,12 @@ const handleAllotteeClick = (allotteeName, tasks) => {
         })
         .then(data => {
           console.log('Success:', data);
-          notify_success();
+          toast.success(response.data.message,{position: 'top-center',});
           fetchAllotteeData();
         })
         .catch((error) => {
           console.error('Error:', error);
-          notify_fail();
+          toast.error(response.data.message,{position: 'top-center',});
         });      
     }
     console.log("Saving all data", { inputValue, tasks }); // Verify state
@@ -941,7 +936,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
         setTimeout(fetchAllotteeData, 200);
         setTasks([]);
         setInputValue('');
-        // setEditingTask(null);
+        toast.success(data.data.message,{position: 'top-center',});
       } else {
         console.error('No data returned from edit task API');
       }
@@ -996,10 +991,11 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
         }
       );
       setTimeout(fetchAllotteeData, 0);
-      toast.success("Task transferred Successfully !", {
-        position: "top-center", 
-        style: { backgroundColor: "white", color: "black" },
-      });
+      // toast.success("Task transferred Successfully !", {
+      //   position: "top-center", 
+      //   style: { backgroundColor: "white", color: "black" },
+      // });
+      toast.success(response.data.message,{position: 'top-center',});
       console.log("API response:", response.data);
     } catch (error) {
       console.error("Error sending task transfer data:", error);
@@ -1052,10 +1048,7 @@ const handleAllotteeReorder = (targetAllotteeName,cardIndex) => {
     .then((response) => {
       console.log("Backend response:", response.data);
       fetchAllotteeData();
-      toast.success("Reorder successful!", {
-        position: "top-center",
-        style: { backgroundColor: "white", color: "black" },
-      });
+      toast.success(response.data.message,{position: 'top-center',});
     })
     .catch((error) => {
       console.error("Error sending allottee reorder data:", error);
@@ -1128,9 +1121,11 @@ const handleRevertClick = async (taskId) => {
 
     if (response.data.success) {
       console.log("Backend updated task status successfully for taskId:", taskId);
+      toast.success(response.data.message,{position: 'top-center',});
       fetchAllottee(setAllottee,setError);
     } else {
       console.error('Backend failed to update task status:', response.data.errors);
+      toast.error(response.data.message,{position: 'top-center',});
     }
   } catch (error) {
     console.error('An error occurred while updating task status:', error);
