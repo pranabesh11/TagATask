@@ -1407,7 +1407,11 @@ const closeModal = () => {
                       {
                         allotterId==currentPersonnelId &&(
                         <div>
+                          <Tooltip id="my-tooltip" className='revert_tooltip'/>
                           <img 
+                            data-tooltip-id="my-tooltip"
+                            data-tooltip-content="Revert This Task"
+                            data-tooltip-place="top"
                             src={revert_icon} 
                             className='revert_icon'
                             data-tip="Send back this task to the Allottee"
