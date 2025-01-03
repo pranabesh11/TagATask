@@ -995,7 +995,12 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
       //   position: "top-center", 
       //   style: { backgroundColor: "white", color: "black" },
       // });
-      toast.success(response.data.message,{position: 'top-center',});
+      if(response.data.message == 'Task Reallocated Successfully.'){
+        toast.success(response.data.message,{position: 'top-center',});
+      }else{
+        toast.warn(response.data.message,{position: 'top-center',});
+      }
+      // toast.success(response.data.message,{position: 'top-center',});
       console.log("API response:", response.data);
     } catch (error) {
       console.error("Error sending task transfer data:", error);
