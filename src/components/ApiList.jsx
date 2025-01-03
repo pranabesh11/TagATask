@@ -174,7 +174,7 @@ export const sendEditTasksData = async (tasksData) => {
       },
     });
     console.log('Edit tasks response:', response.data.message);
-    toast.success(response.data.message,{position: 'top-center',});
+    toast.success(response.data.message,{position: 'top-center',hideProgressBar: true});
     fetchAllottee();
   } catch (error) {
     console.error('Error editing tasks:', error);

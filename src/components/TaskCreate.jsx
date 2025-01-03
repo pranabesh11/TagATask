@@ -154,7 +154,7 @@ useEffect(() => {
         .then((data) => {
           console.log("Success:", data);
           console.log("this function is getting called from useEffect function.");
-          toast.success(data.message,{position: 'top-center',});
+          toast.success(data.message,{position: 'top-center',hideProgressBar: true});
           console.log("this portion is getting hitted");
           setTasks([]);
           console.log(isModalOpen)
@@ -246,7 +246,7 @@ useEffect(() => {
       );
       if(response.data.success){
         fetchAllottee(setAllottee,setError);
-        toast.success(response.data.message,{position: 'top-center',});
+        toast.success(response.data.message,{position: 'top-center',hideProgressBar: true});
       }
   
       if (!response.data.success) {
@@ -260,7 +260,7 @@ useEffect(() => {
   
   const showToastMessage = () => {
     toast.warn("Please select an Allottee", {
-      position: "top-center",
+      position: "top-center",hideProgressBar: true,
       style: { backgroundColor: "white", color: "black" }
     });
   };
@@ -775,12 +775,12 @@ const handleAllotteeClick = (allotteeName, tasks) => {
         })
         .then(data => {
           console.log('Success:', data);
-          toast.success(response.data.message,{position: 'top-center',});
+          toast.success(response.data.message,{position: 'top-center',hideProgressBar: true,});
           fetchAllotteeData();
         })
         .catch((error) => {
           console.error('Error:', error);
-          toast.error(response.data.message,{position: 'top-center',});
+          toast.error(response.data.message,{position: 'top-center',hideProgressBar: true});
         });      
     }
     console.log("Saving all data", { inputValue, tasks }); // Verify state
@@ -936,7 +936,7 @@ const saveEditTask =  async (taskId, allotteeId, updatedText) => {
         setTimeout(fetchAllotteeData, 200);
         setTasks([]);
         setInputValue('');
-        toast.success(data.data.message,{position: 'top-center',});
+        toast.success(data.data.message,{position: 'top-center',hideProgressBar: true});
       } else {
         console.error('No data returned from edit task API');
       }
@@ -996,9 +996,9 @@ const handleDropOnAllotteeContainer = async (targetAllotteeName) => {
       //   style: { backgroundColor: "white", color: "black" },
       // });
       if(response.data.message == 'Task Reallocated Successfully.'){
-        toast.success(response.data.message,{position: 'top-center',});
+        toast.success(response.data.message,{position: 'top-center',hideProgressBar: true});
       }else{
-        toast.warn(response.data.message,{position: 'top-center',});
+        toast.warn(response.data.message,{position: 'top-center',hideProgressBar: true});
       }
       // toast.success(response.data.message,{position: 'top-center',});
       console.log("API response:", response.data);
@@ -1053,7 +1053,7 @@ const handleAllotteeReorder = (targetAllotteeName,cardIndex) => {
     .then((response) => {
       console.log("Backend response:", response.data);
       fetchAllotteeData();
-      toast.success(response.data.message,{position: 'top-center',});
+      toast.success(response.data.message,{position: 'top-center',hideProgressBar: true});
     })
     .catch((error) => {
       console.error("Error sending allottee reorder data:", error);
@@ -1126,11 +1126,11 @@ const handleRevertClick = async (taskId) => {
 
     if (response.data.success) {
       console.log("Backend updated task status successfully for taskId:", taskId);
-      toast.success(response.data.message,{position: 'top-center',});
+      toast.success(response.data.message,{position: 'top-center',hideProgressBar: true});
       fetchAllottee(setAllottee,setError);
     } else {
       console.error('Backend failed to update task status:', response.data.errors);
-      toast.error(response.data.message,{position: 'top-center',});
+      toast.error(response.data.message,{position: 'top-center',hideProgressBar: true});
     }
   } catch (error) {
     console.error('An error occurred while updating task status:', error);
