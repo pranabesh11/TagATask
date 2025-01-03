@@ -155,7 +155,7 @@ export const updateTaskOrderAPI = async (targetAllotteeName,section,reorderedTas
 
     // Log successful update response from backend
     console.log('Task order updated successfully:', response.data);
-    toast.success(response.data.message,{position: 'top-center',});
+    toast.success(response.data.message,{position: 'top-center',hideProgressBar: true,});
   } catch (error) {
     console.error('Error updating task order:', error);
   }
