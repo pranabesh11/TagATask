@@ -173,8 +173,8 @@ export const sendEditTasksData = async (tasksData) => {
         'Accept': 'application/json',
       },
     });
-    console.log('Edit tasks response:', response.data);
-    toast.success("Task Updated Successfully !",{position: 'top-center',});
+    console.log('Edit tasks response:', response.data.message);
+    toast.success(response.data.message,{position: 'top-center',});
     fetchAllottee();
   } catch (error) {
     console.error('Error editing tasks:', error);
