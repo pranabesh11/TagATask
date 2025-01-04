@@ -48,6 +48,7 @@ function TaskCreate() {
   const editingTask = useSelector((state) => state.task.editingTask);
   const [modalitem,setModalitem] = useState(null);
   const [allotteeCardIndex,setAllotteeCardIndex] = useState(0);
+  const [edit_card_allottee_id, setEditCardAllottee] = useState(null);
   const dispatch = useDispatch();
 
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
@@ -83,7 +84,7 @@ useEffect(() => {
       console.log(tasks);
       setIsModalOpen(false);
       const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
-      sendEditTasksData(sanitizedData);
+      sendEditTasksData(sanitizedData,edit_card_allottee_id);
       fetchAllottee(setAllottee,setError);
     }
   }
@@ -721,7 +722,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
     if(editingTask){
       console.log("Saving all data from first line", { inputValue, tasks });
       const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
-      sendEditTasksData(sanitizedData);
+      sendEditTasksData(sanitizedData,edit_card_allottee_id);
       fetchAllottee(setAllottee,setError);
       fetchAllotteeData();
     }else{
@@ -762,21 +763,27 @@ const handleAllotteeClick = (allotteeName, tasks) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'ngrok-skip-browser-warning': "any",
         },
         body: JSON.stringify(dataToSave),
       })
         .then(response => {
+          
           if (!response.ok) {
             throw new Error('Failed to save data');
           }
           return response.json();
         })
         .then(data => {
-          console.log('Success:', data);
-          toast.success(response.data.message,{position: 'top-center',hideProgressBar: true,});
+          console.log("Success:", data);
+          console.log("this function is getting called from useEffect function.");
+          toast.success(data.message,{position: 'top-center',hideProgressBar: true});
+          console.log("this portion is getting hitted");
+          setTasks([]);
+          console.log(isModalOpen)
           fetchAllotteeData();
+          fetchAllottee(setAllottee,setError);
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -840,6 +847,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
 
   const editTask = async (allotteeName, followUpTasks) => {
     const allotteeId = await fetchAllotteeId(allotteeName);
+    setEditCardAllottee(allotteeId);
     setInputValue(allotteeId);
     followUpTasks = followUpTasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
         return allotteeId == allotteeId;
@@ -912,6 +920,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
 };
 
 const saveEditTask =  async (taskId, allotteeId, updatedText) => {
+  console.log("this is from 915");
   try {
       const dataToEdit = {
         task_id: taskId,
@@ -1149,6 +1158,27 @@ const closeModal = () => {
   setInputValue('');
 };
 
+const handleCrossbtn = async()=>{
+  try{
+    if(editingTask){
+      console.log("this function is from outside click");
+      console.log(tasks);
+      setIsModalOpen(false);
+      const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
+      await sendEditTasksData(sanitizedData,edit_card_allottee_id);
+      await fetchAllottee(setAllottee,setError);
+    }else{
+      saveAllData();
+      setIsModalOpen(false);
+      fetchAllottee(setAllottee,setError);
+    }
+  }
+  catch (error) {
+    console.error("Error in handleCrossbtn:", error);
+    setError("An error occurred while processing your request.");
+  }
+}
+
   
 
   return (
@@ -1157,7 +1187,7 @@ const closeModal = () => {
       {isModalOpen && (
         <div className="modal-overlay">
           <div ref={containerRef} className="container">
-            <button className="close_button" onClick={closeModal}>
+            <button className="close_button" onClick={handleCrossbtn}>
               <img src={closebutton} className="close_icon" height={15} width={15} />
             </button>
             <select
@@ -1166,7 +1196,9 @@ const closeModal = () => {
               value={inputValue || ""}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyPress}
-
+              style={{
+                display:editingTask?'none':'block'
+              }}
               autoFocus={true}
             >
               <option value="" disabled>
@@ -1179,7 +1211,12 @@ const closeModal = () => {
               ))}
             </select>
 
-            <div className="editable-div-container">
+            <div 
+              className="editable-div-container" 
+              style={{
+                marginTop:editingTask?'5vh':'0px'
+              }}>
+
               {tasks.map((task, index) => (
                 <div
                   key={index}

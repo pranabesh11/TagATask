@@ -220,6 +220,7 @@
     font-style: normal;
     font-size: 13px;
     width: 40%;
+    text-align: left;
 }
 .close_button{
     float: right;

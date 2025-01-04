@@ -161,8 +161,12 @@ export const updateTaskOrderAPI = async (targetAllotteeName,section,reorderedTas
   }
 };
 
-export const sendEditTasksData = async (tasksData) => {
- 
+export const sendEditTasksData = async (tasksData,edit_card_allottee_id) => {
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get('id');
+  console.log("this is from 165",edit_card_allottee_id,userId);
+  console.log(tasksData);
 
   try {
     const currentPersonnelId = new URLSearchParams(window.location.search).get('id');
