@@ -37,7 +37,7 @@ const StyledWrapper = styled.div`
     position: absolute;
     cursor: pointer;
     inset: 0;
-    background: #9fccfa;
+    background: #A7B49E;
     border-radius: 50px;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
@@ -58,11 +58,11 @@ const StyledWrapper = styled.div`
   }
 
   .switch input:checked + .slider {
-    background: #0974f1;
+    background: #818C78;
   }
 
   .switch input:focus + .slider {
-    box-shadow: 0 0 1px #0974f1;
+    box-shadow: 0 0 1px #818C78;
   }
 
   .switch input:checked + .slider:before {
