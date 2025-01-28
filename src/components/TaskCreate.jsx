@@ -23,6 +23,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setEditingTask } from '../components/slices/Taskslice';
 import "react-tooltip/dist/react-tooltip.css";
 import {Tooltip} from "react-tooltip";
+import Tagview from './Tagview/Tagview';
 
 function TaskCreate() {
   const [inputValue, setInputValue] = useState('');
@@ -1389,9 +1390,9 @@ const handleCrossbtn = async()=>{
 
 
       <div className='toggle_button'>
-        <p className='toggle_text'>Allottee Wise</p>
+        <p className='toggle_text'>Allottee</p>
         <ToggleButton onToggleChange={handleToggleChange}/>
-        <p className='toggle_text'>Tag Wise</p>
+        <p className='toggle_text'>Tag</p>
       </div>
       {!isToggleOn ?
       <div className='task_container'>
@@ -1566,7 +1567,7 @@ const handleCrossbtn = async()=>{
       </div>
       :
       <div className='task_container'>
-        <h1>Tag Wise Tasks</h1>
+        <Tagview/>
       </div>
       }
     </div>

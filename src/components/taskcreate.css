@@ -481,21 +481,21 @@
 }
 .toggle_text{
     font-family: 'Poppins', sans-serif;
-    font-size: 12px;
+    font-size: 15px;
+    background-color: white;
 }
 
 .toggle_button{
-    border: 1px solid red;
     position: fixed;
     right: 0;
-    top: 0;
+    top: 5px;
     z-index: 2;
     display: flex;
     flex-direction: row;
-    
+    background-color: white;
 }
 .toggle_button p{
-    margin: 15px;
+    margin: 6px;
     font-weight: bolder;
     
 }
