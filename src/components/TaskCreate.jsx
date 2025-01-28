@@ -1390,7 +1390,7 @@ const handleCrossbtn = async()=>{
 
 
       <div className='toggle_button'>
-        <p className='toggle_text'>Allottee</p>
+        <p className='toggle_text'>Personnel</p>
         <ToggleButton onToggleChange={handleToggleChange}/>
         <p className='toggle_text'>Tag</p>
       </div>
