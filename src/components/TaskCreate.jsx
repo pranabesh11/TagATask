@@ -52,6 +52,7 @@ function TaskCreate() {
   const dispatch = useDispatch();
   const [commentcount ,setCommentcount] = useState(0);
   const [tagoption, setTagoptions] = useState(['High', 'Medium', 'Low','avoid_this_task']);
+  const [toDoCount,setToDoCount] = useState(0);
 
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
 //  const Base_URL = "https://606c-49-37-8-126.ngrok-free.app";
@@ -855,15 +856,20 @@ const handleAllotteeClick = (allotteeName, tasks) => {
 
   
 
-  const editTask = async (allotteeName, followUpTasks) => {
+  const editTask = async (allotteeName, to_do_tasks, followUpTasks) => {
+    setToDoCount(to_do_tasks.length);
+    let allTask  = to_do_tasks.concat(followUpTasks);
+  console.log("jcj" , allTask);
+   
     const allotteeId = await fetchAllotteeId(allotteeName);
     setEditCardAllottee(allotteeId);
     setInputValue(allotteeId);
-    followUpTasks = followUpTasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
-        return allotteeId == allotteeId;
-    });
+    // followUpTasks = followUpTasks.filter(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+    //     return allotteeId == allotteeId;
+    // });
     let all_taskrefs = [];
-    const transformedTasks = followUpTasks.map(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
+    console.log("this is all tasks type",typeof(followUpTasks),followUpTasks);
+    const transformedTasks = allTask.map(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
         const taskRef = React.createRef();
         all_taskrefs.push(taskRef);
         return {
@@ -884,7 +890,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
     setTasks(transformedTasks);
     tasksRef.current = transformedTasks;
     openModal();
-    console.log("followup tasks", followUpTasks);
+    console.log("followup tasks", allTask);
     console.log("these are all taskrefs", all_taskrefs);
 
     const handleSaveAllTasks = (event) => {
@@ -1271,7 +1277,7 @@ const handleCrossbtn = async()=>{
                       }
                     }}
                     ref={task.ref}
-                    className="new-div-input"
+                    className={`new-div-input ${index<toDoCount ? "disable_task" : ""}`}
                     style={{ border: '1px solid #ccc', padding: '5px', minHeight: '37px', whiteSpace: 'pre-wrap' }}
                     dangerouslySetInnerHTML={{ __html: task.text }} // Only rendered when loading the tasks initially
                   />
@@ -1442,7 +1448,7 @@ const handleCrossbtn = async()=>{
                 onDrop={() => handleDrop(allotteeName,cardIndex)}
                 onClick={() => {
                   dispatch(setEditingTask(true));
-                  editTask(allotteeName , follow_up_tasks)
+                  editTask(allotteeName ,to_do_tasks, follow_up_tasks)
                   }
                 }
               >
