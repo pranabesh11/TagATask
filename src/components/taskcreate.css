@@ -479,13 +479,20 @@
     background-color: inherit;
     border-radius: 5px;
 }
+.toggle_text{
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+}
 
 .toggle_button{
-    width: 90vw;
+    border: 1px solid red;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 2;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    display: none;
+    flex-direction: row;
+    
 }
 .toggle_button p{
     margin: 15px;
@@ -652,4 +659,14 @@
     border-radius: 5px;
     font-weight: 600;
     font-family: Poppins, sans-serif;
+}
+
+.count_layer{
+    display: inline;
+    position: relative;
+    top: -13px;
+    left: -20px;
+    border-radius: 50%;
+    font-family: Poppins, sans-serif;
+    font-size: 12px;
 }

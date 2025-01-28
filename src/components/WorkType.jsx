@@ -46,7 +46,7 @@ const WorkType = ({ selectedOption, setSelectedOption }) => {
       </div>
 
       {showOptions && (
-        <div className="options-popup">
+        <div className="work_type_popup">
           {options.map((option, index) => (
             <div key={index} className="option-item" onClick={() => handleOptionSelect(option)}>
               {option}

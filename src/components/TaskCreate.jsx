@@ -16,7 +16,7 @@ import axios, { all } from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI, sendEditTasksData } from './ApiList';
+import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI, sendEditTasksData ,deleteTask} from './ApiList';
 import  ToggleButton  from './ToggleButton';
 import revert_icon from '../assets/revert.png';
 import { useSelector, useDispatch } from 'react-redux';
@@ -50,9 +50,11 @@ function TaskCreate() {
   const [allotteeCardIndex,setAllotteeCardIndex] = useState(0);
   const [edit_card_allottee_id, setEditCardAllottee] = useState(null);
   const dispatch = useDispatch();
+  const [commentcount ,setCommentcount] = useState(0);
+  const [tagoption, setTagoptions] = useState(['High', 'Medium', 'Low','avoid_this_task']);
 
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
-//  const Base_URL = "https://05ce-49-37-8-126.ngrok-free.app";
+//  const Base_URL = "https://606c-49-37-8-126.ngrok-free.app";
   useEffect(() => {
     tasksRef.current = tasks;
   }, [tasks]);
@@ -74,7 +76,8 @@ const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
     sendUserId(setData, setError);
     fetchData(setData, setError);
     fetchAllottee(setAllottee, setError);
-  }, []);
+    console.log("these are all followup tasks",tasks);
+  }, [tasks]);
 
 
 useEffect(() => {
@@ -173,6 +176,8 @@ useEffect(() => {
 
     setIsSaving(false);
   };
+
+
 
   const handleClick = (event) => {
     if (containerRef.current && containerRef.current.contains(event.target)) {
@@ -510,7 +515,14 @@ useEffect(() => {
   };
 
   const handleDeleteTask = (index) => {
-    setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
+    const currentPersonnelId = new URLSearchParams(window.location.search).get('id');
+    if(currentPersonnelId == tasks[index].allotterId && editingTask){
+      setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
+      deleteTask(tasks[index].taskId , tasks[index].allotteeId , tasks[index].allotterId);
+    }else{
+      setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
+    }
+    console.log("delete task",tasks[index].taskId);
   };
 
   const handleTaskCheck = (cardIndex, taskIndex, isChecked) => {
@@ -837,10 +849,8 @@ const handleAllotteeClick = (allotteeName, tasks) => {
     }, 0);
   };
 
-  const handleCommentsChange = (index, updatedComments) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index].comments = updatedComments;
-    setTasks(updatedTasks);
+  const handleCommentsChange = (updatedComments,comment_index) => {
+    tasks[comment_index].comments = updatedComments;
   };
 
   
@@ -859,6 +869,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
         return {
             taskId,
             allotteeId,
+            allotterId,
             text: taskDescription,
             ref: taskRef,
             completed: completionDate ? true : false,
@@ -898,7 +909,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
         // Attach 'keydown' listener to existing and newly added tasks
         transformedTasks.forEach((task) => {
             if (task.ref.current) {
-                task.ref.current.addEventListener('keydown', handleSaveAllTasks);
+              task.ref.current.addEventListener('keydown', handleSaveAllTasks);
             }
         });
 
@@ -1179,6 +1190,20 @@ const handleCrossbtn = async()=>{
   }
 }
 
+  function takecount(count){
+    setCommentcount(count)
+  }
+  
+  function deleteComment(task_index,del_index){
+    console.log(task_index , del_index);
+    let updated_comments = tasks[task_index].comments.filter((item ,index)=> item[index] !== item[del_index]);
+    console.log("Updated comments:", updated_comments);
+    setTasks((pre)=>{
+     const  updated_Task = [...pre];
+      updated_Task[task_index].comments = updated_comments;
+      return updated_Task;
+    })
+  }
   
 
   return (
@@ -1268,16 +1293,21 @@ const handleCrossbtn = async()=>{
                   <div id='icon_div'>
                     <div>
                       <CustomSelect
+                        tagoption={tagoption}
                         selectedTags={task.selectedTags}
                         onSelectTags={(tags) => handleLabelChange(index, tags)}
                       />
                     </div>
 
-                    <div>
+                    <div className='comment_sectoin'>
                       <Comment
                         comments={Array.isArray(task.comments) ? task.comments : []}
-                        setComments={(updatedComments) => handleCommentsChange(index, updatedComments)}
+                        sendComments={ handleCommentsChange}
+                        comment_index = {index}
+                        comment_count = {takecount}
+                        comment_delete = {deleteComment}
                       />
+                      <div className='count_layer'>{tasks[index].comments.length>0 ?tasks[index].comments.length:null}</div>
                     </div>
 
                     <div>
@@ -1353,9 +1383,9 @@ const handleCrossbtn = async()=>{
 
 
       <div className='toggle_button'>
-        <p>Allottee Wise</p>
+        <p className='toggle_text'>Allottee Wise</p>
         <ToggleButton onToggleChange={handleToggleChange}/>
-        <p>Tag Wise</p>
+        <p className='toggle_text'>Tag Wise</p>
       </div>
       {!isToggleOn ?
       <div className='task_container'>

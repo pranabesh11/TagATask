@@ -4,14 +4,17 @@ import messengerIcon from '../assets/messenger.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
+import "react-tooltip/dist/react-tooltip.css";
+import {Tooltip} from "react-tooltip";
 
-const Comment = () => {
+const Comment = ({sendComments ,comment_index , comment_count,comment_delete}) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [comments, setComments] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [editIndex, setEditIndex] = useState(null);
   const [editedValue, setEditedValue] = useState('');
   const popupRef = useRef(null);
+
 
   const handleIconClick = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -32,6 +35,7 @@ const Comment = () => {
 
   const handleDeleteComment = (index) => {
     setComments(prevComments => prevComments.filter((_, i) => i !== index));
+    comment_delete(comment_index,index);
   };
 
   const handleClickOutside = (event) => {
@@ -43,13 +47,18 @@ const Comment = () => {
 
   const saveComment = () => {
     if (inputValue.trim()) {
-      setComments(prevComments => [...prevComments, inputValue]);
+      const newComments = [...comments, inputValue];
+      setComments(newComments);
       setInputValue('');
+      sendComments(newComments,comment_index);
+      comment_count(newComments.length);
     }
     if (editIndex !== null) {
       const updatedComments = [...comments];
       updatedComments[editIndex] = editedValue;
       setComments(updatedComments);
+      sendComments(updatedComments,comment_index);
+      comment_count(updatedComments.length);
       setEditIndex(null);
     }
   };
@@ -92,17 +101,31 @@ const Comment = () => {
                 />
               ) : (
                 <>
-                  <p
-                    className="saved-comment"
-                    onClick={() => handleCommentClick(index)}
-                  >
-                    {comment}
-                  </p>
-                  <FontAwesomeIcon
-                    icon={faTrashAlt}
-                    className="delete-icon"
-                    onClick={() => handleDeleteComment(index)}
-                  />
+                  { <Tooltip id="my-tooltip" />}
+                  <div className="comment-box">
+                    <div className="comment-section">
+                        <p
+                          className="saved-comment"
+                          onClick={() => handleCommentClick(index)}
+                          data-tooltip-id={comment.length > 0 ? `my-tooltip` : undefined}
+                          data-tooltip-content={comment}
+                          data-tooltip-place="top"
+                        > 
+                          {comment}
+                        </p>
+
+                        <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        className="delete-icon"
+                        onClick={() => handleDeleteComment(index)}
+                      />
+                    </div>
+                    <div className="comment-time-auther">
+                      <p>Dibas shyamal</p>
+                      <span className='comment-time'>02:10 pm</span>
+                    </div>
+                  </div>
+                 
                 </>
               )}
             </div>
