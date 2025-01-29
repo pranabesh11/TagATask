@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
-// const Base_URL = "https://606c-49-37-8-126.ngrok-free.app";
+// const Base_URL = "https://94cd-49-37-8-126.ngrok-free.app";
 
 export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
   // Initial input validation and logging
@@ -196,6 +196,27 @@ export const deleteTask = async(task_priority_id,allottee_id , allotter_id)=>{
   }
   try{
     const response = await axios.post(`${Base_URL}/delete_task`,payload,{
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    });
+    toast.success(response.data.message,{position: 'top-center',hideProgressBar: true});
+  }catch(error){
+    console.error('Error while deleting task from edit popup:', error);
+  }
+}
+
+export const sendComment = async(task_priority_id , comment_text)=>{
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get('id');
+  const payload = {
+    "task_priority_id":task_priority_id,
+    "comment":comment_text[0],
+    "updated_by":userId
+  }
+  try{
+    const response = await axios.post(`${Base_URL}/task_comment_update`,payload,{
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

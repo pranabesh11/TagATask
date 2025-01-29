@@ -16,7 +16,7 @@ import axios, { all } from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI, sendEditTasksData ,deleteTask} from './ApiList';
+import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI, sendEditTasksData ,deleteTask ,sendComment} from './ApiList';
 import  ToggleButton  from './ToggleButton';
 import revert_icon from '../assets/revert.png';
 import { useSelector, useDispatch } from 'react-redux';
@@ -56,7 +56,7 @@ function TaskCreate() {
   const [toDoCount,setToDoCount] = useState(0);
 
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
-//  const Base_URL = "https://606c-49-37-8-126.ngrok-free.app";
+//  const Base_URL = "https://94cd-49-37-8-126.ngrok-free.app";
   useEffect(() => {
     tasksRef.current = tasks;
   }, [tasks]);
@@ -853,6 +853,9 @@ const handleAllotteeClick = (allotteeName, tasks) => {
 
   const handleCommentsChange = (updatedComments,comment_index) => {
     tasks[comment_index].comments = updatedComments;
+    const task_priority_id = tasks[comment_index].taskId
+    const comment_text = updatedComments
+    sendComment(task_priority_id,comment_text)
   };
 
   
