@@ -216,7 +216,7 @@ export const sendComment = async(task_priority_id , comment_text)=>{
     "updated_by":userId
   }
   try{
-    const response = await axios.post(`${Base_URL}/task_comment_update`,payload,{
+    const response = await axios.post(`${Base_URL}/api_list/task_comment_update`,payload,{
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
