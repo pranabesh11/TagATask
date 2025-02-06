@@ -5,16 +5,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import "react-tooltip/dist/react-tooltip.css";
-import {Tooltip} from "react-tooltip";
+import { Tooltip } from "react-tooltip";
 
-const Comment = ({comments,sendComments ,comment_index , comment_count,comment_delete}) => {
+const Comment = ({ comments, sendComments, comment_index, comment_count, comment_delete }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [editIndex, setEditIndex] = useState(null);
   const [editedValue, setEditedValue] = useState('');
   const popupRef = useRef(null);
 
-console.log("......................" , comments);
 
   const handleIconClick = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -24,19 +23,18 @@ console.log("......................" , comments);
     setInputValue(e.target.value);
   };
 
-  // const handleEditChange = (e) => {
-  //   setEditedValue(e.target.value);
-  // };
+  const handleEditChange = (e) => {
+    setEditedValue(e.target.value);
+  };
 
-  // const handleCommentClick = (index) => {
-  //   setEditIndex(index);
-  //   setEditedValue(comments[index]);
-  // };
+  const handleCommentClick = (index) => {
+    setEditIndex(index);
+    setEditedValue(comments[index]);
+  };
 
-  // const handleDeleteComment = (index) => {
-  //   setComments(prevComments => prevComments.filter((_, i) => i !== index));
-  //   comment_delete(comment_index,index);
-  // };
+  const handleDeleteComment = (index) => {
+    comment_delete(comment_index, index);
+  };
 
   const handleClickOutside = (event) => {
     if (popupRef.current && !popupRef.current.contains(event.target)) {
@@ -48,18 +46,14 @@ console.log("......................" , comments);
   const saveComment = () => {
     if (inputValue.trim()) {
       const newComments = [inputValue];
-      //setComments(newComments);
-      console.log("new comments ....", newComments);
-      
       setInputValue('');
-      sendComments(newComments,comment_index);
+      sendComments(newComments, comment_index);
       comment_count(newComments.length);
     }
     if (editIndex !== null) {
       const updatedComments = [...comments];
       updatedComments[editIndex] = editedValue;
-    //  setComments(updatedComments);
-      sendComments(updatedComments,comment_index);
+      sendComments(updatedComments, comment_index);
       comment_count(updatedComments.length);
       setEditIndex(null);
     }
@@ -81,10 +75,10 @@ console.log("......................" , comments);
   return (
     <div className="comment-box-container">
       <ChatBubbleOutlineOutlinedIcon
-      className="comment-icon"
-      onClick={handleIconClick}
-      style={{ opacity: comments.length > 0 ? 1 : 0.3, cursor: 'pointer',fontSize: 30 }}
-    />
+        className="comment-icon"
+        onClick={handleIconClick}
+        style={{ opacity: comments.length > 0 ? 1 : 0.3, cursor: 'pointer', fontSize: 30 }}
+      />
       {isPopupOpen && (
         <div ref={popupRef} className="popup-container">
           {comments.map((comment, index) => (
@@ -95,43 +89,44 @@ console.log("......................" , comments);
                   className="edit-input"
                   value={editedValue}
                   onChange={handleEditChange}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      saveComment();
-                    }
-                  }}
+                  onKeyDown={(e) => e.key === 'Enter' && saveComment()}
                 />
               ) : (
                 <>
-                  { <Tooltip id="my-tooltip" />}
+                  <Tooltip id={`my-tooltip-${index}`} clickable  style={{ backgroundColor: "white", border: "none", boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)" }} 
+                  >
+                    <div className="custom-tooltip">
+                      <div className="tooltip-message">{comment[0]}</div>
+                      <div className="tooltip-footer">
+                        <span className="tooltip-author">{comment[1]}</span>
+                        <span className="tooltip-time">{comment[2]}</span>
+                      </div>
+                    </div>
+                  </Tooltip>
+
                   <div className="comment-box">
                     <div className="comment-section">
-                        <p
-                          className="saved-comment"
-                          onClick={() => handleCommentClick(index)}
-                          data-tooltip-id={comment.length > 0 ? `my-tooltip` : undefined}
-                          data-tooltip-content={`${comment[0]}\n\n${comment[1]} \u00A0\u00A0\u00A0\u00A0 ${comment[2]}`}
-                          data-tooltip-place="top"
-                        >
-                          {comment[0]}
-                        </p>
+                      <p
+                        className="saved-comment"
+                        onClick={() => handleCommentClick(index)}
+                        data-tooltip-id={`my-tooltip-${index}`}
+                        data-tooltip-place="top"
+                      >
+                        {comment[0]}
+                      </p>
 
-                        <FontAwesomeIcon
+                      {/* <FontAwesomeIcon
                         icon={faTrashAlt}
                         className="delete-icon"
                         onClick={() => handleDeleteComment(index)}
-                      />
-                    </div>
-                    <div className="comment-time-auther">
-                      <p>{comment[1]}</p>
-                      <span className='comment-time'>{comment[2]}</span>
+                      /> */}
                     </div>
                   </div>
-                 
                 </>
               )}
             </div>
           ))}
+
           <input
             type="text"
             className="comment-input"

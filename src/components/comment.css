@@ -74,7 +74,12 @@
 
 #my-tooltip{
   width: 200px;
+  color: aqua;
+  border: none ;  /* Removes border */
+  outline: none ;
 }
+
+
 
 .time_name{
   display: flex;
@@ -105,7 +110,7 @@
   margin-bottom: 5px;
 }
 
-.comment-time-auther .comment-time, p 
+.comment-time-auther .comment-time, p
 {
     font-size: 10px;
 }
@@ -114,4 +119,94 @@
 {
   border: 1px solid #cabfbf;
   border-radius: 4px;
+}
+
+/* tooltip  */
+
+.custom-tooltip {
+  background-color: white;
+  padding: 5px;
+  border-radius: 8px;
+  color: black;
+  font-family: Arial, sans-serif;
+  max-width: 400px; /* Ensures text wraps properly */
+  word-wrap: break-word;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+.tooltip-message {
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+.tooltip-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: gray;
+  padding-top: 4px;
+  border-top: 1px solid #e0e0e0;
+  gap: 5px;
+}
+
+.tooltip-author {
+  font-weight: 600;
+  color: #555;
+}
+
+.tooltip-time {
+  font-style: italic;
+  color: #777;
+}
+
+/* Comment Box Styling */
+.comment-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f1f1f1;
+  border-radius: 6px;
+}
+
+.saved-comment {
+  cursor: pointer;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  max-width: 220px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.comment-input {
+  width: 90%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.delete-icon {
+  color: rgb(139, 130, 130);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .custom-tooltip {
+    max-width: 90%;
+  }
+
+  .comment-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .saved-comment {
+    max-width: 90%;
+  }
 }

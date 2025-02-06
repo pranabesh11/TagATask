@@ -1118,7 +1118,13 @@ const handleAllotteeReorder = (targetAllotteeName,cardIndex) => {
 
 
 
-
+const handleFileChange = async(fileIndex , fileName) =>
+  {
+    const task_priority_id = tasks[fileIndex].taskId;
+    console.log('====================================');
+    console.log("files ..." , fileName);
+    console.log('====================================');  
+  }
 
 
 
@@ -1341,7 +1347,7 @@ const handleCrossbtn = async()=>{
                       <div className='count_layer'>{tasks[index] && tasks[index].comments && tasks[index].comments.length>0 ?tasks[index].comments.length:null}</div>
                     </div>
                     <div>
-                      <FileUpload />
+                      <FileUpload fileIndex= {index} sendFile={handleFileChange} />
                     </div>
 
                     <div className='timer_inp'>
