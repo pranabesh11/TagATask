@@ -126,7 +126,7 @@ export const fetchAllottee = async (setAllottee, setError) => {
     setAllottee(response.data.personnels);
   } catch (error) {
     console.error('Error fetching data:', error);
-    setError('Error fetching data. Please check the console for more details.');
+    setError(error);
   }
 };
 

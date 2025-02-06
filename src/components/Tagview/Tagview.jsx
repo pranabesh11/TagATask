@@ -5,18 +5,22 @@ import {get_tag_data} from '../ApiList';
 
 
 function Tagview() {
+
+  const [tagviewdata,setTagViewData] = useState([]);
+
+
   const datafetchfunction = async()=>{
     const data = await get_tag_data();
     setTagViewData(data)
     console.log("this is tagviewdata -----",data);
   }
-  const [tagviewdata,setTagViewData] = useState([]);
+
   useEffect(()=>{datafetchfunction()} ,[])
       
 
   return (
     <div className="task_container">
-      <div className="tasks">
+      {tagviewdata ? <div className="tasks">
         {Object.entries(tagviewdata).map(([category, tasks], cardIndex) => {
           // Assume a logged-in user's ID
           const currentPersonnelId = 26;
@@ -99,7 +103,7 @@ function Tagview() {
             </div>
           );
         })}
-      </div>
+      </div> : <div>There is No Tags </div>}
     </div>
   );
 }
