@@ -1,30 +1,42 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './customselect.css';
-import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined';
+import React, { useState, useEffect, useRef } from "react";
+import { fetchTagsByUserId, sendTagsByUserId  } from "../components/ApiList";
+import "./customselect.css";
+import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
-const CustomSelect = ({ selectedTags = [], onSelectTags = () => {}, tagoption }) => {
-  const options = tagoption;
+const CustomSelect = ({ taskPriorityId }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [tagOptions, setTagOptions] = useState([]);
+  const [filteredTags, setFilteredTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const handleToggleDropdown = (event) => {
-    event.stopPropagation(); // Prevent event from propagating to the document
+  useEffect(() => {
+    console.log("Updated selected tags:------------------->", selectedTags);
+  }, [selectedTags]);
+
+  const handleToggleDropdown = async (event) => {
     setDropdownOpen(!dropdownOpen);
-    console.log("Dropdown toggled");
+    if (!dropdownOpen) {
+      const all_tags = await fetchTagsByUserId();
+      console.log("these are all tags",all_tags);
+      setTagOptions(all_tags);
+      setFilteredTags(all_tags);
+    }
   };
 
-  const handleSelectTag = (tag, event) => {
-    event.stopPropagation(); // Prevent event bubbling when selecting a tag
-
-    if (selectedTags.includes(tag)) {
-      onSelectTags(selectedTags.filter((selectedTag) => selectedTag !== tag));
-    } else {
-      onSelectTags([...selectedTags, tag]);
-    }
-
+  const handleSelectTag = async (tag, event) => {
+    event.stopPropagation();
     setDropdownOpen(false);
+    if (selectedTags.some(selected => selected[0] === tag[0])) {
+      setSelectedTags(selectedTags.filter((selected) => selected[0] !== tag[0]));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+    await sendTagsByUserId(taskPriorityId, tag[0],tag[1]);
+    setSearchTerm("");
   };
 
   const handleClickOutside = (event) => {
@@ -33,51 +45,91 @@ const CustomSelect = ({ selectedTags = [], onSelectTags = () => {}, tagoption })
     }
   };
 
+
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+
+  const handleSearch = async(event) => {
+    const query = event.target.value.toLowerCase();
+    setSearchTerm(query);
+    const filtered = tagOptions.filter((tag) =>
+      tag[1].toLowerCase().includes(query)
+    );
+    setFilteredTags(filtered);
+  };
+
+  
+  const handleKeyDown = async (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (!searchTerm.trim()) return;
+      if (!selectedTags.some((tag) => tag[1].toLowerCase() === searchTerm.toLowerCase())) {
+        const temp_id = Date.now();
+        const tagObject = [temp_id, searchTerm];
+        console.log("🔹 New Tag Object (Immediate):", tagObject);
+        setSelectedTags((prevTags) => [...prevTags, tagObject]);
+        await sendTagsByUserId(taskPriorityId, null, searchTerm);
+      }
+      setSearchTerm("");
+    }
+  };
+  
+  
 
   return (
     <div className="multi-select-dropdown" ref={dropdownRef}>
       <div className="dropdown-header" onClick={handleToggleDropdown}>
-        {selectedTags.length > 0
-          ? selectedTags.map((tag, index) => (
-              <div key={index} className={`selected-tag ${tag.toLowerCase()}`}>
-                <Tooltip id="tagname" />
-                <p
-                  className="tagName"
-                  data-tooltip-id={`tagname`}
-                  data-tooltip-content={tag}
-                  data-tooltip-place="top"
-                >
-                  {tag}
-                </p>
-                <span
-                  className="remove-tag"
-                  onClick={(e) => handleSelectTag(tag, e)} // Pass the event to stop propagation
-                >
-                  &#x2716;
-                </span>
+        {selectedTags.length > 0 ? (
+          selectedTags.map((tag, index) => (
+            <div key={index} className="selected-tag">
+              <Tooltip id="tagname" />
+              <p
+                className="tagName"
+                data-tooltip-id="tagname"
+                data-tooltip-content={tag[1]}
+                data-tooltip-place="top"
+              >
+                {tag[1]}
+              </p>
+              <span className="remove-tag" onClick={(e) => handleSelectTag(tag, e)}>
+                &#x2716;
+              </span>
+            </div>
+          ))
+        ) : (
+          <LabelOutlinedIcon style={{ fontSize: 30, color: "#b2b2b2" }} />
+        )}
+      </div>
+
+      {dropdownOpen && (
+        <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}>
+          {/* Search Bar */}
+          <input
+            type="text"
+            className="search-bar"
+            placeholder="Search tags..."
+            value={searchTerm}
+            onChange={handleSearch}
+            onKeyDown={handleKeyDown}
+            style={{width: "93%" }}
+          />
+
+          {/* Filtered Dropdown Options */}
+          {console.log("this is tag options",filteredTags)}
+          {filteredTags && filteredTags.length > 0 ? (
+            filteredTags.map((option, index) => (
+              <div key={index} onClick={(e) => handleSelectTag(option, e)}>
+                {option[1]}
               </div>
             ))
-          : <LabelOutlinedIcon style={{ fontSize: 30, color: '#b2b2b2' }} />}
-      </div>
-      {dropdownOpen && (
-        <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}> {/* Stop bubbling */}
-          {options.map((option, index) => (
-            <div
-              key={index}
-              className={`dropdown-item ${
-                selectedTags.includes(option) ? 'selected' : ''
-              }`}
-              onClick={(e) => handleSelectTag(option, e)} // Pass the event to stop propagation
-            >
-              {option}
-            </div>
-          ))}
+          ) : (
+            <div className="no-results">No tags found</div>
+          )}
         </div>
       )}
     </div>

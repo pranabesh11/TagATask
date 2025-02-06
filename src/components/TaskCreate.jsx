@@ -16,7 +16,7 @@ import axios, { all } from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI, sendEditTasksData ,deleteTask ,sendComment} from './ApiList';
+import { sendUserId, fetchData, fetchAllottee ,updateTaskOrderAPI, sendEditTasksData ,deleteTask ,sendComment,fetchTagsByUserId} from './ApiList';
 import  ToggleButton  from './ToggleButton';
 import revert_icon from '../assets/revert.png';
 import { useSelector, useDispatch } from 'react-redux';
@@ -52,7 +52,7 @@ function TaskCreate() {
   const [edit_card_allottee_id, setEditCardAllottee] = useState(null);
   const dispatch = useDispatch();
   const [commentcount ,setCommentcount] = useState(0);
-  const [tagoption, setTagoptions] = useState(['High', 'Medium', 'Low','avoid_this_task']);
+  const [tagoption, setTagoptions] = useState([]);
   const [toDoCount,setToDoCount] = useState(0);
 
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
@@ -510,11 +510,12 @@ useEffect(() => {
     setTasks(newTasks);
   };
 
-  const handleLabelChange = (index, tags) => {
+  const handleLabelChange = async(index, tags) => {
     const newTasks = [...tasks];
     newTasks[index].selectedTags = tags;
     setTasks(newTasks);
   };
+ 
 
   const handleDeleteTask = (index) => {
     const currentPersonnelId = new URLSearchParams(window.location.search).get('id');
@@ -851,12 +852,28 @@ const handleAllotteeClick = (allotteeName, tasks) => {
     }, 0);
   };
 
-  const handleCommentsChange = (updatedComments,comment_index) => {
-    tasks[comment_index].comments = updatedComments;
-    const task_priority_id = tasks[comment_index].taskId
-    const comment_text = updatedComments
-    sendComment(task_priority_id,comment_text)
-  };
+  const handleCommentsChange = async (updatedComments, comment_index) => {
+    const task_priority_id = tasks[comment_index].taskId;
+    const comment_text = updatedComments;
+
+    try {
+        // Optimistically update UI first
+        setTasks((prevTasks) => {
+            const updatedTasks = [...prevTasks];
+            updatedTasks[comment_index].comments.push(comment_text); // Add comment locally
+            return updatedTasks;
+        });
+
+        // Send comment to API
+        await sendComment(task_priority_id, comment_text);
+        await fetchAllottee(setAllottee,setError);
+
+        // Fetch the latest comments count from the API
+    } catch (error) {
+        console.error("Error adding comment:", error);
+    }
+};
+
 
   
 
@@ -872,25 +889,31 @@ const handleAllotteeClick = (allotteeName, tasks) => {
     //     return allotteeId == allotteeId;
     // });
     let all_taskrefs = [];
-    console.log("this is all tasks type",typeof(followUpTasks),followUpTasks);
-    const transformedTasks = allTask.map(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId]) => {
-        const taskRef = React.createRef();
-        all_taskrefs.push(taskRef);
-        return {
-            taskId,
-            allotteeId,
-            allotterId,
-            text: taskDescription,
-            ref: taskRef,
-            completed: completionDate ? true : false,
-            datetime: completionDate || verificationDate || null,
-            label: '',
-            workType: '',
-            comments: [],
-            isBold: false,
-            isItalic: false,
-        };
-    });
+    console.log("this is all tasks type",typeof(followUpTasks),allTask);
+    //const commentsArray = allTask.map(task => task[7]); 
+    // console.log("comments ..........." , commentsArray);
+    
+    const transformedTasks = allTask.map(([taskId, taskDescription, completionDate, verificationDate, allotterId, allotteeId, priority, comment]) => {
+      const taskRef = React.createRef();
+      all_taskrefs.push(taskRef);
+      return {
+          taskId,
+          allotteeId,
+          allotterId,
+          text: taskDescription,
+          ref: taskRef,
+          completed: completionDate ? true : false,
+          datetime: completionDate || verificationDate || null,
+          label: '',
+          workType: '',
+          priority: priority,
+          comments: comment || null, 
+          isBold: false,
+          isItalic: false,
+      };
+  });
+    console.log("comments ;;;;;" , transformedTasks);
+    
     setTasks(transformedTasks);
     tasksRef.current = transformedTasks;
     openModal();
@@ -1303,9 +1326,7 @@ const handleCrossbtn = async()=>{
                   <div id='icon_div'>
                     <div>
                       <CustomSelect
-                        tagoption={tagoption}
-                        selectedTags={task.selectedTags}
-                        onSelectTags={(tags) => handleLabelChange(index, tags)}
+                        taskPriorityId={tasks[index].taskId}
                       />
                     </div>
 
@@ -1317,9 +1338,8 @@ const handleCrossbtn = async()=>{
                         comment_count = {takecount}
                         comment_delete = {deleteComment}
                       />
-                      <div className='count_layer'>{tasks[index].comments.length>0 ?tasks[index].comments.length:null}</div>
+                      <div className='count_layer'>{tasks[index] && tasks[index].comments && tasks[index].comments.length>0 ?tasks[index].comments.length:null}</div>
                     </div>
-
                     <div>
                       <FileUpload />
                     </div>
@@ -1425,6 +1445,7 @@ const handleCrossbtn = async()=>{
             });
             // Remove reallocated tasks from to_do_tasks
             to_do_tasks = to_do_tasks.filter(task => !reallocatedTasks.includes(task));
+            
             // Add reallocated tasks to follow_up_tasks
             follow_up_tasks = [...follow_up_tasks, ...reallocatedTasks];
             // Filter out tasks where both allotterId and allotteeId are equal to currentPersonnelId from follow_up_tasks
@@ -1460,7 +1481,7 @@ const handleCrossbtn = async()=>{
                 {/* To-Do Tasks */}
                 <div id={`to_do_tasks_${cardIndex}`} className='to_do_section'>
                   {/* {to_do_tasks.length > 0 && <h3 className='section'>To-Do</h3>} */}
-                  {to_do_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId], index) => (
+                  {to_do_tasks.map(([taskId, taskDescription, completionDate,verificationDate , allotterId, allotteeId ], index) => (
                     <div
                       key={taskId}
                       className="task-item-container"

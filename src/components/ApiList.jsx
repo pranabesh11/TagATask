@@ -227,3 +227,63 @@ export const sendComment = async(task_priority_id , comment_text)=>{
     console.error('Error while deleting task from edit popup:', error);
   }
 }
+
+
+export const fetchTagsByUserId = async () => {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const current_user_id = urlParams.get('id');
+    console.log("api calling for tag section",current_user_id);
+    const response = await axios.get(`${Base_URL}/api_list/tag_data?user_id=${current_user_id}`,{
+      headers: {
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': "any",
+      },
+    });
+    console.log("Tags value from API:", response);
+    return response.data.tag_options;
+  } catch (error) {
+    console.error("Error fetching tags:", error.response ? error.response.data : error.message);
+  }
+};
+
+export const sendTagsByUserId = async (task_priority_id,tag_id,tag_description) => {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const current_user_id = urlParams.get('id');
+    const payload = {
+      "task_priority_id":task_priority_id,
+      "tag_id":tag_id,
+      "tag_description":tag_description,
+      "user_id":current_user_id
+    }
+    const response = await axios.post(`${Base_URL}/api_list/task_tag_update`,payload,{
+      headers: {
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': "any",
+      },
+    });
+    console.log("Tags value from API:", response.data);
+    return response.data.tags;
+  } catch (error) {
+    console.error("Error fetching tags:", error.response ? error.response.data : error.message);
+  }
+};
+
+
+export const get_tag_data = async () => {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const current_user_id = urlParams.get('id');
+    const response = await axios.get(`https://prioritease2-c953f12d76f1.herokuapp.com/api_list/tag_data/?user_id=${current_user_id}`,{
+      headers: {
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': "any",
+      },
+    });
+    console.log("Tags value from API:", response.data.tags);
+    return response.data.tags;
+  } catch (error) {
+    console.error("Error fetching tags:", error.response ? error.response.data : error.message);
+  }
+};
