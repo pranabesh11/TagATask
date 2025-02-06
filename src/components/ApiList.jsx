@@ -234,7 +234,7 @@ export const fetchTagsByUserId = async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const current_user_id = urlParams.get('id');
     console.log("api calling for tag section",current_user_id);
-    const response = await axios.get(`${Base_URL}/api_list/tag_data?user_id=${current_user_id}`,{
+    const response = await axios.get(`${Base_URL}/api_list/tag_option?user_id=${current_user_id}`,{
       headers: {
         'Accept': 'application/json',
         'ngrok-skip-browser-warning': "any",
