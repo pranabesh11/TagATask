@@ -5,7 +5,7 @@ import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
-const CustomSelect = ({ taskPriorityId }) => {
+const CustomSelect = ({ taskPriorityId , sendCustomTags ,index }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [tagOptions, setTagOptions] = useState([]);
@@ -30,6 +30,7 @@ const CustomSelect = ({ taskPriorityId }) => {
   const handleSelectTag = async (tag, event) => {
     event.stopPropagation();
     setDropdownOpen(false);
+    sendCustomTags(tag , index);
     if (selectedTags.some(selected => selected[0] === tag[0])) {
       setSelectedTags(selectedTags.filter((selected) => selected[0] !== tag[0]));
     } else {
@@ -38,7 +39,6 @@ const CustomSelect = ({ taskPriorityId }) => {
     await sendTagsByUserId(taskPriorityId, tag[0],tag[1]);
     setSearchTerm("");
   };
-
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setDropdownOpen(false);
@@ -71,8 +71,9 @@ const CustomSelect = ({ taskPriorityId }) => {
       if (!selectedTags.some((tag) => tag[1].toLowerCase() === searchTerm.toLowerCase())) {
         const temp_id = Date.now();
         const tagObject = [temp_id, searchTerm];
-        console.log("🔹 New Tag Object (Immediate):", tagObject);
+        console.log("🔹 New Tag Object (Immediate):", tagObject , taskPriorityId);
         setSelectedTags((prevTags) => [...prevTags, tagObject]);
+        sendCustomTags(tagObject , index)
         await sendTagsByUserId(taskPriorityId, null, searchTerm);
       }
       setSearchTerm("");
@@ -116,14 +117,17 @@ const CustomSelect = ({ taskPriorityId }) => {
             value={searchTerm}
             onChange={handleSearch}
             onKeyDown={handleKeyDown}
-            style={{width: "93%" }}
           />
 
           {/* Filtered Dropdown Options */}
           {console.log("this is tag options",filteredTags)}
           {filteredTags && filteredTags.length > 0 ? (
             filteredTags.map((option, index) => (
-              <div key={index} onClick={(e) => handleSelectTag(option, e)}>
+              <div 
+              key={index}
+              onClick={(e) => handleSelectTag(option, e)}
+              className="option-value"
+              >
                 {option[1]}
               </div>
             ))

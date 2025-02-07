@@ -5,7 +5,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import closebutton from '../assets/close.png';
 import drag from '../assets/drag.png';
-import TaskList from './TaskList';
+import TargetTime from './TargetTime';
 import CustomSelect from './CustomSelect';
 import WorkType from './WorkType';
 import FileUpload from './FileUpload';
@@ -336,7 +336,7 @@ useEffect(() => {
       text: initialChar,
       completed: false,
       datetime: null,
-      label: '',
+      label: [],
       workType: '',
       comments: [],
       isBold: false,
@@ -490,7 +490,7 @@ useEffect(() => {
       text: '',
       completed: false,
       datetime: null,
-      label: '',
+      label: [],
       ref: React.createRef(),
     };
     setTasks((prevTasks) => {
@@ -836,6 +836,8 @@ const handleAllotteeClick = (allotteeName, tasks) => {
   const handleTaskInput = (index, event) => {
     if (event.type === 'blur' || event.key === 'Enter') {
       const newTasks = [...tasks];
+      console.log("ew add input " , newTasks);
+      
       newTasks[index].text = DOMPurify.sanitize(event.currentTarget.innerHTML, {
         ALLOWED_TAGS: ['b', 'i', 'strong', 'em', 'u', 'a'],
         ALLOWED_ATTR: ['href', 'target']
@@ -904,7 +906,7 @@ const handleAllotteeClick = (allotteeName, tasks) => {
           ref: taskRef,
           completed: completionDate ? true : false,
           datetime: completionDate || verificationDate || null,
-          label: '',
+          label: [],
           workType: '',
           priority: priority,
           comments: comment || null, 
@@ -1243,6 +1245,15 @@ const handleCrossbtn = async()=>{
       return updated_Task;
     })
   }
+
+  const handleCustomTags =(tag , index)=>
+  {
+      console.log("new TAGS" , tag);
+      const newTasks = [...tasks];
+      newTasks[index].selectedTags = tag;
+      setTasks(newTasks);
+      
+  }
   
 
   return (
@@ -1323,7 +1334,7 @@ const handleCrossbtn = async()=>{
                     />
                   }
 
-                  <TaskList
+                  <TargetTime
                     dateTime={task.datetime}
                     onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
                     onKeyDown={(e) => handleTaskKeyDown(index, e)}
@@ -1333,6 +1344,8 @@ const handleCrossbtn = async()=>{
                     <div>
                       <CustomSelect
                         taskPriorityId={tasks[index].taskId}
+                        sendCustomTags={handleCustomTags}
+                        index={index}
                       />
                     </div>
 
@@ -1345,7 +1358,7 @@ const handleCrossbtn = async()=>{
                         comment_delete = {deleteComment}
                       />
                       <div className='count_layer'>{tasks[index] && tasks[index].comments && tasks[index].comments.length>0 ?tasks[index].comments.length:null}</div>
-                    </div>
+                    </div>  
                     <div>
                       <FileUpload fileIndex= {index} sendFile={handleFileChange} />
                     </div>
