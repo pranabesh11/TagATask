@@ -211,3 +211,11 @@
     max-width: 90%;
   }
 }
+
+@media (max-width= 1200px) {
+    .count_layer
+      {
+        top: -31px;
+          left: -1px;
+      }
+}

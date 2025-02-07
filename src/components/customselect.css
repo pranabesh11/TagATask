@@ -53,7 +53,7 @@
   
   .dropdown-menu {
     position: absolute;
-    width: 100%;
+    width: 160px;
     border: 1px solid #ccc;
     background-color: #fff;
     z-index: 1;
@@ -85,5 +85,15 @@
     color: black;
   }
   
+  .search-bar
+  {
+    width: 93%;
+    padding: 4px;
+  }
 
-  
+  .option-value
+  {
+    padding: 2px;
+    border-radius: 4px;
+    font-size: 15px;
+  }
