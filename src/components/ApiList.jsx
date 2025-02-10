@@ -2,8 +2,8 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 
-const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
-// const Base_URL = "https://94cd-49-37-8-126.ngrok-free.app";
+ const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
+//  const Base_URL = "https://94cd-49-37-8-126.ngrok-free.app";
 
 export const handleCheckboxChange = async (taskId, isChecked, setAllottee) => {
   // Initial input validation and logging
@@ -178,7 +178,10 @@ export const sendEditTasksData = async (tasksData,edit_card_allottee_id) => {
       },
     });
     console.log('Edit tasks response:', response.data.message);
-    toast.success(response.data.message,{position: 'top-center',hideProgressBar: true});
+    if( response.data.message)
+    {
+      toast.success(response.data.message,{position: 'top-center',hideProgressBar: true});
+    }
     fetchAllottee();
   } catch (error) {
     console.error('Error editing tasks:', error);

@@ -9,10 +9,10 @@ function TargetTime({ dateTime, onDatetimeChange }) {
     const [isPickerOpen, setIsPickerOpen] = useState(false);
     const [hovering, setHovering] = useState(false);
     const dateTimePickerRef = useRef(null);
-console.log("datetime....", dateTime);
 
     const handleIconClick = () => {
         setIsPickerOpen(prev => !prev);
+
     };
 
     const handleClear = () => {
@@ -66,7 +66,7 @@ console.log("datetime....", dateTime);
                         value={dateTime}
                         onChange={(newDateTime) => {
                             onDatetimeChange(newDateTime);
-                            // setIsPickerOpen(false);
+                             setIsPickerOpen(false);
                         }}
                         input={false}
                         closeOnSelect={false}

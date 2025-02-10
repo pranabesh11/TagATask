@@ -391,21 +391,23 @@ useEffect(() => {
       return;
     }
 
-    if (event.key === 'Backspace' && tasks[index].ref.current.innerText.trim() === '') {
-      event.preventDefault();
-      handleDeleteTask(index);
-      if (tasks.length > 0) {
-        if (index > 0) {
-          const previousTask = tasks[index - 1];
-          setTimeout(() => {
-            previousTask.ref.current.focus();
-            moveCursorToEnd(previousTask.ref.current);
-          }, 0);
-        } else {
-          setTimeout(() => editableInputRef.current.focus(), 0);
-        }
-      }
-    }
+    // delete using backspace 
+    
+    // if (event.key === 'Backspace' && tasks[index].ref.current.innerText.trim() === '') {
+    //   event.preventDefault();
+    //   //handleDeleteTask(index);
+    //   // if (tasks.length > 0) {
+    //   //   if (index > 0) {
+    //   //     const previousTask = tasks[index - 1];
+    //   //     setTimeout(() => {
+    //   //       previousTask.ref.current.focus();
+    //   //       moveCursorToEnd(previousTask.ref.current);
+    //   //     }, 0);
+    //   //   } else {
+    //   //     setTimeout(() => editableInputRef.current.focus(), 0);
+    //   //   }
+    //   // }
+    // }
 
     if (event.key === 'Enter') {
       event.preventDefault();
