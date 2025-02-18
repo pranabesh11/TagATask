@@ -290,3 +290,7 @@ export const get_tag_data = async () => {
     console.error("Error fetching tags:", error.response ? error.response.data : error.message);
   }
 };
+
+export const demo_task = async()=>{
+  console.log("hello world");
+} 

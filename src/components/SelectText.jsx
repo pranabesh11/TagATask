@@ -45,16 +45,6 @@ const SelectText = ({ targetRef, tasks, setTasks, index }) => {
     };
 
 
-
-
-
-
-
-
-
-
-
-    
     
     const tag = formatTags[style];
     const regex = new RegExp(`<${tag}>(.*?)</${tag}>`, "gi");
