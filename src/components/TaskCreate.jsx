@@ -1378,6 +1378,7 @@ const handleCrossbtn = async()=>{
                             <FileUpload fileIndex= {index} sendFile={handleFileChange} />
                           </div>
 
+
                           {tasks[index].allotterId === currentAllotee ? <div className='timer_inp'>
                             <WorkType selectedOption={task.workType}
                               setSelectedOption={(value) => {
