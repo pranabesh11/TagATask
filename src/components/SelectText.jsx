@@ -43,6 +43,18 @@ const SelectText = ({ targetRef, tasks, setTasks, index }) => {
       underline: "u",
       highlight: 'span style="background-color: yellow;"',
     };
+
+
+
+
+
+
+
+
+
+
+
+    
     
     const tag = formatTags[style];
     const regex = new RegExp(`<${tag}>(.*?)</${tag}>`, "gi");
@@ -67,7 +79,7 @@ const SelectText = ({ targetRef, tasks, setTasks, index }) => {
         selectedText,
         `<a href="${url}">${selectedText}</a>`
       );
-      
+
 
       const updatedTasks = [...tasks];
       updatedTasks[index].text = updatedText;
