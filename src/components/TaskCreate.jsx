@@ -87,7 +87,7 @@ useEffect(() => {
     if(editingTask){
       console.log("this function is from outside click");
       console.log(tasks);
-      setIsModalOpen(false);
+      closeModal();
       const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
       sendEditTasksData(sanitizedData,edit_card_allottee_id);
       fetchAllottee(setAllottee,setError);
@@ -193,7 +193,7 @@ useEffect(() => {
         }
         saveAllDataWithInputValue();
         console.log("Clicked outside");
-        setIsModalOpen(false);
+        closeModal();
           // updateData();
       }, 100);
     }
@@ -1217,11 +1217,12 @@ const handleCrossbtn = async()=>{
     if(editingTask){
       console.log("this function is from outside click");
       console.log(tasks);
-      setIsModalOpen(false);
+      closeModal();
       const sanitizedData = tasks.map(({ ref, ...rest }) => rest);
       await sendEditTasksData(sanitizedData,edit_card_allottee_id);
       await fetchAllottee(setAllottee,setError);
     }else{
+      closeModal();
       saveAllData();
       setIsModalOpen(false);
       fetchAllottee(setAllottee,setError);
@@ -1270,7 +1271,7 @@ const handleCrossbtn = async()=>{
             <select
               className="select_allottee"
               id="inputField"
-              value={inputValue || ""}
+              value={inputValue || ''}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyPress}
               style={{
@@ -1282,7 +1283,7 @@ const handleCrossbtn = async()=>{
                 Select Allottee
               </option>
               {data.map(([id, name]) => (
-                <option key={id} value={id}>
+                <option key={id} value={id} multiple={false}>
                   {name}
                 </option>
               ))}
@@ -1303,83 +1304,89 @@ const handleCrossbtn = async()=>{
                   onDragOver={(e)=>{modalDragOver(e)}}
                   onDrop={(e) => handleTaskDrop(e, index)}
                 >
-                  <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
-                  <input
-                    type="checkbox"
-                    className="new-div-checkbox"
-                    checked={task.completed || false}
-                    onChange={(e) => handleTaskCheck(null, index, e.target.checked)}
-                  />
-                  <div
-                    contentEditable
-                    suppressContentEditableWarning={true}
-                    value={tasks}
-                    onChange={(e) => handleTaskInput(index, e)} // Typing input
-                    onBlur={(e) => handleTaskInput(index, e)}  // Save on blur
-                    onMouseUp={() => handleTextSelect(index)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === 'Backspace' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Escape') {
-                        handleTaskKeyDown(index, e); // Handle other keys
-                      }
-                    }}
-                    ref={task.ref}
-                    className={`new-div-input ${index<toDoCount ? "disable_task" : ""}`}
-                    style={{ border: '1px solid #ccc', padding: '5px', minHeight: '37px', whiteSpace: 'pre-wrap' }}
-                    dangerouslySetInnerHTML={{ __html: task.text }} // Only rendered when loading the tasks initially
-                  />
+                  <div className='first-container'>
+                          <img className="drag_image_logo" src={drag} height={20} width={20} alt="drag" />
+                          <input
+                            type="checkbox"
+                            className={`new-div-checkbox ${index<toDoCount ? "disable_task" : ""}`}
+                            checked={task.completed || false}
+                            onChange={(e) => handleTaskCheck(null, index, e.target.checked)}
+                          />
+                          <div
+                            contentEditable
+                            suppressContentEditableWarning={true}
+                            value={tasks}
+                            onChange={(e) => handleTaskInput(index, e)} // Typing input
+                            onBlur={(e) => handleTaskInput(index, e)}  // Save on blur
+                            onMouseUp={() => handleTextSelect(index)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === 'Backspace' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Escape') {
+                                handleTaskKeyDown(index, e); // Handle other keys
+                              }
+                            }}
+                            ref={task.ref}
+                            className={`new-div-input ${index<toDoCount ? "disable_task" : ""}`}
+                            style={{ border: '1px solid #ccc', padding: '5px', minHeight: '37px', whiteSpace: 'pre-wrap' }}
+                            dangerouslySetInnerHTML={{ __html: task.text }} // Only rendered when loading the tasks initially
+                          />
 
-                  {selectedTaskIndex === index &&
-                    <SelectText
-                      targetRef={task.ref}
-                    // toggleBold={toggleBold}
-                    // toggleItalic={toggleItalic}
-                    />
-                  }
-
-                  <TargetTime
-                    dateTime={task.datetime}
-                    onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
-                    onKeyDown={(e) => handleTaskKeyDown(index, e)}
-                  />
-
-                  <div id='icon_div'>
-                    <div>
-                      <CustomSelect
-                        taskPriorityId={tasks[index].taskId}
-                        sendCustomTags={handleCustomTags}
-                        index={index}
-                      />
-                    </div>
-
-                    <div className='comment_sectoin'>
-                      <Comment
-                        comments={Array.isArray(task.comments) ? task.comments : []}
-                        sendComments={ handleCommentsChange}
-                        comment_index = {index}
-                        comment_count = {takecount}
-                        comment_delete = {deleteComment}
-                      />
-                      <div className='count_layer'>{tasks[index] && tasks[index].comments && tasks[index].comments.length>0 ?tasks[index].comments.length:null}</div>
-                    </div>  
-                    <div>
-                      <FileUpload fileIndex= {index} sendFile={handleFileChange} />
-                    </div>
-
-                    <div className='timer_inp'>
-                      <WorkType selectedOption={task.workType}
-                        setSelectedOption={(value) => {
-                          const updatedTasks = [...tasks];
-                          updatedTasks[index].workType = value;
-                          setTasks(updatedTasks);
-                        }}
-                      />
-                    </div>
-
+                          {selectedTaskIndex === index &&
+                            <SelectText
+                              targetRef={task.ref}
+                              tasks={tasks}
+                              setTasks={setTasks}
+                              index={index}
+                            // toggleBold={toggleBold}
+                            // toggleItalic={toggleItalic}
+                            />
+                          }
                   </div>
+                  <div className="second-container">
+                        <TargetTime
+                          dateTime={task.datetime}
+                          onDatetimeChange={(newDatetime) => handleDatetimeChange(index, newDatetime)}
+                          onKeyDown={(e) => handleTaskKeyDown(index, e)}
+                        />
 
-                  <button className="delete-button" onClick={() => handleDeleteTask(index)}>
-                    <DeleteOutlinedIcon className='cross_button' style={{ fontSize: 30 }} />
-                  </button>
+                        <div id='icon_div'>
+                          <div>
+                            <CustomSelect
+                              taskPriorityId={tasks[index].taskId}
+                              sendCustomTags={handleCustomTags}
+                              index={index}
+                            />
+                          </div>
+
+                          <div className='comment_sectoin'>
+                            <Comment
+                              comments={Array.isArray(task.comments) ? task.comments : []}
+                              sendComments={ handleCommentsChange}
+                              comment_index = {index}
+                              comment_count = {takecount}
+                              comment_delete = {deleteComment}
+                            />
+                            <div className='count_layer'>{tasks[index] && tasks[index].comments && tasks[index].comments.length>0 ?tasks[index].comments.length:null}</div>
+                          </div>  
+                          <div>
+                            <FileUpload fileIndex= {index} sendFile={handleFileChange} />
+                          </div>
+
+                          <div className='timer_inp'>
+                            <WorkType selectedOption={task.workType}
+                              setSelectedOption={(value) => {
+                                const updatedTasks = [...tasks];
+                                updatedTasks[index].workType = value;
+                                setTasks(updatedTasks);
+                              }}
+                            />
+                          </div>
+
+                        </div>
+
+                        <button className="delete-button" onClick={() => handleDeleteTask(index)}>
+                          <DeleteOutlinedIcon className='cross_button' style={{ fontSize: 30 }} />
+                        </button>
+                  </div>
                 </div>
               ))}
               <div className="editable-input-container">

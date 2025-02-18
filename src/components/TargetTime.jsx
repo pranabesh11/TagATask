@@ -5,10 +5,12 @@ import './tasklist.css';
 import clockicon from '../assets/clock.png';
 import AccessAlarmOutlinedIcon from '@mui/icons-material/AccessAlarmOutlined';
 
+
 function TargetTime({ dateTime, onDatetimeChange }) {
     const [isPickerOpen, setIsPickerOpen] = useState(false);
     const [hovering, setHovering] = useState(false);
     const dateTimePickerRef = useRef(null);
+
 
     const handleIconClick = () => {
         setIsPickerOpen(prev => !prev);
@@ -56,9 +58,12 @@ function TargetTime({ dateTime, onDatetimeChange }) {
             />
                 {hovering && dateTime && (
                     <span className="hovered-datetime">
-                        {dateTime.format('YYYY-MM-DD HH:mm')}
+                        {typeof dateTime.format === 'function' 
+                            ? dateTime.format('YYYY-MM-DD HH:mm') 
+                            : new Date(dateTime).toLocaleString()}
                     </span>
                 )}
+
             </div>
             {isPickerOpen && (
                 <div ref={dateTimePickerRef} className="datetime-picker-wrapper">

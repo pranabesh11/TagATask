@@ -123,10 +123,10 @@ export const fetchAllottee = async (setAllottee, setError) => {
       },
     });
     console.log(response.data.personnels);
-    setAllottee(response.data.personnels);
+     setAllottee(response.data.personnels);
   } catch (error) {
     console.error('Error fetching data:', error);
-    setError(error);
+     setError(error);
   }
 };
 

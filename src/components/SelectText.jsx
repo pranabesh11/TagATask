@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './selecttext.css';
+import React, { useState, useRef, useEffect } from "react";
+import "./selecttext.css";
 
-const SelectText = ({ targetRef }) => {
+const SelectText = ({ targetRef, tasks, setTasks, index }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [optionsPosition, setOptionsPosition] = useState({ top: 0, left: 0 });
   const [selectionRange, setSelectionRange] = useState(null);
@@ -9,100 +9,91 @@ const SelectText = ({ targetRef }) => {
 
   const handleTextSelection = () => {
     const selection = window.getSelection();
+    console.log("selection text" , selection);
+    
     if (selection && selection.rangeCount > 0 && !selection.isCollapsed) {
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
-
       const parentRect = targetRef.current.getBoundingClientRect();
 
       setOptionsPosition({
         top: rect.top - parentRect.top - 40,
         left: rect.left - parentRect.left,
       });
-
-      setSelectionRange(range.cloneRange());  
+      setSelectionRange(range.cloneRange());
       setShowOptions(true);
     } else {
       setShowOptions(false);
     }
   };
 
-  
-  const restoreSelection = () => {
+
+  const applyFormat = (style) => {
+    if (!selectionRange) return;
     const selection = window.getSelection();
-    selection.removeAllRanges();
-    if (selectionRange) {
-      selection.addRange(selectionRange);
-    }
-  };
+    const selectedText = selection.toString().trim();
+    console.log("selection text 2" , selectedText);
 
-  
-  const wrapSelectedText = (style) => {
-    if (selectionRange) {
-      restoreSelection();
-      const selectedText = selectionRange.extractContents();
-      const span = document.createElement('span');
-      
-      if (style === 'bold') {
-        span.style.fontWeight = 'bold';
-      } else if (style === 'italic') {
-        span.style.fontStyle = 'italic';
-      } else if (style === 'underline') {
-        span.style.textDecoration = 'underline';
-      } else if (style === 'highlight') {
-        span.style.backgroundColor = 'yellow';
-      }
+    if (!selectedText) return;
 
-      span.appendChild(selectedText);
-      selectionRange.insertNode(span);
-      setSelectionRange(selectionRange.cloneRange());
-    }
+    let taskText = tasks[index].text;
+    const formatTags = {
+      bold: "b",
+      italic: "i",
+      underline: "u",
+      highlight: 'span style="background-color: yellow;"',
+    };
+    
+    const tag = formatTags[style];
+    const regex = new RegExp(`<${tag}>(.*?)</${tag}>`, "gi");
+    const formattedText = taskText.includes(`<${tag}>${selectedText}</${tag}>`)
+      ? taskText.replace(regex, selectedText)
+      : taskText.replace(selectedText, `<${tag}>${selectedText}</${tag}>`);
+    
+    const updatedTasks = [...tasks];
+    updatedTasks[index].text = formattedText;
+    setTasks(updatedTasks);
+    setShowOptions(false);
   };
 
   const insertLink = () => {
-    const url = prompt('Enter the URL');
+    const url = prompt("Enter the URL");
     if (url && selectionRange) {
-      restoreSelection();
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.target = '_blank';
-      anchor.appendChild(selectionRange.extractContents());
-      selectionRange.insertNode(anchor);
-      setSelectionRange(selectionRange.cloneRange());
-    }
-  };
+      const selection = window.getSelection();
+      const selectedText = selection.toString();
+      if (!selectedText) return;
 
-  const handleClickOutside = (event) => {
-    if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+      const updatedText = tasks[index].text.replace(
+        selectedText,
+        `<a href="${url}">${selectedText}</a>`
+      );
+
+      const updatedTasks = [...tasks];
+      updatedTasks[index].text = updatedText;
+      setTasks(updatedTasks);
       setShowOptions(false);
     }
   };
 
   useEffect(() => {
-    document.addEventListener('mouseup', handleTextSelection);
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mouseup', handleTextSelection);
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    document.addEventListener("mouseup", handleTextSelection);
+    return () => document.removeEventListener("mouseup", handleTextSelection);
   }, []);
 
   return (
-    <>
-      {showOptions && (
-        <div
-          ref={optionsRef}
-          className="options-popup"
-          style={{ top: `${optionsPosition.top}px`, left: `${optionsPosition.left}px`, position: 'absolute' }}
-        >
-          <button onClick={() => wrapSelectedText('bold')}>B</button>
-          <button onClick={() => wrapSelectedText('italic')}>I</button>
-          <button onClick={() => wrapSelectedText('underline')}>U</button>
-          <button onClick={() => wrapSelectedText('highlight')}>H</button>
-          <button onClick={insertLink}>Link</button>
-        </div>
-      )}
-    </>
+    showOptions && (
+      <div
+        ref={optionsRef}
+        className="options-popup"
+        style={{ top: `${optionsPosition.top}px`, left: `${optionsPosition.left}px`, position: "absolute" }}
+      >
+        <button onClick={() => applyFormat("bold")}>B</button>
+        <button onClick={() => applyFormat("italic")}>I</button>
+        <button onClick={() => applyFormat("underline")}>U</button>
+        <button onClick={() => applyFormat("highlight")}>H</button>
+        <button onClick={insertLink}>Link</button>
+      </div>
+    )
   );
 };
 
