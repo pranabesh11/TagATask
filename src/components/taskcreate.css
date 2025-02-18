@@ -97,14 +97,14 @@
 
 }
 
-.new-div {
+/* .new-div {
     border-style: none;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     /* border: 1px solid red; */
-}
+} */
 .new-div:hover .drag_image_logo {
     opacity: 0;
     cursor: move;
@@ -152,12 +152,18 @@
 
 .new-div {
     display: flex;
-    align-items: center;
     margin-bottom: 3px;
     /* padding: 10px; */
     border-radius: 5px;
     transition: transform 0.2s ease, opacity 0.2s ease;
     position: relative;
+}
+
+.first-container
+{
+    display: flex;
+    align-items: center;
+    width: 50%;
 }
 
 .new-div.dragging {
@@ -219,8 +225,14 @@
     font-weight: 500;
     font-style: normal;
     font-size: 13px;
-    width: 40%;
+    width: 100%;
     text-align: left;
+}
+.second-container
+{
+    display: flex;
+    align-items: center;
+    width: 50%;
 }
 .close_button{
     float: right;
@@ -348,7 +360,7 @@
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    width: 40%;
+    width: 80%;
 }
 .card-item.dragging {
     opacity: 0.5;
@@ -675,4 +687,61 @@
     pointer-events: none;
     opacity: 0.3;
     cursor: not-allowed;
+}
+
+
+
+@media (max-width:767px) {
+    .tasks
+    {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .allottee_container
+    {
+        width: 90%;
+    }
+    .toggle_button
+    {
+        margin-right: 10px;
+    }
+    .modal-overlay .container
+    {
+        width: 85%;
+    }
+    .new-div
+    {
+        flex-direction: column;
+    }
+    .first-container
+    {
+        width: 100%;
+    }
+    .second-container
+    {
+        width: 100%;
+    }
+    
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+    .allottee_container
+    {
+        width: 40%;
+    }
+    .count_layer{
+        top: -13px;
+        left: -22px;
+    }
+    .new-div
+    {
+        flex-direction: column;
+    }
+    .first-container
+    {
+        width: 100%;
+    }
+    .second-container
+    {
+        width: 100%;
+    }
 }
