@@ -67,6 +67,7 @@ const SelectText = ({ targetRef, tasks, setTasks, index }) => {
         selectedText,
         `<a href="${url}">${selectedText}</a>`
       );
+      
 
       const updatedTasks = [...tasks];
       updatedTasks[index].text = updatedText;
