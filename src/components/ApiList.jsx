@@ -291,6 +291,4 @@ export const get_tag_data = async () => {
   }
 };
 
-export const demo_task = async()=>{
-  console.log("hello world");
-} 
+ 
