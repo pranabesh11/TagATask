@@ -54,12 +54,17 @@ function TaskCreate() {
   const [commentcount ,setCommentcount] = useState(0);
   const [tagoption, setTagoptions] = useState([]);
   const [toDoCount,setToDoCount] = useState(0);
-
+  const [currentAllotee,setCurrentAllotee] = useState("");
 const Base_URL = "https://prioritease2-c953f12d76f1.herokuapp.com";
 //  const Base_URL = "https://94cd-49-37-8-126.ngrok-free.app";
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPersonnelId = parseInt(urlParams.get('id'));
+    setCurrentAllotee(currentPersonnelId);
     tasksRef.current = tasks;
   }, [tasks]);
+
+console.log("currentAllotee",currentAllotee);
 
   useEffect(() => {
     if (editingTask) {
@@ -520,6 +525,8 @@ useEffect(() => {
  
 
   const handleDeleteTask = (index) => {
+    console.log("delete task id ........", tasks[index].allotterId);
+    
     const currentPersonnelId = new URLSearchParams(window.location.search).get('id');
     if(currentPersonnelId == tasks[index].allotterId && editingTask){
       setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
@@ -1371,7 +1378,7 @@ const handleCrossbtn = async()=>{
                             <FileUpload fileIndex= {index} sendFile={handleFileChange} />
                           </div>
 
-                          <div className='timer_inp'>
+                          {tasks[index].allotterId === currentAllotee ? <div className='timer_inp'>
                             <WorkType selectedOption={task.workType}
                               setSelectedOption={(value) => {
                                 const updatedTasks = [...tasks];
@@ -1379,13 +1386,14 @@ const handleCrossbtn = async()=>{
                                 setTasks(updatedTasks);
                               }}
                             />
-                          </div>
+                          </div> :<div></div> }
+                          
 
                         </div>
-
-                        <button className="delete-button" onClick={() => handleDeleteTask(index)}>
+                      {tasks[index].allotterId === currentAllotee ?  <button className="delete-button" onClick={() => handleDeleteTask(index)}>
                           <DeleteOutlinedIcon className='cross_button' style={{ fontSize: 30 }} />
-                        </button>
+                        </button> : <div></div> }
+                       
                   </div>
                 </div>
               ))}
