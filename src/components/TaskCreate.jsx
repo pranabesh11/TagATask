@@ -523,6 +523,16 @@ useEffect(() => {
     setTasks(newTasks);
   };
  
+// delete Task .... 
+
+const confirmDeleteTask = (index) => {
+  const isConfirmed = window.confirm("Are you sure you want to delete this task?");
+  
+  if (isConfirmed) {
+    handleDeleteTask(index);
+  }
+};
+
 
   const handleDeleteTask = (index) => {
     console.log("delete task id ........", tasks[index].allotterId);
@@ -1391,9 +1401,11 @@ const handleCrossbtn = async()=>{
                           
 
                         </div>
-                      {tasks[index].allotterId === currentAllotee ?  <button className="delete-button" onClick={() => handleDeleteTask(index)}>
+                      {tasks[index].allotterId === currentAllotee ?  <button className="delete-button" onClick={() => confirmDeleteTask(index)}>
                           <DeleteOutlinedIcon className='cross_button' style={{ fontSize: 30 }} />
-                        </button> : <div></div> }
+                        </button>
+                         : <div></div>
+                      }
                        
                   </div>
                 </div>
